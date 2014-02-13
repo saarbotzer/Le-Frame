@@ -96,6 +96,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var cardHeight : CGFloat = 0
     var cardWidth : CGFloat = 0
     var cellSpacing : CGFloat = 10
+    var viewFinishedLoading: Bool = false
     
     // Hints
     var hintToShow : Bool = false
@@ -134,7 +135,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             defaults.set(UUID().uuidString, forKey: "uuid")
         }
         
-        startNewGame()
+        if !viewFinishedLoading {
+            startNewGame()
+            viewFinishedLoading = true
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -192,6 +196,22 @@ extension GameVC {
         removeIcon.image = removeIcon.image?.withRenderingMode(.alwaysTemplate)
         removeIcon.tintColor = .white
 
+    }
+    
+    /// Sets the remove screen labels & background UI
+    func updateRemoveLabelsUI() {
+        // TODO: Make it consistent with all screen sizes
+        let radius = removeLabelsBackground.frame.width / 2
+        removeLabelsBackground.roundCorners([.allCorners], radius: radius)
+        removeLabelsBackground.backgroundColor = .black
+        removeLabelsBackground.alpha = 0.7
+        
+        removeLabelsBackground.layer.borderColor = UIColor.white.cgColor
+        
+        removalSumLabel.textColor = .white
+        removalSumLabel.layer.zPosition = 4
+        removalSumTitleLabel.textColor = .white
+        removalSumTitleLabel.layer.zPosition = 4//.alpha = 1
     }
 }
 
@@ -750,21 +770,7 @@ extension GameVC {
 // MARK: - Removal Functions
 extension GameVC {
     
-    /// Sets the remove screen labels & background UI
-    func updateRemoveLabelsUI() {
-        // TODO: Make it consistent with all screen sizes
-        let radius = removeLabelsBackground.frame.width / 2
-        removeLabelsBackground.roundCorners([.allCorners], radius: radius)
-        removeLabelsBackground.backgroundColor = .black
-        removeLabelsBackground.alpha = 0.7
-        
-        removeLabelsBackground.layer.borderColor = UIColor.white.cgColor
-        
-        removalSumLabel.textColor = .white
-        removalSumLabel.layer.zPosition = 4
-        removalSumTitleLabel.textColor = .white
-        removalSumTitleLabel.layer.zPosition = 4//.alpha = 1
-    }
+    
     
     /// Enables/Disable the Remove button
     /// - Parameter enable: True if enable, false if disable
