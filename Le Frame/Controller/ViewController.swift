@@ -14,15 +14,26 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     @IBOutlet weak var nextCardImageView: UIImageView!
     
+    
+    var kingsAvailable : Bool = true
+    var queensAvailable : Bool = true
+    var jacksAvailable : Bool = true
+    var spotsAvailable : Bool = true
+    
+    
     // Get the deck
     var model = CardModel()
     var deck = [Card]()
     
     var nextCard = Card()
     
+    var gameMode = GameMode.placing
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        gameMode = .placing
+        
         // Get deck
         deck = model.getCards()
         
@@ -43,8 +54,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath) as! CardCollectionViewCell
-        cell.setEmpty()
-        
+        cell.initializeSpot(with: nil, at: indexPath)
+
         return cell
     }
     
@@ -52,19 +63,40 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         let cell = collectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
         
-        // What to do when a spot is selected
-        if canPutCard(nextCard, at: indexPath) {
-            print("\(getCardPosition(indexPath)) - \(nextCard.imageName)")
-            
-            // Put the card in the spot and go to the next card
-            cell.setCard(nextCard)
-            getNextCard()
-            
-        } else {
-            // If the spot already has a card
-            // TODO: Check if it's card-removal code and if so - check whether to remove cards or not
-            cell.setEmpty() // remove line
+        
+        if gameMode == .placing {
+            // What to do when a spot is selected
+            if canPutCard(nextCard, at: indexPath) {
+                print("\(getCardPosition(indexPath)) - \(nextCard.imageName)")
+                
+                // Put the card in the spot and go to the next card
+                cell.setCard(nextCard)
+                getNextCard()
+                
+            }
+            finishedPlacingCard()
+        } else if gameMode == .removing {
+            // TODO: Implement pairs removal mode
         }
+        print(gameMode)
+
+    }
+    
+    func finishedPlacingCard() {
+        checkAvailability()
+        
+        // TODO: Add winning game option
+        
+        if isGameOver() {
+            gameMode = .gameOver
+        } else {
+            if isBoardFull() {
+                gameMode = .removing
+            } else {
+                gameMode = .placing
+            }
+        }
+        
     }
     
     // MARK: - Card-spot validation methods
@@ -116,6 +148,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     // MARK: - Helper methods
+    
+
+    
     func getNextCard() {
         nextCard = deck.remove(at: 0)
         updateNextCardImage()
@@ -170,3 +205,93 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
 
 }
+
+
+// MARK: - Board actions and variables
+extension ViewController {
+    
+    func isGameWon() -> Bool {
+        
+        // TODO: Implement isGameWon function
+        return false
+    }
+    
+    func isGameOver() -> Bool {
+        
+        let boardFull = isBoardFull()
+        let pairsToRemove = checkForPairs()
+        let nextCardRank = nextCard.rank!
+        
+        if boardFull && !pairsToRemove {
+            return true
+        }
+        if !boardFull && nextCardRank == .jack && !jacksAvailable {
+            return true
+        }
+        if !boardFull && nextCardRank == .queen && !queensAvailable {
+            return true
+        }
+        if !boardFull && nextCardRank == .king && !kingsAvailable {
+            return true
+        }
+        
+        return false
+    }
+    
+    func checkForPairs() -> Bool {
+        var allNonRoyalValues : [Int] = [Int]()
+        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if let cardRankValue = cell.card?.rank!.getRawValue() {
+                if cardRankValue < 11 {
+                    allNonRoyalValues.append(cardRankValue)
+                }
+            }
+        }
+        if allNonRoyalValues.contains(10) {
+            return true
+        }
+        for i in 0..<allNonRoyalValues.count {
+            for j in i..<allNonRoyalValues.count {
+                if allNonRoyalValues[i] + allNonRoyalValues[j] == 10 {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+    func isBoardFull() -> Bool {
+        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if cell.isEmpty {
+                return false
+            }
+        }
+        return true
+    }
+
+    func checkAvailability() {
+        kingsAvailable = false
+        queensAvailable = false
+        jacksAvailable = false
+        spotsAvailable = false
+        
+        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            let indexPath = spot.indexPath!
+            let allowedRanks = getAllowedRanksByPosition(cardPosition: getCardPosition(indexPath))
+            if spot.isEmpty {
+                switch allowedRanks {
+                case .jacks:
+                    jacksAvailable = true
+                case .queens:
+                    queensAvailable = true
+                case .kings:
+                    kingsAvailable = true
+                default:
+                    spotsAvailable = true
+                }
+            }
+            spotsAvailable = spotsAvailable || jacksAvailable || queensAvailable || kingsAvailable
+        }
+    }
+}
+

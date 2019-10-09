@@ -14,6 +14,20 @@ class CardCollectionViewCell: UICollectionViewCell {
     
     var card: Card?
     var isEmpty: Bool = false
+    var indexPath: IndexPath?
+    
+    func initializeSpot(with card: Card?, at indexPath: IndexPath) {
+        self.card = card
+        self.indexPath = indexPath
+        
+        if let card = card {
+            imageView.image = UIImage(named: card.imageName)
+            self.isEmpty = false
+        } else {
+            imageView.image = UIImage(named: "joker_black.jpg")
+            self.isEmpty = true
+        }
+    }
     
     func setCard(_ card: Card) {
         self.card = card
@@ -38,6 +52,4 @@ enum AllowedRanks {
     case jacks
     case queens
     case notRoyal
-    
-    
 }

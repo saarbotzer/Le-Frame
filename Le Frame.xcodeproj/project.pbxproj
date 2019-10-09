@@ -16,6 +16,7 @@
 		BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */; };
 		BCC40D0B234DF4A000CD951D /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40D0A234DF4A000CD951D /* CardModel.swift */; };
 		BCE12CE9234E340400962F00 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CE8234E340400962F00 /* Card.swift */; };
+		BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CEE234E35E400962F00 /* Utilities.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +30,8 @@
 		BCC40CFC234DEDEB00CD951D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
 		BCC40D0A234DF4A000CD951D /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
-		BCE12CE8234E340400962F00 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = SOURCE_ROOT; };
+		BCE12CE8234E340400962F00 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = "Le Frame/Model/Card.swift"; sourceTree = SOURCE_ROOT; };
+		BCE12CEE234E35E400962F00 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,18 +64,51 @@
 		BCC40CED234DEDE400CD951D /* Le Frame */ = {
 			isa = PBXGroup;
 			children = (
-				BCE12CE8234E340400962F00 /* Card.swift */,
-				BCC40D0A234DF4A000CD951D /* CardModel.swift */,
-				BCC40CEE234DEDE400CD951D /* AppDelegate.swift */,
+				BCE12CEA234E353B00962F00 /* Model */,
+				BCE12CEC234E354E00962F00 /* View */,
+				BCE12CEB234E354500962F00 /* Controller */,
+				BCC40CFC234DEDEB00CD951D /* Info.plist */,
 				BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */,
-				BCC40CF2234DEDE400CD951D /* ViewController.swift */,
-				BCC40CF4234DEDE400CD951D /* Main.storyboard */,
 				BCC40CF7234DEDEB00CD951D /* Assets.xcassets */,
 				BCC40CF9234DEDEB00CD951D /* LaunchScreen.storyboard */,
-				BCC40CFC234DEDEB00CD951D /* Info.plist */,
-				BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */,
+				BCE12CED234E355E00962F00 /* Other */,
 			);
 			path = "Le Frame";
+			sourceTree = "<group>";
+		};
+		BCE12CEA234E353B00962F00 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				BCE12CE8234E340400962F00 /* Card.swift */,
+				BCC40D0A234DF4A000CD951D /* CardModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		BCE12CEB234E354500962F00 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				BCC40CF2234DEDE400CD951D /* ViewController.swift */,
+				BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */,
+				BCE12CEE234E35E400962F00 /* Utilities.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		BCE12CEC234E354E00962F00 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				BCC40CF4234DEDE400CD951D /* Main.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		BCE12CED234E355E00962F00 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				BCC40CEE234DEDE400CD951D /* AppDelegate.swift */,
+			);
+			path = Other;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,6 +184,7 @@
 			files = (
 				BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */,
 				BCE12CE9234E340400962F00 /* Card.swift in Sources */,
+				BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */,
 				BCC40CF3234DEDE400CD951D /* ViewController.swift in Sources */,
 				BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */,
 				BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */,
