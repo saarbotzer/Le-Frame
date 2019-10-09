@@ -42,7 +42,7 @@ class CardCollectionViewCell: UICollectionViewCell {
     }
     
     func removeCard() {
-        
+        setEmpty()
     }
 }
 

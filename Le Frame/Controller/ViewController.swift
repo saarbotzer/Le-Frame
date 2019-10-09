@@ -26,6 +26,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var deck = [Card]()
     
     var nextCard = Card()
+    var selectedCardIndexPath: IndexPath?
     
     var gameMode = GameMode.placing
     
@@ -67,7 +68,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         if gameMode == .placing {
             // What to do when a spot is selected
             if canPutCard(nextCard, at: indexPath) {
-                print("\(getCardPosition(indexPath)) - \(nextCard.imageName)")
                 
                 // Put the card in the spot and go to the next card
                 cell.setCard(nextCard)
@@ -76,9 +76,34 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             }
             finishedPlacingCard()
         } else if gameMode == .removing {
-            // TODO: Implement pairs removal mode
+
+            // TODO: Mark cards for removal
+            let currentCard = cell.card!
+            if currentCard.rank! == .ten {
+                cell.removeCard()
+                return
+            }
+
+            if selectedCardIndexPath == nil {
+                selectedCardIndexPath = indexPath
+            } else {
+                let selectedCardCell = spotsCollectionView.cellForItem(at: selectedCardIndexPath!) as! CardCollectionViewCell
+                let selectedCard = selectedCardCell.card!
+    
+                if selectedCard.rank!.getRawValue() + currentCard.rank!.getRawValue() == 10 && selectedCardIndexPath != indexPath {
+                    selectedCardCell.removeCard()
+                    cell.removeCard()
+                    selectedCardIndexPath = nil
+                } else {
+                    selectedCardIndexPath = indexPath
+                }
+            }
+            if !checkForPairs() {
+                
+                // TODO: Ask if finished removing cards?
+                gameMode = .placing
+            }
         }
-        print(gameMode)
 
     }
     
@@ -251,7 +276,7 @@ extension ViewController {
             return true
         }
         for i in 0..<allNonRoyalValues.count {
-            for j in i..<allNonRoyalValues.count {
+            for j in i+1..<allNonRoyalValues.count {
                 if allNonRoyalValues[i] + allNonRoyalValues[j] == 10 {
                     return true
                 }
