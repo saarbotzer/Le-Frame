@@ -14,8 +14,8 @@
 		BCC40CF8234DEDEB00CD951D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF7234DEDEB00CD951D /* Assets.xcassets */; };
 		BCC40CFB234DEDEB00CD951D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF9234DEDEB00CD951D /* LaunchScreen.storyboard */; };
 		BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */; };
-		BCC40D09234DF47D00CD951D /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40D08234DF47D00CD951D /* Card.swift */; };
 		BCC40D0B234DF4A000CD951D /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40D0A234DF4A000CD951D /* CardModel.swift */; };
+		BCE12CE9234E340400962F00 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CE8234E340400962F00 /* Card.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,8 +28,8 @@
 		BCC40CFA234DEDEB00CD951D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BCC40CFC234DEDEB00CD951D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
-		BCC40D08234DF47D00CD951D /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = SOURCE_ROOT; };
 		BCC40D0A234DF4A000CD951D /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
+		BCE12CE8234E340400962F00 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +62,7 @@
 		BCC40CED234DEDE400CD951D /* Le Frame */ = {
 			isa = PBXGroup;
 			children = (
-				BCC40D08234DF47D00CD951D /* Card.swift */,
+				BCE12CE8234E340400962F00 /* Card.swift */,
 				BCC40D0A234DF4A000CD951D /* CardModel.swift */,
 				BCC40CEE234DEDE400CD951D /* AppDelegate.swift */,
 				BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */,
@@ -148,8 +148,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */,
+				BCE12CE9234E340400962F00 /* Card.swift in Sources */,
 				BCC40CF3234DEDE400CD951D /* ViewController.swift in Sources */,
-				BCC40D09234DF47D00CD951D /* Card.swift in Sources */,
 				BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */,
 				BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */,
 				BCC40D0B234DF4A000CD951D /* CardModel.swift in Sources */,
