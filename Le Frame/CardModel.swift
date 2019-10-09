@@ -1,0 +1,50 @@
+//
+//  CardModel.swift
+//  Le Frame
+//
+//  Created by Saar Botzer on 09/10/2019.
+//  Copyright © 2019 Saar Botzer. All rights reserved.
+//
+
+import Foundation
+
+class CardModel {
+    
+    func getCards() -> [Card]{
+        var cards = [Card]()
+        
+        let allSuits = CardSuit.allCases
+        let allRanks = CardRank.allCases
+        
+        
+        for suit in allSuits {
+            for rank in allRanks {
+                let card = Card()
+                card.createImageName(suit: suit, rank: rank)
+                cards.append(card)
+            }
+        }
+        return cards
+    }
+
+}
+
+enum CardSuit: String, CaseIterable {
+    case heart = "h"
+    case diamond = "d"
+    case club = "c"
+    case spade = "s"
+    
+    func getRawValue() -> String{
+        return self.rawValue
+    }
+    
+}
+
+enum CardRank: Int, CaseIterable {
+    case ace = 1, two, three, four, five, six, seven, eight, nine, ten, jack, queen, king
+    
+    func getRawValue() -> Int{
+        return self.rawValue
+    }
+}
