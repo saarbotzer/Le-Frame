@@ -62,50 +62,66 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        let cell = collectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
-        
-        
-        if gameMode == .placing {
-            // What to do when a spot is selected
-            if canPutCard(nextCard, at: indexPath) {
-                
-                // Put the card in the spot and go to the next card
-                cell.setCard(nextCard)
-                getNextCard()
-                
-            }
-            finishedPlacingCard()
-        } else if gameMode == .removing {
-
-            // TODO: Mark cards for removal
-            let currentCard = cell.card!
-            if currentCard.rank! == .ten {
-                cell.removeCard()
-                return
-            }
-
-            if selectedCardIndexPath == nil {
-                selectedCardIndexPath = indexPath
-            } else {
-                let selectedCardCell = spotsCollectionView.cellForItem(at: selectedCardIndexPath!) as! CardCollectionViewCell
-                let selectedCard = selectedCardCell.card!
+        playTurn(with: indexPath)
+        if isGameOver() {
+            gameMode = .gameOver
+            
+            // What to do when game over
+            print(gameMode)
+        }
+    }
     
-                if selectedCard.rank!.getRawValue() + currentCard.rank!.getRawValue() == 10 && selectedCardIndexPath != indexPath {
-                    selectedCardCell.removeCard()
+    func playTurn(with indexPath: IndexPath) {
+        let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+            
+            
+            if gameMode == .placing {
+                // What to do when a spot is selected
+                if canPutCard(nextCard, at: indexPath) {
+                    
+                    // Put the card in the spot and go to the next card
+                    cell.setCard(nextCard)
+                    getNextCard()
+                    
+                }
+                finishedPlacingCard()
+            } else if gameMode == .removing {
+
+                // TODO: Mark cards for removal
+                
+                // In case of pressing an empty spot in removal mode
+                if cell.isEmpty {
+                    return
+                }
+                
+                let currentCard = cell.card!
+                if currentCard.rank! == .ten {
                     cell.removeCard()
-                    selectedCardIndexPath = nil
-                } else {
+                    return
+                }
+
+                if selectedCardIndexPath == nil {
                     selectedCardIndexPath = indexPath
+                } else {
+                    let selectedCardCell = spotsCollectionView.cellForItem(at: selectedCardIndexPath!) as! CardCollectionViewCell
+                    let selectedCard = selectedCardCell.card!
+        
+                    if selectedCard.rank!.getRawValue() + currentCard.rank!.getRawValue() == 10 && selectedCardIndexPath != indexPath {
+                        selectedCardCell.removeCard()
+                        cell.removeCard()
+                        selectedCardIndexPath = nil
+                    } else {
+                        selectedCardIndexPath = indexPath
+                    }
+                }
+                if !checkForPairs() {
+                    
+                    // TODO: Ask if finished removing cards?
+                    gameMode = .placing
                 }
             }
-            if !checkForPairs() {
-                
-                // TODO: Ask if finished removing cards?
-                gameMode = .placing
-            }
-        }
-
     }
+    
     
     func finishedPlacingCard() {
         checkAvailability()
