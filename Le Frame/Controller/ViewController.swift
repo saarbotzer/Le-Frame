@@ -13,7 +13,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var spotsCollectionView: UICollectionView!
     
     @IBOutlet weak var nextCardImageView: UIImageView!
-    @IBOutlet weak var modeLabel: UILabel!
     @IBOutlet weak var doneRemovingBtn: UIButton!
     @IBOutlet weak var removeBtn: UIButton!
     
@@ -88,7 +87,6 @@ class ViewController: UIViewController {
 extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // Grid always contains 16 cards (4x4)
         return 4
     }
     
@@ -106,28 +104,25 @@ extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         playTurn(with: indexPath)
-        if isGameOver() {
-            setGameMode(mode: .gameOver)
-            
-            // What to do when game over
-            
-            showAlert("Game Over", "You've lost")
-            print(gameMode)
+        
+        if gameMode != .removing {
+            if isGameOver() {
+                setGameMode(mode: .gameOver)
+            } else if isBoardFull() && isGameWon() {
+                setGameMode(mode: .won)
+            }
         }
     }
     
-    func showAlert(_ title: String, _ message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-//        let alertAction  = UIAlertAction(title: "Restart", style: .default, handler: nil)
-        let alertAction = UIAlertAction(title: "Restart", style: .default) { (action) in
-            self.initializeGame()
-        }
-        
-        alert.addAction(alertAction)
-        
-        present(alert, animated: true, completion: nil)
+    
+    func gameOver() {
+        showAlert("Game Over", "You've lost")
     }
+    
+    func gameWon() {
+        showAlert("Congratulations!", "You won")
+    }
+
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: 10.0, bottom: 10.0, right: 10.0)
@@ -146,7 +141,20 @@ extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDe
 // MARK: Spots Handling and Interface Methods
 extension ViewController {
     
-    // Update Interface
+    func showAlert(_ title: String, _ message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        let restartAction = UIAlertAction(title: "Restart", style: .default) { (action) in
+            self.initializeGame()
+        }
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        
+        alert.addAction(restartAction)
+        alert.addAction(okAction)
+
+        present(alert, animated: true, completion: nil)
+    }
+    
     func setGameMode(mode: GameMode) {
         
         gameMode = mode
@@ -156,29 +164,22 @@ extension ViewController {
             updateNextCardImage()
             doneRemovingBtn.isHidden = true
             removeBtn.isHidden = true
-            labelText = "Mode: Card Placing"
         case .removing:
             nextCardImageView.image = UIImage(named: "green_card.png")
             doneRemovingBtn.isHidden = false
             removeBtn.isHidden = false
-            labelText = "Mode: Card Removing"
         case .gameOver:
-            labelText = "Game Over"
+            gameOver()
         case .won:
-            labelText = "You've Won!"
+            gameWon()
         }
-        modeLabel.text = labelText
     }
     
-    
-    // Spots Handling
     func resetCardIndexes() {
         firstSelectedCardIndexPath = nil
         secondSelectedCardIndexPath = nil
     }
     
-    
-    // Board Handling
     func finishedPlacingCard() {
         checkAvailability()
         
@@ -195,22 +196,19 @@ extension ViewController {
         }
         
     }
-    
-    // Spots Handling
+
     func removeAllCards() {
         for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
             cell.removeCard()
         }
     }
     
-    // Spots Handling
     func markAllCardAsNotSelected() {
         for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
             cell.setNotSelected()
         }
     }
     
-    // Spots Handling
     func markCardAsSelected(at indexPath: IndexPath) {
         if let cell = spotsCollectionView.cellForItem(at: indexPath) as? CardCollectionViewCell {
             cell.setSelected()
@@ -253,8 +251,6 @@ extension ViewController {
                 }
                 finishedPlacingCard()
             } else if gameMode == .removing {
-
-                // TODO: Mark cards for removal
                 
                 // In case of pressing an empty spot in removal mode
                 if cell.isEmpty {
@@ -314,7 +310,26 @@ extension ViewController {
     func isGameWon() -> Bool {
         
         // TODO: Implement isGameWon function
-        return false
+        
+        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            let allowedRanks = getAllowedRanksByPosition(indexPath: cell.indexPath!)
+            if let card = cell.card {
+                let cardRank = card.rank!
+                if allowedRanks == .jacks && cardRank != .jack {
+                    return false
+                }
+                if allowedRanks == .queens && cardRank != .queen {
+                    return false
+                }
+                if allowedRanks == .kings && cardRank != .king {
+                    return false
+                }
+            } else if allowedRanks != .notRoyal{
+                return false
+            }
+        }
+        
+        return true
     }
     
     // Game Logic
