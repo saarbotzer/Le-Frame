@@ -24,7 +24,7 @@ class CardCollectionViewCell: UICollectionViewCell {
             imageView.image = UIImage(named: card.imageName)
             self.isEmpty = false
         } else {
-            imageView.image = UIImage(named: "joker_black.jpg")
+            imageView.image = UIImage(named: "green_card.png")
             self.isEmpty = true
         }
     }
@@ -37,7 +37,7 @@ class CardCollectionViewCell: UICollectionViewCell {
     
     func setEmpty() {
         self.card = nil
-        imageView.image = UIImage(named: "joker_black.jpg")
+        imageView.image = UIImage(named: "green_card.png")
         self.isEmpty = true
     }
     
