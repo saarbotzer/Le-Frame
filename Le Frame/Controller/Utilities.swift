@@ -14,3 +14,5 @@ enum GameMode {
     case gameOver
     case won
 }
+
+public let spotImageName = "green_card.png"

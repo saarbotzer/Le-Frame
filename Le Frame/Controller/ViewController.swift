@@ -10,19 +10,18 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    // IBOutlets
     @IBOutlet weak var spotsCollectionView: UICollectionView!
-    
     @IBOutlet weak var nextCardImageView: UIImageView!
     @IBOutlet weak var doneRemovingBtn: UIButton!
     @IBOutlet weak var removeBtn: UIButton!
     
-    
+    // Spots available by rank
     var kingsAvailable : Bool = true
     var queensAvailable : Bool = true
     var jacksAvailable : Bool = true
     var spotsAvailable : Bool = true
-    
-    
+        
     var model = CardModel()
     var deck = [Card]()
     
@@ -39,7 +38,6 @@ class ViewController: UIViewController {
         spotsCollectionView.dataSource = self
         
         initializeGame()
-        
     }
     
     // IBActions
@@ -72,8 +70,6 @@ class ViewController: UIViewController {
         resetCardIndexes()
         markAllCardAsNotSelected()
     }
-    
-    
     
     // IBActions
     @IBAction func doneRemovingPressed(_ sender: Any) {
@@ -158,14 +154,13 @@ extension ViewController {
     func setGameMode(mode: GameMode) {
         
         gameMode = mode
-        var labelText = ""
         switch mode {
         case .placing:
             updateNextCardImage()
             doneRemovingBtn.isHidden = true
             removeBtn.isHidden = true
         case .removing:
-            nextCardImageView.image = UIImage(named: "green_card.png")
+            nextCardImageView.image = UIImage(named: spotImageName)
             doneRemovingBtn.isHidden = false
             removeBtn.isHidden = false
         case .gameOver:
