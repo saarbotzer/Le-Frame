@@ -44,6 +44,16 @@ class CardCollectionViewCell: UICollectionViewCell {
     func removeCard() {
         setEmpty()
     }
+    
+    func setSelected() {
+        self.layer.borderWidth = 1
+        self.layer.borderColor = UIColor.red.cgColor
+    }
+    
+    func setNotSelected() {
+        self.layer.borderWidth = 0
+        self.layer.borderColor = UIColor.clear.cgColor
+    }
 }
 
 

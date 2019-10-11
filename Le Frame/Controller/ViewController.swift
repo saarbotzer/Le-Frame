@@ -8,11 +8,14 @@
 
 import UIKit
 
-class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class ViewController: UIViewController {
     
     @IBOutlet weak var spotsCollectionView: UICollectionView!
     
     @IBOutlet weak var nextCardImageView: UIImageView!
+    @IBOutlet weak var modeLabel: UILabel!
+    @IBOutlet weak var doneRemovingBtn: UIButton!
+    @IBOutlet weak var removeBtn: UIButton!
     
     
     var kingsAvailable : Bool = true
@@ -21,22 +24,24 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var spotsAvailable : Bool = true
     
     
-    // Get the deck
     var model = CardModel()
     var deck = [Card]()
     
     var nextCard = Card()
-    var selectedCardIndexPath: IndexPath?
+    var firstSelectedCardIndexPath: IndexPath?
+    var secondSelectedCardIndexPath: IndexPath?
     
     var gameMode = GameMode.placing
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        gameMode = .placing
+        setGameMode(mode: .placing)
         
         // Get deck
         deck = model.getCards()
+        deck.shuffle()
+
         
         spotsCollectionView.delegate = self
         spotsCollectionView.dataSource = self
@@ -47,29 +52,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
 
     
-    // MARK: - CollectionView Methods
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // Grid always contains 16 cards (4x4)
-        return 16
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath) as! CardCollectionViewCell
-        cell.initializeSpot(with: nil, at: indexPath)
 
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        playTurn(with: indexPath)
-        if isGameOver() {
-            gameMode = .gameOver
-            
-            // What to do when game over
-            print(gameMode)
-        }
-    }
     
     func playTurn(with indexPath: IndexPath) {
         let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
@@ -94,32 +77,39 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                     return
                 }
                 
-                let currentCard = cell.card!
-                if currentCard.rank! == .ten {
-                    cell.removeCard()
-                    return
-                }
-
-                if selectedCardIndexPath == nil {
-                    selectedCardIndexPath = indexPath
+                if firstSelectedCardIndexPath == nil {
+                    firstSelectedCardIndexPath = indexPath
+                    secondSelectedCardIndexPath = nil
+                    markCardAsSelected(at: firstSelectedCardIndexPath!)
                 } else {
-                    let selectedCardCell = spotsCollectionView.cellForItem(at: selectedCardIndexPath!) as! CardCollectionViewCell
-                    let selectedCard = selectedCardCell.card!
-        
-                    if selectedCard.rank!.getRawValue() + currentCard.rank!.getRawValue() == 10 && selectedCardIndexPath != indexPath {
-                        selectedCardCell.removeCard()
-                        cell.removeCard()
-                        selectedCardIndexPath = nil
+                    if firstSelectedCardIndexPath == indexPath{
+                        firstSelectedCardIndexPath = nil
+                        secondSelectedCardIndexPath = nil
+                        markAllCardAsNotSelected()
+                    } else if secondSelectedCardIndexPath != nil {
+                        markAllCardAsNotSelected()
+                        firstSelectedCardIndexPath = indexPath
+                        secondSelectedCardIndexPath = nil
+                        markCardAsSelected(at: firstSelectedCardIndexPath!)
                     } else {
-                        selectedCardIndexPath = indexPath
+                        secondSelectedCardIndexPath = indexPath
+                        markCardAsSelected(at: secondSelectedCardIndexPath!)
                     }
                 }
-                if !checkForPairs() {
-                    
-                    // TODO: Ask if finished removing cards?
-                    gameMode = .placing
-                }
+                
             }
+    }
+    
+    func markAllCardAsNotSelected() {
+        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            cell.setNotSelected()
+        }
+    }
+    
+    func markCardAsSelected(at indexPath: IndexPath) {
+        if let cell = spotsCollectionView.cellForItem(at: indexPath) as? CardCollectionViewCell {
+            cell.setSelected()
+        }
     }
     
     
@@ -129,12 +119,12 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         // TODO: Add winning game option
         
         if isGameOver() {
-            gameMode = .gameOver
+            setGameMode(mode: .gameOver)
         } else {
             if isBoardFull() {
-                gameMode = .removing
+                setGameMode(mode: .removing)
             } else {
-                gameMode = .placing
+                setGameMode(mode: .placing)
             }
         }
         
@@ -149,8 +139,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             
             let cardRank = card.rank!
             
-            let cardPosition = getCardPosition(indexPath)
-            let allowedRanks = getAllowedRanksByPosition(cardPosition: cardPosition)
+            let allowedRanks = getAllowedRanksByPosition(indexPath: indexPath)
             
             switch cardRank {
             case .jack:
@@ -167,9 +156,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         return false
     }
     
-    func getAllowedRanksByPosition(cardPosition: (Int, Int)) -> AllowedRanks {
-        let row = cardPosition.0
-        let column = cardPosition.1
+    func getAllowedRanksByPosition(indexPath: IndexPath) -> AllowedRanks {
+        let row = indexPath.row
+        let column = indexPath.section
         
         switch (row, column) {
         // Corners
@@ -190,7 +179,67 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     // MARK: - Helper methods
     
-
+    @IBAction func removePressed(_ sender: Any) {
+        // Validity checks (no index paths, same index path)
+        // TODO: maybe change ifs to if lets
+        
+        // Option 1 - Only one card is selected
+        if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath == nil {
+            let firstCardCell = spotsCollectionView.cellForItem(at: firstSelectedCardIndexPath!) as! CardCollectionViewCell
+            let firstCard = firstCardCell.card!
+            // If the card is 10 - remove
+            if firstCard.rank! == .ten {
+                firstCardCell.removeCard()
+            }
+        // Option 2 - Two cards are selected
+        } else if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath != nil {
+            let firstCardCell = spotsCollectionView.cellForItem(at: firstSelectedCardIndexPath!) as! CardCollectionViewCell
+            let firstCard = firstCardCell.card!
+            
+            let secondCardCell = spotsCollectionView.cellForItem(at: secondSelectedCardIndexPath!) as! CardCollectionViewCell
+            let secondCard = secondCardCell.card!
+            
+            // If the cards match - remove
+            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == 10 {
+                firstCardCell.removeCard()
+                secondCardCell.removeCard()
+            }
+        }
+        resetCardIndexes()
+        markAllCardAsNotSelected()
+    }
+    
+    func resetCardIndexes() {
+        firstSelectedCardIndexPath = nil
+        secondSelectedCardIndexPath = nil
+    }
+    
+    @IBAction func doneRemovingPressed(_ sender: Any) {
+        setGameMode(mode: .placing)
+        markAllCardAsNotSelected()
+    }
+    
+    func setGameMode(mode: GameMode) {
+        gameMode = mode
+        var labelText = ""
+        switch mode {
+        case .placing:
+            updateNextCardImage()
+            doneRemovingBtn.isHidden = true
+            removeBtn.isHidden = true
+            labelText = "Mode: Card Placing"
+        case .removing:
+            nextCardImageView.image = UIImage(named: "joker_black.jpg")
+            doneRemovingBtn.isHidden = false
+            removeBtn.isHidden = false
+            labelText = "Mode: Card Removing"
+        case .gameOver:
+            labelText = "Game Over"
+        case .won:
+            labelText = "You've Won!"
+        }
+        modeLabel.text = labelText
+    }
     
     func getNextCard() {
         nextCard = deck.remove(at: 0)
@@ -200,51 +249,51 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func updateNextCardImage() {
         nextCardImageView.image = UIImage(named: "\(nextCard.imageName).jpg")
     }
-    
-    func getCardPosition(_ indexPath: IndexPath) -> (Int, Int) {
-        // Gets the card position (row and column) by the indexPath
-        
-        var row : Int
-        var column : Int
-        
-        let indexPathRow = indexPath.row
-        
-        if 0...3 ~= indexPathRow {
-            row = 0
-        }
-        
-        // Determine row in grid
-        switch indexPathRow {
-            case 0...3:
-                row = 0
-            case 4...7:
-                row = 1
-            case 8...11:
-                row = 2
-            case 12...15:
-                row = 3
-            default:
-                row = -1
-        }
 
-        // Determine column in grid
-        switch indexPathRow {
-        case let x where x % 4 == 0:
-            column = 0
-        case let x where (x-1) % 4 == 0:
-            column = 1
-        case let x where (x-2) % 4 == 0:
-            column = 2
-        case let x where (x-3) % 4 == 0:
-            column = 3
-        default:
-            column = -1
-        }
+}
+
+// MARK: - CollectionView Methods
+
+extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
-        return (row, column)
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        // Grid always contains 16 cards (4x4)
+        return 4
     }
     
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 4
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath) as! CardCollectionViewCell
+        cell.initializeSpot(with: nil, at: indexPath)
 
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        playTurn(with: indexPath)
+        if isGameOver() {
+            setGameMode(mode: .gameOver)
+            
+            // What to do when game over
+            print(gameMode)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: 10.0, bottom: 10.0, right: 10.0)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let height = collectionView.frame.height / 4 - 10
+        let width = height / 3 * 2
+        
+        return CGSize(width: width, height: height)
+    }
 }
 
 
@@ -318,7 +367,7 @@ extension ViewController {
         
         for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
             let indexPath = spot.indexPath!
-            let allowedRanks = getAllowedRanksByPosition(cardPosition: getCardPosition(indexPath))
+            let allowedRanks = getAllowedRanksByPosition(indexPath: indexPath)
             if spot.isEmpty {
                 switch allowedRanks {
                 case .jacks:

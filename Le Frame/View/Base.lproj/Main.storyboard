@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -13,11 +13,11 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Le_Frame" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="xln-Id-4BC">
-                                <rect key="frame" x="0.0" y="134" width="414" height="528"/>
+                                <rect key="frame" x="0.0" y="90" width="375" height="377"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="LcB-K2-VDr">
                                     <size key="itemSize" width="80" height="120"/>
@@ -35,6 +35,9 @@
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="joker_red" translatesAutoresizingMaskIntoConstraints="NO" id="V0N-oF-FZ2">
                                                     <rect key="frame" x="0.0" y="0.0" width="80" height="120"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="V0N-oF-FZ2" secondAttribute="height" multiplier="2:3" id="IyK-Sd-Qbi"/>
+                                                    </constraints>
                                                 </imageView>
                                             </subviews>
                                             <constraints>
@@ -51,32 +54,62 @@
                                 </cells>
                             </collectionView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="joker_red" translatesAutoresizingMaskIntoConstraints="NO" id="ZcU-RU-Flc">
-                                <rect key="frame" x="167" y="692" width="80" height="120"/>
+                                <rect key="frame" x="147.5" y="497" width="80" height="120"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="80" id="Lgb-Ws-fB6"/>
                                     <constraint firstAttribute="height" constant="120" id="VTB-X2-GbA"/>
                                 </constraints>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mode: Card Placing" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z7H-2y-FQp">
+                                <rect key="frame" x="16" y="61" width="343" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dL5-EI-FeT">
+                                <rect key="frame" x="19.5" y="542" width="108" height="30"/>
+                                <state key="normal" title="Done Removing"/>
+                                <connections>
+                                    <action selector="doneRemovingPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jqG-cg-EP2"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SXM-Ax-1UO">
+                                <rect key="frame" x="247.5" y="542" width="55" height="30"/>
+                                <state key="normal" title="Remove"/>
+                                <connections>
+                                    <action selector="removePressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8cW-nP-Lfe"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="xln-Id-4BC" secondAttribute="bottom" constant="200" id="5eA-hN-837"/>
                             <constraint firstItem="ZcU-RU-Flc" firstAttribute="top" secondItem="xln-Id-4BC" secondAttribute="bottom" constant="30" id="DZs-s6-Gg9"/>
+                            <constraint firstItem="xln-Id-4BC" firstAttribute="top" secondItem="Z7H-2y-FQp" secondAttribute="bottom" constant="8" id="HhS-Pf-xdw"/>
+                            <constraint firstItem="ZcU-RU-Flc" firstAttribute="leading" secondItem="dL5-EI-FeT" secondAttribute="trailing" constant="20" id="Hst-ab-o4B"/>
                             <constraint firstItem="xln-Id-4BC" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="J9o-ud-6nf"/>
                             <constraint firstItem="xln-Id-4BC" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="KPn-xm-T4H"/>
+                            <constraint firstItem="SXM-Ax-1UO" firstAttribute="centerY" secondItem="ZcU-RU-Flc" secondAttribute="centerY" id="RLB-0J-MTo"/>
                             <constraint firstItem="ZcU-RU-Flc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="V3r-SQ-yya"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Z7H-2y-FQp" secondAttribute="trailing" constant="16" id="V7R-Wg-veE"/>
+                            <constraint firstItem="Z7H-2y-FQp" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="WIF-Ir-cC3"/>
                             <constraint firstItem="xln-Id-4BC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="90" id="hlQ-8s-VPX"/>
+                            <constraint firstItem="dL5-EI-FeT" firstAttribute="centerY" secondItem="ZcU-RU-Flc" secondAttribute="centerY" id="p2m-Ie-Ubz"/>
+                            <constraint firstItem="SXM-Ax-1UO" firstAttribute="leading" secondItem="ZcU-RU-Flc" secondAttribute="trailing" constant="20" id="rPM-eH-8Xg"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="doneRemovingBtn" destination="dL5-EI-FeT" id="6bC-uj-XEV"/>
+                        <outlet property="modeLabel" destination="Z7H-2y-FQp" id="sxf-3B-n45"/>
                         <outlet property="nextCardImageView" destination="ZcU-RU-Flc" id="ihJ-Sx-jKu"/>
+                        <outlet property="removeBtn" destination="SXM-Ax-1UO" id="vDa-x0-cnk"/>
                         <outlet property="spotsCollectionView" destination="xln-Id-4BC" id="bkj-Wd-Yui"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="137.68115942028987" y="116.51785714285714"/>
+            <point key="canvasLocation" x="136.80000000000001" y="116.49175412293854"/>
         </scene>
     </scenes>
     <resources>
