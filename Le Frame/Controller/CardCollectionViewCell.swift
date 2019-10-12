@@ -31,8 +31,11 @@ class CardCollectionViewCell: UICollectionViewCell {
     
     func setCard(_ card: Card) {
         self.card = card
-        imageView.image = UIImage(named: card.imageName)
         self.isEmpty = false
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
+            self.imageView.image = UIImage(named: card.imageName)
+        }
     }
     
     func setEmpty() {

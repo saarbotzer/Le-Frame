@@ -73,7 +73,9 @@ class ViewController: UIViewController {
     
     // IBActions
     @IBAction func doneRemovingPressed(_ sender: Any) {
-        setGameMode(mode: .placing)
+        if gameMode == .removing {
+            setGameMode(mode: .placing)
+        }
         markAllCardAsNotSelected()
     }
 }
@@ -98,7 +100,7 @@ extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+                
         playTurn(with: indexPath)
         
         if gameMode != .removing {
@@ -136,6 +138,34 @@ extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDe
 
 // MARK: Spots Handling and Interface Methods
 extension ViewController {
+
+    func animateCard(card: Card, to indexPath: IndexPath) {
+        let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+        
+        let tempImageView = UIImageView(image: UIImage(named: "\(card.imageName).jpg"))
+        tempImageView.frame = nextCardImageView.frame
+        view.addSubview(tempImageView)
+        print(cell.frame)
+
+        let toWidth = cell.frame.width
+        let toHeight = cell.frame.height
+        
+        // TODO: Fix animation, make the card go to the exact cell spot
+        let toX = cell.frame.minX
+        let toY = cell.frame.minY + toHeight + 15
+//        let toFrame = cell.frame //.offsetBy(dx: 0, dy: cell.frame.height + 12)
+        let toFrame = CGRect(x: toX, y: toY, width: toWidth, height: toHeight)
+        
+        UIView.animate(withDuration: 0.3) {
+            tempImageView.frame = toFrame
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
+            tempImageView.removeFromSuperview()
+        }
+
+    }
+    
     
     func showAlert(_ title: String, _ message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -157,17 +187,22 @@ extension ViewController {
         switch mode {
         case .placing:
             updateNextCardImage()
-            doneRemovingBtn.isHidden = true
-            removeBtn.isHidden = true
+            showRemovalUI(show: false)
         case .removing:
             nextCardImageView.image = UIImage(named: spotImageName)
-            doneRemovingBtn.isHidden = false
-            removeBtn.isHidden = false
+            showRemovalUI(show: true)
         case .gameOver:
+            showRemovalUI(show: false)
             gameOver()
         case .won:
+            showRemovalUI(show: false)
             gameWon()
         }
+    }
+    
+    func showRemovalUI(show: Bool) {
+        doneRemovingBtn.isHidden = !show
+        removeBtn.isHidden = !show
     }
     
     func resetCardIndexes() {
@@ -240,6 +275,7 @@ extension ViewController {
                 if canPutCard(nextCard, at: indexPath) {
                     
                     // Put the card in the spot and go to the next card
+                    animateCard(card: nextCard, to: indexPath)
                     cell.setCard(nextCard)
                     getNextCard()
                     
@@ -373,8 +409,16 @@ extension ViewController {
     
     // Game Logic
     func getNextCard() {
-        nextCard = deck.remove(at: 0)
-        updateNextCardImage()
+        if deck.count > 0 {
+            nextCard = deck.remove(at: 0)
+            updateNextCardImage()
+        } else {
+            if isGameWon() {
+                setGameMode(mode: .won)
+            } else if isGameOver() {
+                setGameMode(mode: .gameOver)
+            }
+        }
     }
     
     // Game Logic?
