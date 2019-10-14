@@ -26,6 +26,19 @@ class CardModel {
         }
         return cards
     }
+    
+    func getTestDeck() -> [Card] {
+        var cards = [Card]()
+        for _ in 1...4 {
+            for rank in [CardRank.jack, CardRank.queen, CardRank.king] {
+                let card = Card()
+                card.createImageName(suit: .club, rank: rank)
+                cards.append(card)
+            }
+        }
+        
+        return cards
+    }
 
 }
 

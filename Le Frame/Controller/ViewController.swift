@@ -115,10 +115,12 @@ extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDe
     
     func gameOver() {
         showAlert("Game Over", "You've lost")
+        updateNextCardImage()
     }
     
     func gameWon() {
         showAlert("Congratulations!", "You won")
+        updateNextCardImage()
     }
 
     
@@ -257,7 +259,8 @@ extension ViewController {
         removeAllCards()
         
         // Get deck
-        deck = model.getCards()
+//        deck = model.getCards()
+        deck = model.getTestDeck()
         deck.shuffle()
         
         // Handle first card
@@ -423,7 +426,11 @@ extension ViewController {
     
     // Game Logic?
     func updateNextCardImage() {
-        nextCardImageView.image = UIImage(named: "\(nextCard.imageName).jpg")
+        if gameMode == .placing || gameMode == .removing {
+            nextCardImageView.image = UIImage(named: "\(nextCard.imageName).jpg")
+        } else {
+            nextCardImageView.image = UIImage(named: spotImageName)
+        }
     }
     
     // Game Logic
