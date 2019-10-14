@@ -49,13 +49,15 @@ class CardCollectionViewCell: UICollectionViewCell {
     }
     
     func setSelected() {
-        self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.red.cgColor
+        self.layer.borderWidth = 3
+        self.layer.borderColor = UIColor.darkGray.cgColor
+        self.layer.cornerRadius = 5
     }
     
     func setNotSelected() {
         self.layer.borderWidth = 0
         self.layer.borderColor = UIColor.clear.cgColor
+        self.layer.cornerRadius = 0
     }
 }
 
