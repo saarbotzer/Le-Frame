@@ -141,27 +141,42 @@ extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDe
 // MARK: Spots Handling and Interface Methods
 extension ViewController {
 
+    /** Animates a card from the next card spot to the requested spot in the grid
+     
+     - Parameter card: The card that is being moved.
+     - Parameter indexPath: The destination IndexPath in the cards grid
+     
+     */
     func animateCard(card: Card, to indexPath: IndexPath) {
+        
+        // Get destination cell
         let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
         
+        // Create moving imageView
         let tempImageView = UIImageView(image: UIImage(named: "\(card.imageName).jpg"))
-        tempImageView.frame = nextCardImageView.frame
+        
+        // Get origin point and size
+        let originPoint = nextCardImageView.superview?.convert(nextCardImageView.frame.origin, to: nil)
+        let originSize = nextCardImageView.frame.size
+        let originFrame = CGRect(origin: originPoint!, size: originSize)
+        
+        // Get destination point and size
+        let destinationPoint = cell.superview?.convert(cell.frame.origin, to: nil)
+        let destinationSize = cell.frame.size
+        let destinationFrame = CGRect(origin: destinationPoint!, size: destinationSize)
+        
+        // Apply origin properties to imageView
+        tempImageView.frame = originFrame
+        
+        // Add the imageView to the main view
         view.addSubview(tempImageView)
-        print(cell.frame)
-
-        let toWidth = cell.frame.width
-        let toHeight = cell.frame.height
-        
-        // TODO: Fix animation, make the card go to the exact cell spot
-        let toX = cell.frame.minX
-        let toY = cell.frame.minY + toHeight + 15
-//        let toFrame = cell.frame //.offsetBy(dx: 0, dy: cell.frame.height + 12)
-        let toFrame = CGRect(x: toX, y: toY, width: toWidth, height: toHeight)
-        
+ 
+        // Animate
         UIView.animate(withDuration: 0.3) {
-            tempImageView.frame = toFrame
+            tempImageView.frame = destinationFrame
         }
         
+        // Remove imageView after when arriving to destination
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
             tempImageView.removeFromSuperview()
         }
