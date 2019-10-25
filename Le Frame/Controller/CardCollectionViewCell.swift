@@ -10,12 +10,19 @@ import UIKit
 
 class CardCollectionViewCell: UICollectionViewCell {
     
+    // MARK: Properties & Declerations
     @IBOutlet weak var imageView: UIImageView!
     
     var card: Card?
     var isEmpty: Bool = false
     var indexPath: IndexPath?
     
+    /**
+     Initializes the spot with default values and appearance.
+     
+     - Parameter card: The card to place at the spot, should always be nil but if not it is placed.
+     - Parameter indexPath: The spot's IndexPath in the CollectionView
+     */
     func initializeSpot(with card: Card?, at indexPath: IndexPath) {
         self.card = card
         self.indexPath = indexPath
@@ -29,6 +36,11 @@ class CardCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    /**
+     Sets the card for the spot and changes the photo to match the card.
+     
+     - Parameter card: The card to set
+     */
     func setCard(_ card: Card) {
         self.card = card
         self.isEmpty = false
@@ -38,6 +50,9 @@ class CardCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    /**
+     Sets the spot as empty.
+     */
     func setEmpty() {
         self.card = nil
         imageView.image = UIImage(named: spotImageName)

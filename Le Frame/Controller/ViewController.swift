@@ -8,8 +8,9 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
+    // MARK: Properties & Declerations
     // IBOutlets
     @IBOutlet weak var spotsCollectionView: UICollectionView!
     @IBOutlet weak var nextCardImageView: UIImageView!
@@ -21,16 +22,18 @@ class ViewController: UIViewController {
     var queensAvailable : Bool = true
     var jacksAvailable : Bool = true
     var spotsAvailable : Bool = true
-        
+    
+    // Game Data
     var model = CardModel()
     var deck = [Card]()
-    
+
     var nextCard = Card()
     var firstSelectedCardIndexPath: IndexPath?
     var secondSelectedCardIndexPath: IndexPath?
     
     var gameMode = GameMode.placing
     
+    // MARK: viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -40,7 +43,11 @@ class ViewController: UIViewController {
         initializeGame()
     }
     
-    // IBActions
+    // MARK: - IBActions
+    
+    /** Called when **Remove** button is pressed.
+     The function checks whether one card or two cards are selected, and removes them if they are summed to 10.
+    */
     @IBAction func removePressed(_ sender: Any) {
         // Validity checks (no index paths, same index path)
         // TODO: maybe change ifs to if lets
@@ -71,19 +78,18 @@ class ViewController: UIViewController {
         markAllCardAsNotSelected()
     }
     
-    // IBActions
+    /** Called when **Done** button is pressed.
+     Switches between removing and placing game modes and deselects all cards.
+     */
     @IBAction func doneRemovingPressed(_ sender: Any) {
         if gameMode == .removing {
             setGameMode(mode: .placing)
         }
         markAllCardAsNotSelected()
     }
-}
 
-// MARK: - CollectionView Methods
+    // MARK: - CollectionView Methods
 
-extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 4
     }
@@ -122,6 +128,9 @@ extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDe
         showAlert("Congratulations!", "You won")
         updateNextCardImage()
     }
+    
+    
+
 
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -135,13 +144,13 @@ extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDe
         
         return CGSize(width: width, height: height)
     }
-}
 
+    
+    // MARK: - Spots Handling and Interface Methods
 
-// MARK: Spots Handling and Interface Methods
-extension ViewController {
-
-    /** Animates a card from the next card spot to the requested spot in the grid
+    
+    /**
+     Animates a card from the next card spot to the requested spot in the grid
      
      - Parameter card: The card that is being moved.
      - Parameter indexPath: The destination IndexPath in the cards grid
@@ -184,6 +193,12 @@ extension ViewController {
     }
     
     
+    /**
+     Shows alert for game ends (win/lose) with *OK* and *Restart* actions.
+     
+     - Parameter title: The title of the alert
+     - Parameter message: The message of the alert
+     */
     func showAlert(_ title: String, _ message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
@@ -198,6 +213,11 @@ extension ViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    /**
+     Changes the game mode, changes the UI accordingly and calls functions that acts according to the new game mode.
+     
+     - Parameter mode: The game mode to set
+     */
     func setGameMode(mode: GameMode) {
         
         gameMode = mode
@@ -206,7 +226,6 @@ extension ViewController {
             updateNextCardImage()
             showRemovalUI(show: false)
         case .removing:
-            nextCardImageView.image = UIImage(named: spotImageName)
             showRemovalUI(show: true)
         case .gameOver:
             showRemovalUI(show: false)
@@ -220,6 +239,7 @@ extension ViewController {
     func showRemovalUI(show: Bool) {
         doneRemovingBtn.isHidden = !show
         removeBtn.isHidden = !show
+        nextCardImageView.image = UIImage(named: spotImageName)
     }
     
     func resetCardIndexes() {
@@ -261,11 +281,9 @@ extension ViewController {
             cell.setSelected()
         }
     }
-}
 
-// MARK: - Game Logic Functions
-extension ViewController {
-    
+    // MARK: - Game Logic Functions
+
     // Game Logic
     func initializeGame() {
         setGameMode(mode: .placing)
@@ -357,9 +375,7 @@ extension ViewController {
     
     // Game Logic
     func isGameWon() -> Bool {
-        
-        // TODO: Implement isGameWon function
-        
+                
         for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
             let allowedRanks = getAllowedRanksByPosition(indexPath: cell.indexPath!)
             if let card = cell.card {
