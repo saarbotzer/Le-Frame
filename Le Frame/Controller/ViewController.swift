@@ -119,17 +119,6 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     }
     
     
-    func gameOver() {
-        showAlert("Game Over", "You've lost")
-        updateNextCardImage()
-    }
-    
-    func gameWon() {
-        showAlert("Congratulations!", "You won")
-        updateNextCardImage()
-    }
-    
-    
 
 
     
@@ -495,6 +484,16 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             }
         }
         return true
+    }
+    
+    func gameOver() {
+        showAlert("Game Over", "You've lost")
+        updateNextCardImage()
+    }
+    
+    func gameWon() {
+        showAlert("Congratulations!", "You won")
+        updateNextCardImage()
     }
 
     // Game Logic
