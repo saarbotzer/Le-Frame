@@ -170,12 +170,12 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         view.addSubview(tempImageView)
  
         // Animate
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: cardAnimationDuration) {
             tempImageView.frame = destinationFrame
         }
         
         // Remove imageView after when arriving to destination
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
             tempImageView.removeFromSuperview()
         }
 
@@ -228,7 +228,10 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     func showRemovalUI(show: Bool) {
         doneRemovingBtn.isHidden = !show
         removeBtn.isHidden = !show
-        nextCardImageView.image = UIImage(named: spotImageName)
+        
+        if show {
+            nextCardImageView.image = UIImage(named: spotImageName)
+        }
     }
     
     func resetCardIndexes() {

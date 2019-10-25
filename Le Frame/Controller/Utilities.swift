@@ -18,4 +18,4 @@ enum GameMode {
 public let spotImageName = "green_card.png"
 
 /// The times that takes for a card to move from the new card spot to it's designated spot.
-public let cardAnimationDuration = 0.3
+public let cardAnimationDuration : Double = 0.3

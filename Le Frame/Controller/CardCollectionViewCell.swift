@@ -45,7 +45,7 @@ class CardCollectionViewCell: UICollectionViewCell {
         self.card = card
         self.isEmpty = false
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
             self.imageView.image = UIImage(named: card.imageName)
         }
     }
