@@ -274,8 +274,8 @@ extension ViewController {
         removeAllCards()
         
         // Get deck
-//        deck = model.getCards()
         deck = model.getTestDeck()
+        deck = model.getCards()
         deck.shuffle()
         
         // Handle first card
