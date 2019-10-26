@@ -31,7 +31,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var firstSelectedCardIndexPath: IndexPath?
     var secondSelectedCardIndexPath: IndexPath?
     
-    var gameMode = GameMode.placing
+    var gameStatus = GameStatus.placing
     
     // MARK: viewDidLoad
     override func viewDidLoad() {
@@ -57,7 +57,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             let firstCardCell = spotsCollectionView.cellForItem(at: firstSelectedCardIndexPath!) as! CardCollectionViewCell
             let firstCard = firstCardCell.card!
             // If the card is 10 - remove
-            if firstCard.rank! == .ten {
+            if sumMode == .ten && firstCard.rank! == .ten {
                 firstCardCell.removeCard()
             }
         // Option 2 - Two cards are selected
@@ -69,7 +69,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             let secondCard = secondCardCell.card!
             
             // If the cards match - remove
-            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == 10 {
+            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == sumMode.getRawValue() {
                 firstCardCell.removeCard()
                 secondCardCell.removeCard()
             }
@@ -82,8 +82,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      Switches between removing and placing game modes and deselects all cards.
      */
     @IBAction func doneRemovingPressed(_ sender: Any) {
-        if gameMode == .removing {
-            setGameMode(mode: .placing)
+        if gameStatus == .removing {
+            setGameStatus(status: .placing)
         }
         markAllCardAsNotSelected()
     }
@@ -109,11 +109,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 
         playTurn(with: indexPath)
         
-        if gameMode != .removing {
+        if gameStatus != .removing {
             if isGameOver() {
-                setGameMode(mode: .gameOver)
+                setGameStatus(status: .gameOver)
             } else if isBoardFull() && isGameWon() {
-                setGameMode(mode: .won)
+                setGameStatus(status: .won)
             }
         }
     }
@@ -200,14 +200,14 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     /**
-     Changes the game mode, changes the UI accordingly and calls functions that acts according to the new game mode.
+     Changes the game status, changes the UI accordingly and calls functions that acts according to the new game status.
      
-     - Parameter mode: The game mode to set
+     - Parameter status: The game status to set
      */
-    func setGameMode(mode: GameMode) {
+    func setGameStatus(status: GameStatus) {
         
-        gameMode = mode
-        switch mode {
+        gameStatus = status
+        switch status {
         case .placing:
             updateNextCardImage()
             showRemovalUI(show: false)
@@ -242,12 +242,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // TODO: Add winning game option
         
         if isGameOver() {
-            setGameMode(mode: .gameOver)
+            setGameStatus(status: .gameOver)
         } else {
             if isBoardFull() {
-                setGameMode(mode: .removing)
+                setGameStatus(status: .removing)
             } else {
-                setGameMode(mode: .placing)
+                setGameStatus(status: .placing)
             }
         }
         
@@ -275,7 +275,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
     // Game Logic
     func initializeGame() {
-        setGameMode(mode: .placing)
+        setGameStatus(status: .placing)
         
         markAllCardAsNotSelected()
         removeAllCards()
@@ -295,7 +295,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
             
             
-            if gameMode == .placing {
+            if gameStatus == .placing {
                 // What to do when a spot is selected
                 if canPutCard(nextCard, at: indexPath) {
                     
@@ -306,7 +306,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                     
                 }
                 finishedPlacingCard()
-            } else if gameMode == .removing {
+            } else if gameStatus == .removing {
                 
                 // In case of pressing an empty spot in removal mode
                 if cell.isEmpty {
@@ -437,19 +437,19 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             updateNextCardImage()
         } else {
             if isGameWon() {
-                setGameMode(mode: .won)
+                setGameStatus(status: .won)
             } else if isGameOver() {
-                setGameMode(mode: .gameOver)
+                setGameStatus(status: .gameOver)
             }
         }
     }
     
     // Game Logic?
     func updateNextCardImage() {
-        if gameMode == .placing || gameMode == .removing {
+        if gameStatus == .placing || gameStatus == .removing {
             nextCardImageView.image = UIImage(named: "\(nextCard.imageName).jpg")
         } else {
-            nextCardImageView.image = UIImage(named: spotImageName)
+//            nextCardImageView.image = UIImage(named: spotImageName)
         }
     }
     
