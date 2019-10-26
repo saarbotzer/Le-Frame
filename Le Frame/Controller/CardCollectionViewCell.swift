@@ -39,36 +39,43 @@ class CardCollectionViewCell: UICollectionViewCell {
     /**
      Sets the card for the spot and changes the photo to match the card.
      
-     - Parameter card: The card to set
+     - Parameter card: The card to set. If nil then the card is removed
      */
-    func setCard(_ card: Card) {
-        self.card = card
-        self.isEmpty = false
+    func setCard(_ card: Card?) {
+        if let card = card {
+        
+            self.card = card
+            self.isEmpty = false
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
-            self.imageView.image = UIImage(named: card.imageName)
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+                self.imageView.image = UIImage(named: card.imageName)
+            }
+        } else {
+            self.card = nil
+            imageView.image = UIImage(named: spotImageName)
+            self.isEmpty = true
         }
     }
     
     /**
-     Sets the spot as empty.
+     Removes the card from the spot
      */
-    func setEmpty() {
-        self.card = nil
-        imageView.image = UIImage(named: spotImageName)
-        self.isEmpty = true
-    }
-    
     func removeCard() {
-        setEmpty()
+        setCard(nil)
     }
     
+    /**
+     Changes the appearance of the card to be selected
+     */
     func setSelected() {
         self.layer.borderWidth = 3
         self.layer.borderColor = UIColor.darkGray.cgColor
         self.layer.cornerRadius = 5
     }
     
+    /**
+    Changes the appearance of the card to be deselected
+    */
     func setNotSelected() {
         self.layer.borderWidth = 0
         self.layer.borderColor = UIColor.clear.cgColor
