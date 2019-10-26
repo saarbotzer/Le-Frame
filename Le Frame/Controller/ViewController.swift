@@ -9,7 +9,7 @@
 import UIKit
 
 class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
-    
+
     // MARK: Properties & Declerations
     // IBOutlets
     @IBOutlet weak var spotsCollectionView: UICollectionView!
@@ -133,11 +133,8 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         
         return CGSize(width: width, height: height)
     }
-
-    
     // MARK: - Spots Handling and Interface Methods
 
-    
     /**
      Animates a card from the next card spot to the requested spot in the grid
      
