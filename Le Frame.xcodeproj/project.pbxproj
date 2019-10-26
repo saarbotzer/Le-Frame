@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CEE234DEDE400CD951D /* AppDelegate.swift */; };
 		BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */; };
-		BCC40CF3234DEDE400CD951D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF2234DEDE400CD951D /* ViewController.swift */; };
+		BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF2234DEDE400CD951D /* GameVC.swift */; };
 		BCC40CF6234DEDE400CD951D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF4234DEDE400CD951D /* Main.storyboard */; };
 		BCC40CF8234DEDEB00CD951D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF7234DEDEB00CD951D /* Assets.xcassets */; };
 		BCC40CFB234DEDEB00CD951D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF9234DEDEB00CD951D /* LaunchScreen.storyboard */; };
@@ -23,7 +23,7 @@
 		BCC40CEB234DEDE400CD951D /* Le Frame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Le Frame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCC40CEE234DEDE400CD951D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		BCC40CF2234DEDE400CD951D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		BCC40CF2234DEDE400CD951D /* GameVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameVC.swift; sourceTree = "<group>"; };
 		BCC40CF5234DEDE400CD951D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		BCC40CF7234DEDEB00CD951D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BCC40CFA234DEDEB00CD951D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -88,7 +88,7 @@
 		BCE12CEB234E354500962F00 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				BCC40CF2234DEDE400CD951D /* ViewController.swift */,
+				BCC40CF2234DEDE400CD951D /* GameVC.swift */,
 				BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */,
 				BCE12CEE234E35E400962F00 /* Utilities.swift */,
 			);
@@ -185,7 +185,7 @@
 				BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */,
 				BCE12CE9234E340400962F00 /* Card.swift in Sources */,
 				BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */,
-				BCC40CF3234DEDE400CD951D /* ViewController.swift in Sources */,
+				BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */,
 				BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */,
 				BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */,
 				BCC40D0B234DF4A000CD951D /* CardModel.swift in Sources */,
