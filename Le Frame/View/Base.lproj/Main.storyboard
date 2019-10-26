@@ -220,6 +220,9 @@
                                                         <segment title="On"/>
                                                         <segment title="Off"/>
                                                     </segments>
+                                                    <connections>
+                                                        <action selector="soundsSwitched:" destination="ESL-rj-V34" eventType="valueChanged" id="rpO-sT-Qpj"/>
+                                                    </connections>
                                                 </segmentedControl>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -249,6 +252,9 @@
                                                         <segment title="10"/>
                                                         <segment title="11"/>
                                                     </segments>
+                                                    <connections>
+                                                        <action selector="sumSwitched:" destination="ESL-rj-V34" eventType="valueChanged" id="B2p-sz-zFb"/>
+                                                    </connections>
                                                 </segmentedControl>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -274,6 +280,9 @@
                                                         <segment title="Yes"/>
                                                         <segment title="No"/>
                                                     </segments>
+                                                    <connections>
+                                                        <action selector="showHintsSwitched:" destination="ESL-rj-V34" eventType="valueChanged" id="rfs-yl-FgD"/>
+                                                    </connections>
                                                 </segmentedControl>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -341,6 +350,11 @@
                             <outlet property="delegate" destination="ESL-rj-V34" id="An5-Sk-lzs"/>
                         </connections>
                     </tableView>
+                    <connections>
+                        <outlet property="hintsSwitch" destination="8wO-He-ztB" id="zyO-DL-AtA"/>
+                        <outlet property="soundsSwitch" destination="OKq-yL-Thn" id="FdJ-Lt-irg"/>
+                        <outlet property="sumModeSwitch" destination="rLC-Nj-1sn" id="iG4-Tg-rB9"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QOs-Tq-Wbl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

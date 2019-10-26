@@ -10,16 +10,28 @@ import UIKit
 
 class SettingsVC: UITableViewController {
 
+    @IBOutlet weak var soundsSwitch: UISegmentedControl!
+    @IBOutlet weak var sumModeSwitch: UISegmentedControl!
+    @IBOutlet weak var hintsSwitch: UISegmentedControl!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        updateDefaultValues()
+        
     }
-
+    
+    func updateDefaultValues() {
+        // TODO: Change default values for sounds and hints by settings
+        
+        if sumMode == .ten {
+            sumModeSwitch.selectedSegmentIndex = 0
+        } else if sumMode == .eleven {
+            sumModeSwitch.selectedSegmentIndex = 1
+        }
+    }
+    
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -67,7 +79,7 @@ class SettingsVC: UITableViewController {
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
     */
 
@@ -95,5 +107,50 @@ class SettingsVC: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    // MARK: - Switches Functions
+    
+    @IBAction func soundsSwitched(_ sender: UISegmentedControl) {
+        let chosenSegmentIndex = sender.selectedSegmentIndex
 
+        switch chosenSegmentIndex {
+        case 0:
+            // TODO: Add sounds on function
+            return
+        case 1:
+            // TODO: Add sounds off function
+            return
+        default:
+            return
+        }
+    }
+    
+    @IBAction func sumSwitched(_ sender: UISegmentedControl) {
+        let chosenSegmentIndex = sender.selectedSegmentIndex
+
+        // TODO: Make sumMode change for the next game
+        switch chosenSegmentIndex {
+        case 0:
+            sumMode = .ten
+        case 1:
+            sumMode = .eleven
+        default:
+            return
+        }
+    }
+    
+    @IBAction func showHintsSwitched(_ sender: UISegmentedControl) {
+        let chosenSegmentIndex = sender.selectedSegmentIndex
+
+        switch chosenSegmentIndex {
+        case 0:
+            // TODO: Turn on hints
+            return
+        case 1:
+            // TODO: Turn off hints
+            return
+        default:
+            return
+        }
+    }
 }
