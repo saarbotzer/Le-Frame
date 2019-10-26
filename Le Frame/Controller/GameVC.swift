@@ -16,6 +16,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var nextCardImageView: UIImageView!
     @IBOutlet weak var doneRemovingBtn: UIButton!
     @IBOutlet weak var removeBtn: UIButton!
+    @IBOutlet weak var settingsBtn: UIButton!
     
     // Spots available by rank
     var kingsAvailable : Bool = true
@@ -39,6 +40,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
         spotsCollectionView.delegate = self
         spotsCollectionView.dataSource = self
+        
+        settingsBtn.imageEdgeInsets = UIEdgeInsets(top: -50, left: -50, bottom: -50, right: -50)
         
         initializeGame()
     }

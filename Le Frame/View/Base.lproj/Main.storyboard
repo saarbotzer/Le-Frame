@@ -104,12 +104,15 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Ub-ZM-dvF">
-                                <rect key="frame" x="157" y="70" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u1u-x1-uIf">
+                                <rect key="frame" x="16" y="88" width="26.666666666666671" height="26"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <state key="normal" image="gear" catalog="system">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large"/>
+                                </state>
                                 <connections>
-                                    <segue destination="ESL-rj-V34" kind="presentation" modalPresentationStyle="fullScreen" id="i52-j4-shm"/>
+                                    <segue destination="Y1a-BS-Ud5" kind="presentation" modalPresentationStyle="fullScreen" id="29s-Ea-0gp"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -119,10 +122,12 @@
                             <constraint firstItem="xqZ-Ke-1XW" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="1Dm-IT-fAP"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="xln-Id-4BC" secondAttribute="bottom" constant="200" id="5eA-hN-837"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="xqZ-Ke-1XW" secondAttribute="bottom" constant="46" id="B8Z-kg-jLG"/>
+                            <constraint firstItem="u1u-x1-uIf" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="DlX-o7-zH5"/>
                             <constraint firstItem="xln-Id-4BC" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="J9o-ud-6nf"/>
                             <constraint firstItem="xln-Id-4BC" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="KPn-xm-T4H"/>
                             <constraint firstItem="xln-Id-4BC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="90" id="hlQ-8s-VPX"/>
                             <constraint firstAttribute="trailing" secondItem="xqZ-Ke-1XW" secondAttribute="trailing" id="n7b-tp-VDb"/>
+                            <constraint firstItem="xln-Id-4BC" firstAttribute="top" secondItem="u1u-x1-uIf" secondAttribute="bottom" constant="20" id="vZf-jR-ia8"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -130,12 +135,13 @@
                         <outlet property="doneRemovingBtn" destination="dL5-EI-FeT" id="6bC-uj-XEV"/>
                         <outlet property="nextCardImageView" destination="ZcU-RU-Flc" id="ihJ-Sx-jKu"/>
                         <outlet property="removeBtn" destination="SXM-Ax-1UO" id="vDa-x0-cnk"/>
+                        <outlet property="settingsBtn" destination="u1u-x1-uIf" id="29d-LN-cxX"/>
                         <outlet property="spotsCollectionView" destination="xln-Id-4BC" id="bkj-Wd-Yui"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136.80000000000001" y="116.49175412293854"/>
+            <point key="canvasLocation" x="-788" y="103"/>
         </scene>
         <!--SettingsVC-->
         <scene sceneID="AeF-Jh-HVR">
@@ -350,6 +356,13 @@
                             <outlet property="delegate" destination="ESL-rj-V34" id="An5-Sk-lzs"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" id="3M7-RW-Ik5">
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="Nyg-CF-hmB">
+                            <connections>
+                                <action selector="donePressed:" destination="ESL-rj-V34" id="xwz-ni-s5U"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="hintsSwitch" destination="8wO-He-ztB" id="zyO-DL-AtA"/>
                         <outlet property="soundsSwitch" destination="OKq-yL-Thn" id="FdJ-Lt-irg"/>
@@ -358,11 +371,28 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QOs-Tq-Wbl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="957.60000000000002" y="120.44334975369459"/>
+            <point key="canvasLocation" x="962" y="103"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="L0P-gK-QfR">
+            <objects>
+                <navigationController id="Y1a-BS-Ud5" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Zmy-ke-hEy">
+                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="ESL-rj-V34" kind="relationship" relationship="rootViewController" id="yTl-Is-M8o"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1fD-Uf-Rob" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="118" y="103"/>
         </scene>
     </scenes>
     <resources>
         <image name="checkmark.circle.fill" catalog="system" width="64" height="60"/>
+        <image name="gear" catalog="system" width="64" height="58"/>
         <image name="green_card" width="427" height="600"/>
         <image name="trash.circle.fill" catalog="system" width="64" height="60"/>
     </resources>

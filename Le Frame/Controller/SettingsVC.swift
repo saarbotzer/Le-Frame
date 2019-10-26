@@ -22,7 +22,19 @@ class SettingsVC: UITableViewController {
     }
     
     func updateDefaultValues() {
-        // TODO: Change default values for sounds and hints by settings
+        
+        if soundsOn {
+            soundsSwitch.selectedSegmentIndex = 0
+        } else {
+            soundsSwitch.selectedSegmentIndex = 1
+        }
+        
+        if showHints {
+            hintsSwitch.selectedSegmentIndex = 0
+        } else {
+            hintsSwitch.selectedSegmentIndex = 1
+        }
+        
         
         if sumMode == .ten {
             sumModeSwitch.selectedSegmentIndex = 0
@@ -116,10 +128,10 @@ class SettingsVC: UITableViewController {
         switch chosenSegmentIndex {
         case 0:
             // TODO: Add sounds on function
-            return
+            soundsOn = true
         case 1:
             // TODO: Add sounds off function
-            return
+            soundsOn = false
         default:
             return
         }
@@ -145,12 +157,21 @@ class SettingsVC: UITableViewController {
         switch chosenSegmentIndex {
         case 0:
             // TODO: Turn on hints
-            return
+            showHints = true
         case 1:
             // TODO: Turn off hints
-            return
+            showHints = false
         default:
             return
         }
     }
+    
+    
+    // MARK: - Navigation Functions
+    
+    @IBAction func donePressed(_ sender: Any) {
+//        dismiss(animated: self, completion: nil)
+        self.dismiss(animated: true, completion: nil)
+    }
+    
 }

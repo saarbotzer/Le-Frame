@@ -30,3 +30,7 @@ public let spotImageName = "green_card.png"
 public let cardAnimationDuration : Double = 0.3
 
 public var sumMode : SumMode = .ten
+
+public var soundsOn : Bool = true
+
+public var showHints : Bool = true
