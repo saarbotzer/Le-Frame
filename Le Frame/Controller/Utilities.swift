@@ -29,4 +29,4 @@ public let spotImageName = "green_card.png"
 /// The time that takes for a card to move from the new card spot to it's designated spot.
 public let cardAnimationDuration : Double = 0.3
 
-public var sumMode : SumMode = .eleven
+public var sumMode : SumMode = .ten
