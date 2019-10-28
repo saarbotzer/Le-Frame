@@ -34,6 +34,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     var gameStatus = GameStatus.placing
     
+    // Settings
+    let defaults = UserDefaults.standard
+    var gameSumMode : SumMode = .ten
+    
     // MARK: viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,7 +64,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             let firstCardCell = spotsCollectionView.cellForItem(at: firstSelectedCardIndexPath!) as! CardCollectionViewCell
             let firstCard = firstCardCell.card!
             // If the card is 10 - remove
-            if sumMode == .ten && firstCard.rank! == .ten {
+            if gameSumMode == .ten && firstCard.rank! == .ten {
                 firstCardCell.removeCard()
             }
         // Option 2 - Two cards are selected
@@ -72,7 +76,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             let secondCard = secondCardCell.card!
             
             // If the cards match - remove
-            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == sumMode.getRawValue() {
+            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == gameSumMode.getRawValue() {
                 firstCardCell.removeCard()
                 secondCardCell.removeCard()
             }
@@ -278,6 +282,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
     // Game Logic
     func initializeGame() {
+        
+        gameSumMode = getSumMode()
+        
         setGameStatus(status: .placing)
         
         markAllCardAsNotSelected()
@@ -291,6 +298,15 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // Handle first card
         getNextCard()
         updateNextCardImage()
+    }
+    
+    func getSumMode() -> SumMode {
+        let savedValue = defaults.integer(forKey: "SumMode")
+        if savedValue == 11 {
+            return .eleven
+        } else {
+            return .ten
+        }
     }
     
     // Game Logic

@@ -14,6 +14,9 @@ class SettingsVC: UITableViewController {
     @IBOutlet weak var sumModeSwitch: UISegmentedControl!
     @IBOutlet weak var hintsSwitch: UISegmentedControl!
     
+    
+    let defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -23,22 +26,26 @@ class SettingsVC: UITableViewController {
     
     func updateDefaultValues() {
         
+        let soundsOn = defaults.bool(forKey: "SoundsOn")
+        let showHintsOn = defaults.bool(forKey: "ShowHintsOn")
+        let sumMode = defaults.integer(forKey: "SumMode")
+        
         if soundsOn {
             soundsSwitch.selectedSegmentIndex = 0
         } else {
             soundsSwitch.selectedSegmentIndex = 1
         }
         
-        if showHints {
+        if showHintsOn {
             hintsSwitch.selectedSegmentIndex = 0
         } else {
             hintsSwitch.selectedSegmentIndex = 1
         }
         
         
-        if sumMode == .ten {
+        if sumMode == 10 {
             sumModeSwitch.selectedSegmentIndex = 0
-        } else if sumMode == .eleven {
+        } else if sumMode == 11 {
             sumModeSwitch.selectedSegmentIndex = 1
         }
     }
@@ -128,10 +135,10 @@ class SettingsVC: UITableViewController {
         switch chosenSegmentIndex {
         case 0:
             // TODO: Add sounds on function
-            soundsOn = true
+            defaults.set(true, forKey: "SoundsOn")
         case 1:
             // TODO: Add sounds off function
-            soundsOn = false
+            defaults.set(false, forKey: "SoundsOn")
         default:
             return
         }
@@ -143,9 +150,9 @@ class SettingsVC: UITableViewController {
         // TODO: Make sumMode change for the next game
         switch chosenSegmentIndex {
         case 0:
-            sumMode = .ten
+            defaults.set(10, forKey: "SumMode")
         case 1:
-            sumMode = .eleven
+            defaults.set(11, forKey: "SumMode")
         default:
             return
         }
@@ -157,10 +164,10 @@ class SettingsVC: UITableViewController {
         switch chosenSegmentIndex {
         case 0:
             // TODO: Turn on hints
-            showHints = true
+            defaults.set(true, forKey: "ShowHintsOn")
         case 1:
             // TODO: Turn off hints
-            showHints = false
+            defaults.set(false, forKey: "ShowHintsOn")
         default:
             return
         }
