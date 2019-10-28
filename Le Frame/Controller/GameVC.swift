@@ -53,7 +53,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // MARK: - IBActions
     
     /** Called when **Remove** button is pressed.
-     The function checks whether one card or two cards are selected, and removes them if they are summed to 10.
+     The function checks whether one card or two cards are selected, and removes them if they are summed to 10 or 11 (depending on the mode).
     */
     @IBAction func removePressed(_ sender: Any) {
         // Validity checks (no index paths, same index path)
@@ -482,12 +482,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 }
             }
         }
-        if allNonRoyalValues.contains(10) {
+        if allNonRoyalValues.contains(10) && gameSumMode == .ten{
             return true
         }
         for i in 0..<allNonRoyalValues.count {
             for j in i+1..<allNonRoyalValues.count {
-                if allNonRoyalValues[i] + allNonRoyalValues[j] == 10 {
+                if allNonRoyalValues[i] + allNonRoyalValues[j] == gameSumMode.getRawValue() {
                     return true
                 }
             }
