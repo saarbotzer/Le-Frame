@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
+class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, UITabBarDelegate {
 
     // MARK: Properties & Declerations
     // IBOutlets
@@ -16,6 +16,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var nextCardImageView: UIImageView!
     @IBOutlet weak var doneRemovingBtn: UIButton!
     @IBOutlet weak var removeBtn: UIButton!
+    @IBOutlet weak var tabBar: UITabBar!
     
     // Spots available by rank
     var kingsAvailable : Bool = true
@@ -40,7 +41,15 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         spotsCollectionView.delegate = self
         spotsCollectionView.dataSource = self
         
+        updateTabBarUI()
         initializeGame()
+    }
+    
+    // TODO: Move function to appropriate place
+    func updateTabBarUI() {
+        tabBar.layer.borderWidth = 0.50
+        tabBar.layer.borderColor = UIColor.clear.cgColor
+        tabBar.clipsToBounds = true
     }
     
     // MARK: - IBActions

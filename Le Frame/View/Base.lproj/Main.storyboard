@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -13,14 +13,14 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="GameVC" customModule="Le_Frame" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xqZ-Ke-1XW">
-                                <rect key="frame" x="0.0" y="467" width="375" height="154"/>
+                                <rect key="frame" x="0.0" y="662" width="414" height="154"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="green_card" translatesAutoresizingMaskIntoConstraints="NO" id="ZcU-RU-Flc">
-                                        <rect key="frame" x="147.5" y="17" width="80" height="120"/>
+                                        <rect key="frame" x="167" y="17" width="80" height="120"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="80" id="tcs-el-FFC"/>
                                             <constraint firstAttribute="height" constant="120" id="zRg-EJ-exZ"/>
@@ -68,7 +68,7 @@
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="xln-Id-4BC">
-                                <rect key="frame" x="0.0" y="90" width="375" height="377"/>
+                                <rect key="frame" x="0.0" y="134" width="414" height="528"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="LcB-K2-VDr">
                                     <size key="itemSize" width="80" height="120"/>
@@ -104,35 +104,64 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HKs-Zn-bvm">
+                                <rect key="frame" x="0.0" y="813" width="414" height="49"/>
+                                <subviews>
+                                    <tabBar contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1tJ-Rg-nqu">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <items>
+                                            <tabBarItem title="Hint" image="lightbulb" catalog="system" id="P0p-No-qLX"/>
+                                            <tabBarItem title="New Game" image="arrow.counterclockwise" catalog="system" id="iAw-Rr-yqf"/>
+                                            <tabBarItem title="Settings" image="gear" catalog="system" id="NPL-XE-uRo"/>
+                                        </items>
+                                    </tabBar>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="49" id="3E8-KO-IJD"/>
+                                    <constraint firstItem="1tJ-Rg-nqu" firstAttribute="top" secondItem="HKs-Zn-bvm" secondAttribute="top" id="TLe-o0-XTQ"/>
+                                    <constraint firstAttribute="bottom" secondItem="1tJ-Rg-nqu" secondAttribute="bottom" id="Vfl-fp-qpn"/>
+                                    <constraint firstItem="1tJ-Rg-nqu" firstAttribute="leading" secondItem="HKs-Zn-bvm" secondAttribute="leading" id="XaB-kn-tft"/>
+                                    <constraint firstAttribute="trailing" secondItem="1tJ-Rg-nqu" secondAttribute="trailing" id="vBh-ID-XrP"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="xqZ-Ke-1XW" firstAttribute="top" secondItem="xln-Id-4BC" secondAttribute="bottom" id="0a3-z7-THa"/>
-                            <constraint firstItem="xqZ-Ke-1XW" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="1Dm-IT-fAP"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="xln-Id-4BC" secondAttribute="bottom" constant="200" id="5eA-hN-837"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="xqZ-Ke-1XW" secondAttribute="bottom" constant="46" id="B8Z-kg-jLG"/>
-                            <constraint firstItem="xln-Id-4BC" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="J9o-ud-6nf"/>
-                            <constraint firstItem="xln-Id-4BC" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="KPn-xm-T4H"/>
-                            <constraint firstItem="xln-Id-4BC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="90" id="hlQ-8s-VPX"/>
-                            <constraint firstAttribute="trailing" secondItem="xqZ-Ke-1XW" secondAttribute="trailing" id="n7b-tp-VDb"/>
+                            <constraint firstItem="xqZ-Ke-1XW" firstAttribute="leading" secondItem="bCO-Je-4Y7" secondAttribute="leading" id="1Dm-IT-fAP"/>
+                            <constraint firstItem="bCO-Je-4Y7" firstAttribute="bottom" secondItem="xln-Id-4BC" secondAttribute="bottom" constant="200" id="5eA-hN-837"/>
+                            <constraint firstItem="bCO-Je-4Y7" firstAttribute="bottom" secondItem="xqZ-Ke-1XW" secondAttribute="bottom" constant="46" id="B8Z-kg-jLG"/>
+                            <constraint firstItem="HKs-Zn-bvm" firstAttribute="leading" secondItem="bCO-Je-4Y7" secondAttribute="leading" id="CcF-Us-uhm"/>
+                            <constraint firstItem="xln-Id-4BC" firstAttribute="trailing" secondItem="bCO-Je-4Y7" secondAttribute="trailing" id="J9o-ud-6nf"/>
+                            <constraint firstItem="xln-Id-4BC" firstAttribute="leading" secondItem="bCO-Je-4Y7" secondAttribute="leading" id="KPn-xm-T4H"/>
+                            <constraint firstItem="HKs-Zn-bvm" firstAttribute="bottom" secondItem="bCO-Je-4Y7" secondAttribute="bottom" id="RNc-PV-vRN"/>
+                            <constraint firstItem="xln-Id-4BC" firstAttribute="top" secondItem="bCO-Je-4Y7" secondAttribute="top" constant="90" id="hlQ-8s-VPX"/>
+                            <constraint firstItem="bCO-Je-4Y7" firstAttribute="trailing" secondItem="HKs-Zn-bvm" secondAttribute="trailing" id="k43-9o-iVJ"/>
+                            <constraint firstItem="bCO-Je-4Y7" firstAttribute="trailing" secondItem="xqZ-Ke-1XW" secondAttribute="trailing" id="n7b-tp-VDb"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <viewLayoutGuide key="safeArea" id="bCO-Je-4Y7"/>
                     </view>
                     <connections>
                         <outlet property="doneRemovingBtn" destination="dL5-EI-FeT" id="6bC-uj-XEV"/>
                         <outlet property="nextCardImageView" destination="ZcU-RU-Flc" id="ihJ-Sx-jKu"/>
                         <outlet property="removeBtn" destination="SXM-Ax-1UO" id="vDa-x0-cnk"/>
                         <outlet property="spotsCollectionView" destination="xln-Id-4BC" id="bkj-Wd-Yui"/>
+                        <outlet property="tabBar" destination="1tJ-Rg-nqu" id="UdK-6y-dY7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136.80000000000001" y="116.49175412293854"/>
+            <point key="canvasLocation" x="133.59999999999999" y="115.59220389805098"/>
         </scene>
     </scenes>
     <resources>
+        <image name="arrow.counterclockwise" catalog="system" width="56" height="64"/>
         <image name="checkmark.circle.fill" catalog="system" width="64" height="60"/>
+        <image name="gear" catalog="system" width="64" height="58"/>
         <image name="green_card" width="427" height="600"/>
+        <image name="lightbulb" catalog="system" width="56" height="64"/>
         <image name="trash.circle.fill" catalog="system" width="64" height="60"/>
     </resources>
 </document>

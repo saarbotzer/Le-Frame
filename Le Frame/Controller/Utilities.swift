@@ -6,7 +6,7 @@
 //  Copyright © 2019 Saar Botzer. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 enum GameStatus {
     case placing
