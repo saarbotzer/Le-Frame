@@ -17,7 +17,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var doneRemovingBtn: UIButton!
     @IBOutlet weak var removeBtn: UIButton!
     @IBOutlet weak var tabBar: UITabBar!
-    @IBOutlet weak var settingsBtn: UIButton!
     
     // Spots available by rank
     var kingsAvailable : Bool = true
@@ -47,7 +46,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         spotsCollectionView.dataSource = self
         
         updateTabBarUI()
-        settingsBtn.imageEdgeInsets = UIEdgeInsets(top: -50, left: -50, bottom: -50, right: -50)
         
         initializeGame()
     }
@@ -57,9 +55,28 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         tabBar.layer.borderWidth = 0.50
         tabBar.layer.borderColor = UIColor.clear.cgColor
         tabBar.clipsToBounds = true
+        tabBar.delegate = self
     }
     
     // MARK: - IBActions
+    
+    func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        print(item.tag)
+        
+        switch item.tag {
+        case 1:
+            performSegue(withIdentifier: "goToSettings", sender: nil)
+        case 2:
+            // TODO: hintPressed()
+            print("Hint Pressed")
+        case 3:
+            // TODO: newGamePressed()
+            print("New Game Pressed")
+        default:
+            return
+        }
+        tabBar.selectedItem = nil
+    }
     
     /** Called when **Remove** button is pressed.
      The function checks whether one card or two cards are selected, and removes them if they are summed to 10 or 11 (depending on the mode).
