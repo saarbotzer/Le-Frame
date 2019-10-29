@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BCC28118236478A40020104E /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC28117236478A40020104E /* SettingsVC.swift */; };
 		BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CEE234DEDE400CD951D /* AppDelegate.swift */; };
 		BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */; };
 		BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF2234DEDE400CD951D /* GameVC.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BCC28117236478A40020104E /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		BCC40CEB234DEDE400CD951D /* Le Frame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Le Frame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCC40CEE234DEDE400CD951D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -70,7 +72,6 @@
 				BCC40CFC234DEDEB00CD951D /* Info.plist */,
 				BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */,
 				BCC40CF7234DEDEB00CD951D /* Assets.xcassets */,
-				BCC40CF9234DEDEB00CD951D /* LaunchScreen.storyboard */,
 				BCE12CED234E355E00962F00 /* Other */,
 			);
 			path = "Le Frame";
@@ -91,6 +92,7 @@
 				BCC40CF2234DEDE400CD951D /* GameVC.swift */,
 				BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */,
 				BCE12CEE234E35E400962F00 /* Utilities.swift */,
+				BCC28117236478A40020104E /* SettingsVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -98,6 +100,7 @@
 		BCE12CEC234E354E00962F00 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				BCC40CF9234DEDEB00CD951D /* LaunchScreen.storyboard */,
 				BCC40CF4234DEDE400CD951D /* Main.storyboard */,
 			);
 			path = View;
@@ -187,6 +190,7 @@
 				BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */,
 				BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */,
 				BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */,
+				BCC28118236478A40020104E /* SettingsVC.swift in Sources */,
 				BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */,
 				BCC40D0B234DF4A000CD951D /* CardModel.swift in Sources */,
 			);

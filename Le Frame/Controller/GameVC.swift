@@ -17,6 +17,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var doneRemovingBtn: UIButton!
     @IBOutlet weak var removeBtn: UIButton!
     @IBOutlet weak var tabBar: UITabBar!
+    @IBOutlet weak var settingsBtn: UIButton!
     
     // Spots available by rank
     var kingsAvailable : Bool = true
@@ -34,6 +35,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     var gameStatus = GameStatus.placing
     
+    // Settings
+    let defaults = UserDefaults.standard
+    var gameSumMode : SumMode = .ten
+    
     // MARK: viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +47,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         spotsCollectionView.dataSource = self
         
         updateTabBarUI()
+        settingsBtn.imageEdgeInsets = UIEdgeInsets(top: -50, left: -50, bottom: -50, right: -50)
+        
         initializeGame()
     }
     
@@ -55,7 +62,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // MARK: - IBActions
     
     /** Called when **Remove** button is pressed.
-     The function checks whether one card or two cards are selected, and removes them if they are summed to 10.
+     The function checks whether one card or two cards are selected, and removes them if they are summed to 10 or 11 (depending on the mode).
     */
     @IBAction func removePressed(_ sender: Any) {
         // Validity checks (no index paths, same index path)
@@ -66,7 +73,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             let firstCardCell = spotsCollectionView.cellForItem(at: firstSelectedCardIndexPath!) as! CardCollectionViewCell
             let firstCard = firstCardCell.card!
             // If the card is 10 - remove
-            if sumMode == .ten && firstCard.rank! == .ten {
+            if gameSumMode == .ten && firstCard.rank! == .ten {
                 firstCardCell.removeCard()
             }
         // Option 2 - Two cards are selected
@@ -78,7 +85,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             let secondCard = secondCardCell.card!
             
             // If the cards match - remove
-            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == sumMode.getRawValue() {
+            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == gameSumMode.getRawValue() {
                 firstCardCell.removeCard()
                 secondCardCell.removeCard()
             }
@@ -284,6 +291,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
     // Game Logic
     func initializeGame() {
+        
+        gameSumMode = getSumMode()
+        
         setGameStatus(status: .placing)
         
         markAllCardAsNotSelected()
@@ -297,6 +307,15 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // Handle first card
         getNextCard()
         updateNextCardImage()
+    }
+    
+    func getSumMode() -> SumMode {
+        let savedValue = defaults.integer(forKey: "SumMode")
+        if savedValue == 11 {
+            return .eleven
+        } else {
+            return .ten
+        }
     }
     
     // Game Logic
@@ -472,12 +491,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 }
             }
         }
-        if allNonRoyalValues.contains(10) {
+        if allNonRoyalValues.contains(10) && gameSumMode == .ten{
             return true
         }
         for i in 0..<allNonRoyalValues.count {
             for j in i+1..<allNonRoyalValues.count {
-                if allNonRoyalValues[i] + allNonRoyalValues[j] == 10 {
+                if allNonRoyalValues[i] + allNonRoyalValues[j] == gameSumMode.getRawValue() {
                     return true
                 }
             }
