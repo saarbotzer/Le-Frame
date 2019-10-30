@@ -245,6 +245,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         let restartAction = UIAlertAction(title: "Restart", style: .default) { (action) in
+            self.resetTimer()
             self.initializeGame()
         }
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -342,7 +343,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // Get deck
         deck = model.getRoyalTestDeck()
         deck = model.getRegularTestDeck()
-//        deck = model.getCards()
+        deck = model.getCards()
         deck.shuffle()
         cardsLeft = deck.count + 1
         
@@ -613,12 +614,23 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let minutes = secondsPassed / 60 % 60
         let seconds = secondsPassed % 60
         
-        let timeString = String(format: "%02i:%02i:%02i", hours, minutes, seconds)
+        var timeString = ""
+        
+        if hours > 0 {
+            timeString = String(format: "%02i:%02i:%02i", hours, minutes, seconds)
+        } else {
+            timeString = String(format: "%02i:%02i", minutes, seconds)
+        }
         
         timeLabel.text = "TIME: \(timeString)"
         
         // Stop the timer
 //        timer?.invalidate()
+    }
+    
+    func resetTimer() {
+        timer?.invalidate()
+        secondsPassed = 0
     }
 }
 
