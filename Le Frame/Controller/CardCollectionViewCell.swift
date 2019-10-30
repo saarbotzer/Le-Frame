@@ -22,8 +22,9 @@ class CardCollectionViewCell: UICollectionViewCell {
     // Lift animation
     let borderWidth: CGFloat = 2.0
     let transformBy: CGFloat = 1.06
-    let liftAnimationDuration: TimeInterval = 2.0
+    let liftAnimationDuration: TimeInterval = 0.3
     let cornerRadius: CGFloat = 4
+    
     // Shadow
     let defaultShadowRadius: CGFloat = 1
     let liftedShadowRadius: CGFloat = 4
