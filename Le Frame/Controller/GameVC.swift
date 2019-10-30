@@ -45,9 +45,15 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         spotsCollectionView.delegate = self
         spotsCollectionView.dataSource = self
         
-        updateTabBarUI()
+        updateUI()
         
         initializeGame()
+    }
+    
+    // TODO: Move function to appropriate place and improve function
+    func updateUI() {
+        spotsCollectionView.backgroundColor = UIColor.clear
+        updateTabBarUI()
     }
     
     // TODO: Move function to appropriate place
@@ -55,6 +61,17 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         tabBar.layer.borderWidth = 0.50
         tabBar.layer.borderColor = UIColor.clear.cgColor
         tabBar.clipsToBounds = true
+        
+        tabBar.backgroundColor = UIColor.clear
+        
+        // Changing the tabBar items' color to black
+        for item in tabBar.items! {
+            item.image = item.image?.withRenderingMode(.alwaysOriginal)
+            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.black], for: .normal)
+        }
+        
+        
+        // TODO: Move to another place
         tabBar.delegate = self
     }
     
