@@ -18,6 +18,17 @@ class CardCollectionViewCell: UICollectionViewCell {
     var indexPath: IndexPath?
     var originalTransform: CGAffineTransform?
     
+    // MARK: Design Constants
+    // Lift animation
+    let borderWidth: CGFloat = 2.0
+    let transformBy: CGFloat = 1.06
+    let liftAnimationDuration: TimeInterval = 2.0
+    let cornerRadius: CGFloat = 4
+    // Shadow
+    let defaultShadowRadius: CGFloat = 1
+    let liftedShadowRadius: CGFloat = 4
+    let shadowOffset: CGSize = CGSize(width: -1, height: 1)
+    
     /**
      Initializes the spot with default values and appearance.
      
@@ -39,11 +50,14 @@ class CardCollectionViewCell: UICollectionViewCell {
         self.originalTransform = self.transform
         
         setUI()
-        addShadow()
     }
     
+    /**
+     Sets the initial UI of the spot
+     */
     func setUI() {
-        self.layer.cornerRadius = 4
+        self.layer.cornerRadius = cornerRadius
+        addShadow()
     }
     
     /**
@@ -78,19 +92,17 @@ class CardCollectionViewCell: UICollectionViewCell {
      Changes the appearance of the card to be selected
      */
     func setSelected() {
-        // TODO: Use constants (border, transform, animation, color)
-        let borderWidth: CGFloat = 2.0
-        let transformBy: CGFloat = 1.06
+        
         let scaledTransform = originalTransform!.scaledBy(x: transformBy, y: transformBy)
 
-        UIView.animate(withDuration: 0.2) {
+        UIView.animate(withDuration: liftAnimationDuration) {
             
             self.layer.borderColor = UIColor(red: 0.9995, green: 0.9883, blue: 0.4726, alpha: 1).cgColor
-            self.layer.borderWidth = borderWidth
+            self.layer.borderWidth = self.borderWidth
             
             self.transform = scaledTransform
             
-            self.layer.shadowRadius = 5
+            self.layer.shadowRadius = self.liftedShadowRadius
         }
         
     }
@@ -99,30 +111,25 @@ class CardCollectionViewCell: UICollectionViewCell {
     Changes the appearance of the card to be deselected
     */
     func setNotSelected() {
-        // TODO: Use constants (border, transform, animation)
-
-        // TODO: Make transformBy be relative to enlargement
-//        let scaledTransform = originalTransform!.scaledBy(x: transformBy, y: transformBy)
-        
-        UIView.animate(withDuration: 0.3) {
-
-//            self.frame = self.frame.insetBy(dx: borderWidth, dy: borderWidth)
+        UIView.animate(withDuration: liftAnimationDuration) {
             self.layer.borderColor = UIColor.clear.cgColor
             self.layer.borderWidth = 0
             
-//            self.layer.frame = self.originalFrame!
             self.transform = self.originalTransform!
-            self.layer.shadowRadius = 1
+            self.layer.shadowRadius = self.defaultShadowRadius
         }
         
     }
     
+    /**
+     Adds a default shadow to the spot
+     */
     func addShadow() {
         self.layer.masksToBounds = false
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOpacity = 0.5
-        self.layer.shadowOffset = CGSize(width: -1, height: 1)
-        self.layer.shadowRadius = 1
+        self.layer.shadowOffset = shadowOffset
+        self.layer.shadowRadius = defaultShadowRadius
 
         self.layer.shadowPath = UIBezierPath(rect: bounds).cgPath
     }
