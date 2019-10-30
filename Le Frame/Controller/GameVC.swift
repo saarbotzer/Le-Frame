@@ -66,8 +66,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         // Changing the tabBar items' color to black
         for item in tabBar.items! {
-            item.image = item.image?.withRenderingMode(.alwaysOriginal)
-            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.black], for: .normal)
+//            item.image = item.image?.withRenderingMode(.alwaysOriginal)
+            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.white], for: .normal)
         }
         
         
