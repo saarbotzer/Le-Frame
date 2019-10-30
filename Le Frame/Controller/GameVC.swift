@@ -94,6 +94,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             print("Hint Pressed")
         case 3:
             // TODO: newGamePressed()
+            showAlert("New Game?", "Are you sure you want to restart?")
+//            initializeGame()
             print("New Game Pressed")
         default:
             return
