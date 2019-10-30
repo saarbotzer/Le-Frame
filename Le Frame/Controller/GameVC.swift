@@ -17,6 +17,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var doneRemovingBtn: UIButton!
     @IBOutlet weak var removeBtn: UIButton!
     @IBOutlet weak var tabBar: UITabBar!
+    @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var cardsLeftLabel: UILabel!
     
     // Spots available by rank
     var kingsAvailable : Bool = true
@@ -31,6 +33,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var nextCard = Card()
     var firstSelectedCardIndexPath: IndexPath?
     var secondSelectedCardIndexPath: IndexPath?
+    var cardsLeft : Int?
     
     var gameStatus = GameStatus.placing
     
@@ -173,7 +176,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 10.0, bottom: 10.0, right: 10.0)
+        return UIEdgeInsets(top: 5.0, left: 10.0, bottom: 5.0, right: 10.0)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -334,9 +337,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         removeAllCards()
         
         // Get deck
-        deck = model.getTestDeck()
-        deck = model.getCards()
+        deck = model.getRoyalTestDeck()
+        deck = model.getRegularTestDeck()
+//        deck = model.getCards()
         deck.shuffle()
+        cardsLeft = deck.count + 1
         
         // Handle first card
         getNextCard()
@@ -496,6 +501,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func getNextCard() {
         if deck.count > 0 {
             nextCard = deck.remove(at: 0)
+            cardsLeft = cardsLeft! - 1
+            updateCardsLeftLabel()
             updateNextCardImage()
         } else {
             if isGameWon() {
@@ -504,6 +511,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 setGameStatus(status: .gameOver)
             }
         }
+    }
+    
+    func updateCardsLeftLabel() {
+        cardsLeftLabel.text = "CARDS LEFT: \(cardsLeft ?? 0)"
     }
     
     // Game Logic?

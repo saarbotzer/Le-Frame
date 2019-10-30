@@ -174,11 +174,13 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="cardsLeftLabel" destination="lu5-qc-XIw" id="fro-cT-hWx"/>
                         <outlet property="doneRemovingBtn" destination="dL5-EI-FeT" id="6bC-uj-XEV"/>
                         <outlet property="nextCardImageView" destination="ZcU-RU-Flc" id="ihJ-Sx-jKu"/>
                         <outlet property="removeBtn" destination="SXM-Ax-1UO" id="vDa-x0-cnk"/>
                         <outlet property="spotsCollectionView" destination="xln-Id-4BC" id="bkj-Wd-Yui"/>
                         <outlet property="tabBar" destination="IIg-up-Rhk" id="9wS-RZ-kYI"/>
+                        <outlet property="timeLabel" destination="MRB-3L-EFt" id="nMz-TW-mNZ"/>
                         <segue destination="Y1a-BS-Ud5" kind="presentation" identifier="goToSettings" modalPresentationStyle="fullScreen" id="Vos-Tj-t7y"/>
                     </connections>
                 </viewController>
