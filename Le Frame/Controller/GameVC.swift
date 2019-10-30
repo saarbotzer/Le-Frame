@@ -37,6 +37,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     var gameStatus = GameStatus.placing
     
+    var timer: Timer?
+    var secondsPassed: Int = 0
+    
     // Settings
     let defaults = UserDefaults.standard
     var gameSumMode : SumMode = .ten
@@ -346,6 +349,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // Handle first card
         getNextCard()
         updateNextCardImage()
+        addTimer()
     }
     
     func getSumMode() -> SumMode {
@@ -593,6 +597,28 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
             spotsAvailable = spotsAvailable || jacksAvailable || queensAvailable || kingsAvailable
         }
+    }
+    
+    // MARK: Misc Functions
+    
+    func addTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerElapsed), userInfo: nil, repeats: true)
+        RunLoop.main.add(timer!, forMode: .common)
+    }
+    
+    @objc func timerElapsed() {
+        secondsPassed += 1
+        
+        let hours = secondsPassed / 3600
+        let minutes = secondsPassed / 60 % 60
+        let seconds = secondsPassed % 60
+        
+        let timeString = String(format: "%02i:%02i:%02i", hours, minutes, seconds)
+        
+        timeLabel.text = "TIME: \(timeString)"
+        
+        // Stop the timer
+//        timer?.invalidate()
     }
 }
 
