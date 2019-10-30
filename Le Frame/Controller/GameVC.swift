@@ -84,8 +84,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // MARK: - IBActions
     
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        print(item.tag)
-        
         switch item.tag {
         case 1:
             performSegue(withIdentifier: "goToSettings", sender: nil)
@@ -97,7 +95,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         default:
             return
         }
-        tabBar.selectedItem = nil
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+            self.tabBar.selectedItem = nil
+        }
+        
     }
     
     /** Called when **Remove** button is pressed.
