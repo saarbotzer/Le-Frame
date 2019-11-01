@@ -58,6 +58,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        
         spotsCollectionView.delegate = self
         spotsCollectionView.dataSource = self
         
