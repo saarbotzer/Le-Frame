@@ -53,6 +53,17 @@ class CardModel {
         
         return newDeck
     }
+    
+    func getDeckHash(deck: [Card]) -> String {
+        var deckHash: String = ""
+        for card in deck {
+            let rank = String(format: "%02d", card.rank!.getRawValue())
+            let suit = card.suit!.getRawValue()
+            deckHash += "\(suit)\(rank)"
+        }
+        
+        return deckHash
+    }
 
 }
 

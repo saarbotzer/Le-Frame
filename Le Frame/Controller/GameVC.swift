@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, UITabBarDelegate {
 
@@ -37,6 +38,15 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     var gameStatus = GameStatus.placing
     
+    // Game Stats
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var deckHash : String?
+    var didWin : Bool = false
+    var loseReason : String?
+    var restartAfter : Bool?
+    var startTime : Date?
+    
+    // Timer
     var timer: Timer?
     var secondsPassed: Int = 0
     
@@ -346,12 +356,17 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         deck = model.getRegularTestDeck()
         deck = model.getCards()
         deck.shuffle()
+        
+        deckHash = model.getDeckHash(deck: deck)
         cardsLeft = deck.count + 1
         
         // Handle first card
         getNextCard()
         updateNextCardImage()
         addTimer()
+        
+        
+        startTime = Date()
     }
     
     func getSumMode() -> SumMode {
@@ -567,12 +582,20 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func gameOver() {
         showAlert("Game Over", "You've lost")
+        didWin = false
+        // TODO: Add lose reasons
+        loseReason = "General lose reason"
         updateNextCardImage()
+        
+        addStats()
     }
     
     func gameWon() {
         showAlert("Congratulations!", "You won")
+        didWin = true
         updateNextCardImage()
+        
+        addStats()
     }
 
     // Game Logic
@@ -632,6 +655,34 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func resetTimer() {
         timer?.invalidate()
         secondsPassed = 0
+    }
+    
+    // MARK: - Data Model Functions
+    
+    func addStats() {
+        let gameRow: Game = Game(context: context)
+        gameRow.gameID = UUID()
+        gameRow.deck = deckHash
+        gameRow.didWin = didWin
+        gameRow.duration = Int16(secondsPassed)
+        gameRow.loseReason = loseReason
+        gameRow.nofCardsLeft = Int16(cardsLeft!)
+        gameRow.nofJacksPlaced = -1
+        gameRow.nofKingsPlaced = -1
+        gameRow.nofQueensPlaced = -1
+        gameRow.restartAfter = false
+        gameRow.startTime = startTime
+        gameRow.sumMode = Int16(gameSumMode.getRawValue())
+        
+        saveStats()
+    }
+    
+    func saveStats() {
+        do {
+            try context.save()
+        } catch {
+            print("Error saving context: \(error)")
+        }
     }
 }
 
