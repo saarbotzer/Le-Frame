@@ -68,6 +68,169 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         initializeGame()
     }
     
+    // MARK: - Gameflow Functions
+    /**
+     Starts a new game.
+     */
+    func initializeGame() {
+        
+        gameSumMode = getSumMode()
+        
+        setGameStatus(status: .placing)
+        
+        markAllCardAsNotSelected()
+        removeAllCards()
+        
+        // Get deck
+        deck = model.getRoyalTestDeck()
+        deck = model.getRegularTestDeck()
+        deck = model.getCards()
+        deck.shuffle()
+        
+        deckHash = model.getDeckHash(deck: deck)
+        cardsLeft = deck.count + 1
+        
+        // Handle first card
+        getNextCard()
+        updateNextCardImage()
+        addTimer()
+        
+        
+        startTime = Date()
+    }
+    
+    /**
+     Gets the setted SumMode (10/11) for the current game from the user defaults.
+     - Returns: The setted SumMode
+     */
+    func getSumMode() -> SumMode {
+        let savedValue = defaults.integer(forKey: "SumMode")
+        if savedValue == 11 {
+            return .eleven
+        } else {
+            return .ten
+        }
+    }
+    
+    /**
+     Checks whether the next card can be placed at a spot on the board.
+     
+     - Parameter card: The card to check
+     - Parameter indexPath: The designated spot to place the card at
+     
+     - Returns: True if the card can be placed at the spot, false otherwise
+     */
+    func canPutCard(_ card: Card, at indexPath: IndexPath) -> Bool {
+        // If the spot is empty then check whether the spot position and the card rank fit
+        
+        let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+        if cell.isEmpty {
+            
+            let cardRank = card.rank!
+            
+            let allowedRanks = getAllowedRanksByPosition(indexPath: indexPath)
+            
+            switch cardRank {
+            case .jack:
+                return allowedRanks == .jacks
+            case .queen:
+                return allowedRanks == .queens
+            case.king:
+                return allowedRanks == .kings
+            default:
+                // If the card is not royal - true
+                return true
+            }
+        }
+        return false
+    }
+    
+    /**
+     Checks whether the game was completed and the user have won.
+     
+     - Returns: True if the user won the game, false otherwise
+     */
+    func isGameWon() -> Bool {
+
+        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            let allowedRanks = getAllowedRanksByPosition(indexPath: cell.indexPath!)
+            // If the spot contains a card that does not match it's designated rank, the function returns false.
+            if let card = cell.card {
+                let cardRank = card.rank!
+                if allowedRanks == .jacks && cardRank != .jack {
+                    return false
+                }
+                if allowedRanks == .queens && cardRank != .queen {
+                    return false
+                }
+                if allowedRanks == .kings && cardRank != .king {
+                    return false
+                }
+            // If there is no card at the spot and it is a royal spot, the function returns false.
+            } else if allowedRanks != .notRoyal{
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    /**
+     Checks whether the user lose. It's using the nextCard so must be called after a turn
+     
+     - Returns: True if the game is over, false otherwise
+     */
+    func isGameOver() -> Bool {
+        
+        let boardFull = isBoardFull()
+        let pairsToRemove = checkForPairs()
+        let nextCardRank = nextCard.rank!
+        
+        // If the board is full and there are no cards to remove
+        if boardFull && !pairsToRemove {
+            return true
+        }
+        // If the next card is royal and all of the relevant spots are taken
+        if !boardFull && nextCardRank == .jack && !jacksAvailable {
+            return true
+        }
+        if !boardFull && nextCardRank == .queen && !queensAvailable {
+            return true
+        }
+        if !boardFull && nextCardRank == .king && !kingsAvailable {
+            return true
+        }
+        
+        return false
+    }
+    
+    // TODO: Maybe change AllowedRanks to "DesignatedRanks" or something like it
+    /**
+     Checks for a certain IndexPath which type of cards should be placed.
+     - Parameter indexPath: The spot's IndexPath
+     - Returns: The appropriate AllowedRanks for the spot
+     */
+    func getAllowedRanksByPosition(indexPath: IndexPath) -> AllowedRanks {
+        let row = indexPath.row
+        let column = indexPath.section
+        
+        switch (row, column) {
+        // Corners
+        case (0, 0), (0, 3), (3, 0), (3, 3):
+            return .kings
+        // Sides
+        case (1, 0), (2, 0), (1, 3), (2, 3):
+            return .queens
+        // Floor and ceiling
+        case (0, 1), (0, 2), (3, 1), (3, 2):
+            return .jacks
+        // Center
+        default:
+            return .notRoyal
+        }
+    }
+    
+    
     // TODO: Move function to appropriate place and improve function
     func updateUI() {
         spotsCollectionView.backgroundColor = UIColor.clear
@@ -151,9 +314,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      Switches between removing and placing game modes and deselects all cards.
      */
     @IBAction func doneRemovingPressed(_ sender: Any) {
-        if gameStatus == .removing {
-            setGameStatus(status: .placing)
-        }
+        finishedTurn()
         markAllCardAsNotSelected()
     }
 
@@ -175,21 +336,36 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-                
-        playTurn(with: indexPath)
         
-        if gameStatus != .removing {
-            if isGameOver() {
-                setGameStatus(status: .gameOver)
-            } else if isBoardFull() && isGameWon() {
-                setGameStatus(status: .won)
-            }
+        switch gameStatus {
+        case .placing:
+            placeCard(at: indexPath)
+            finishedTurn()
+//            finishedPlacingCard()
+        case .removing:
+            selectCardForRemoval(at: indexPath)
+        case .gameOver:
+            gameOver()
+        case .won:
+            gameWon()
+        default:
+            // TODO: What to do when a card was tapped when gameOver/Won
+            return
         }
+        
+//        print("Next card: \(nextCard.imageName)")
+        
+        
+        
+//        if gameStatus != .removing {
+//            if isGameOver() {
+//                setGameStatus(status: .gameOver)
+//            } else if isGameWon() {
+//                setGameStatus(status: .won)
+//            }
+//        }
     }
     
-    
-
-
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 5.0, left: 10.0, bottom: 5.0, right: 10.0)
@@ -267,6 +443,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         alert.addAction(okAction)
 
         present(alert, animated: true, completion: nil)
+        
     }
     
     /**
@@ -304,6 +481,46 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func resetCardIndexes() {
         firstSelectedCardIndexPath = nil
         secondSelectedCardIndexPath = nil
+    }
+    
+    func isNextCardBlocked() -> Bool {
+        if let nextCardRank = nextCard.rank {
+            if nextCardRank == .jack && !jacksAvailable {
+                return true
+            } else if nextCardRank == .queen && !queensAvailable {
+                return true
+            } else if nextCardRank == .king && !kingsAvailable {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
+    func finishedTurn() {
+        checkAvailability()
+        
+        
+        let boardFull = isBoardFull()
+        let cardsToRemove = checkForPairs()
+        let nextCardIsBlocked = isNextCardBlocked()
+        
+        if boardFull {
+            if cardsToRemove {
+                setGameStatus(status: .removing)
+            } else {
+                setGameStatus(status: .gameOver)
+            }
+        } else if nextCardIsBlocked {
+            setGameStatus(status: .gameOver)
+        } else if gameStatus == .removing {
+            setGameStatus(status: .placing)
+        }
+        if isGameWon() {
+            setGameStatus(status: .won)
+        }
     }
     
     func finishedPlacingCard() {
@@ -344,179 +561,59 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // MARK: - Game Logic Functions
 
     // Game Logic
-    func initializeGame() {
-        
-        gameSumMode = getSumMode()
-        
-        setGameStatus(status: .placing)
-        
-        markAllCardAsNotSelected()
-        removeAllCards()
-        
-        // Get deck
-        deck = model.getRoyalTestDeck()
-        deck = model.getRegularTestDeck()
-        deck = model.getCards()
-        deck.shuffle()
-        
-        deckHash = model.getDeckHash(deck: deck)
-        cardsLeft = deck.count + 1
-        
-        // Handle first card
-        getNextCard()
-        updateNextCardImage()
-        addTimer()
-        
-        
-        startTime = Date()
+    
+    
+    /**
+     Checks if the card can be put at the spot and does it if so.
+     - Parameter indexPath: The spot's IndexPath
+     */
+    func placeCard(at indexPath: IndexPath) {
+        let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+        if canPutCard(nextCard, at: indexPath) {
+            // Put the card in the spot and go to the next card
+            animateCard(card: nextCard, to: indexPath)
+            cell.setCard(nextCard)
+            getNextCard()
+        }
     }
     
-    func getSumMode() -> SumMode {
-        let savedValue = defaults.integer(forKey: "SumMode")
-        if savedValue == 11 {
-            return .eleven
+    /**
+     Checks what card are already selected and selects/deselects accordingly.
+     
+     - Parameter indexPath: The tapped spot's IndexPath
+     */
+    func selectCardForRemoval(at indexPath: IndexPath) {
+        let tappedSpot = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+        
+        // In case of pressing an empty spot in removal mode
+        if tappedSpot.isEmpty {
+            return
+        }
+        
+        // If this is the first selected card, select the tapped card
+        if firstSelectedCardIndexPath == nil {
+            firstSelectedCardIndexPath = indexPath
+            secondSelectedCardIndexPath = nil
+            markCardAsSelected(at: firstSelectedCardIndexPath!)
         } else {
-            return .ten
-        }
-    }
-    
-    // Game Logic
-    func playTurn(with indexPath: IndexPath) {
-        let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
-            
-            
-            if gameStatus == .placing {
-                // What to do when a spot is selected
-                if canPutCard(nextCard, at: indexPath) {
-                    
-                    // Put the card in the spot and go to the next card
-                    animateCard(card: nextCard, to: indexPath)
-                    cell.setCard(nextCard)
-                    getNextCard()
-                    
-                }
-                finishedPlacingCard()
-            } else if gameStatus == .removing {
-                
-                // In case of pressing an empty spot in removal mode
-                if cell.isEmpty {
-                    return
-                }
-                
-                if firstSelectedCardIndexPath == nil {
-                    firstSelectedCardIndexPath = indexPath
-                    secondSelectedCardIndexPath = nil
-                    markCardAsSelected(at: firstSelectedCardIndexPath!)
-                } else {
-                    if firstSelectedCardIndexPath == indexPath{
-                        firstSelectedCardIndexPath = nil
-                        secondSelectedCardIndexPath = nil
-                        markAllCardAsNotSelected()
-                    } else if secondSelectedCardIndexPath != nil {
-                        markAllCardAsNotSelected()
-                        firstSelectedCardIndexPath = indexPath
-                        secondSelectedCardIndexPath = nil
-                        markCardAsSelected(at: firstSelectedCardIndexPath!)
-                    } else {
-                        secondSelectedCardIndexPath = indexPath
-                        markCardAsSelected(at: secondSelectedCardIndexPath!)
-                    }
-                }
-                
+            // If the tapped card is already selected, deselect it
+            if firstSelectedCardIndexPath == indexPath {
+                firstSelectedCardIndexPath = nil
+                secondSelectedCardIndexPath = nil
+                markAllCardAsNotSelected()
             }
-    }
-    
-    // Game Logic
-    func canPutCard(_ card: Card, at indexPath: IndexPath) -> Bool {
-        // If the spot is empty then check whether the spot position and the card rank fit
-        
-        let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
-        if cell.isEmpty {
-            
-            let cardRank = card.rank!
-            
-            let allowedRanks = getAllowedRanksByPosition(indexPath: indexPath)
-            
-            switch cardRank {
-            case .jack:
-                return allowedRanks == .jacks
-            case .queen:
-                return allowedRanks == .queens
-            case.king:
-                return allowedRanks == .kings
-            default:
-                // If the card is not royal - true
-                return true
+            // If no second card is selected, select the tapped card
+            else if secondSelectedCardIndexPath == nil {
+                secondSelectedCardIndexPath = indexPath
+                markCardAsSelected(at: secondSelectedCardIndexPath!)
             }
-        }
-        return false
-    }
-    
-    // Game Logic
-    func isGameWon() -> Bool {
-                
-        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            let allowedRanks = getAllowedRanksByPosition(indexPath: cell.indexPath!)
-            if let card = cell.card {
-                let cardRank = card.rank!
-                if allowedRanks == .jacks && cardRank != .jack {
-                    return false
-                }
-                if allowedRanks == .queens && cardRank != .queen {
-                    return false
-                }
-                if allowedRanks == .kings && cardRank != .king {
-                    return false
-                }
-            } else if allowedRanks != .notRoyal{
-                return false
+            // If two cards are already selected, deselect them and select the tapped card
+            else {
+                markAllCardAsNotSelected()
+                firstSelectedCardIndexPath = indexPath
+                secondSelectedCardIndexPath = nil
+                markCardAsSelected(at: firstSelectedCardIndexPath!)
             }
-        }
-        
-        return true
-    }
-    
-    // Game Logic
-    func isGameOver() -> Bool {
-        
-        let boardFull = isBoardFull()
-        let pairsToRemove = checkForPairs()
-        let nextCardRank = nextCard.rank!
-        
-        if boardFull && !pairsToRemove {
-            return true
-        }
-        if !boardFull && nextCardRank == .jack && !jacksAvailable {
-            return true
-        }
-        if !boardFull && nextCardRank == .queen && !queensAvailable {
-            return true
-        }
-        if !boardFull && nextCardRank == .king && !kingsAvailable {
-            return true
-        }
-        
-        return false
-    }
-    
-    // Game Logic
-    func getAllowedRanksByPosition(indexPath: IndexPath) -> AllowedRanks {
-        let row = indexPath.row
-        let column = indexPath.section
-        
-        switch (row, column) {
-        // Corners
-        case (0, 0), (0, 3), (3, 0), (3, 3):
-            return .kings
-        // Sides
-        case (1, 0), (2, 0), (1, 3), (2, 3):
-            return .queens
-        // Floor and ceiling
-        case (0, 1), (0, 2), (3, 1), (3, 2):
-            return .jacks
-        // Center
-        default:
-            return .notRoyal
         }
     }
     
@@ -542,11 +639,14 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     // Game Logic?
     func updateNextCardImage() {
-        if gameStatus == .placing || gameStatus == .removing {
-            nextCardImageView.image = UIImage(named: "\(nextCard.imageName).jpg")
-        } else {
-//            nextCardImageView.image = UIImage(named: spotImageName)
+        if let image = UIImage(named: "\(nextCard.imageName).jpg") {
+            nextCardImageView.image = image
         }
+//        if gameStatus == .placing || gameStatus == .removing {
+//            nextCardImageView.image = UIImage(named: "\(nextCard.imageName).jpg")
+//        } else {
+////            nextCardImageView.image = UIImage(named: spotImageName)
+//        }
     }
     
     // Game Logic
@@ -583,16 +683,35 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func gameOver() {
+        resetTimer()
         showAlert("Game Over", "You've lost")
         didWin = false
-        // TODO: Add lose reasons
-        loseReason = "General lose reason"
+        loseReason = getLoseReason()
         updateNextCardImage()
         
         addStats()
     }
     
+    func getLoseReason() -> String {
+        if let nextCardRank = nextCard.rank {
+            if nextCardRank == .jack && !jacksAvailable {
+                return "noEmptyJackSpots"
+            }
+            if nextCardRank == .queen && !queensAvailable {
+                return "noEmptyQueenSpots"
+            }
+            if nextCardRank == .king && !kingsAvailable {
+                return "noEmptyKingSpots"
+            }
+        }
+        if isBoardFull() && !checkForPairs() {
+            return "noCardsToRemove"
+        }
+        return "unknown"
+    }
+    
     func gameWon() {
+        resetTimer()
         showAlert("Congratulations!", "You won")
         didWin = true
         updateNextCardImage()
@@ -669,14 +788,28 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         gameRow.duration = Int16(secondsPassed)
         gameRow.loseReason = loseReason
         gameRow.nofCardsLeft = Int16(cardsLeft!)
-        gameRow.nofJacksPlaced = -1
-        gameRow.nofKingsPlaced = -1
-        gameRow.nofQueensPlaced = -1
+        gameRow.nofJacksPlaced = getNumberOfCardsPlaced(withRank: .jack)
+        gameRow.nofKingsPlaced = getNumberOfCardsPlaced(withRank: .king)
+        gameRow.nofQueensPlaced = getNumberOfCardsPlaced(withRank: .queen)
+        
+        // TODO: Check if restarted after, update row
         gameRow.restartAfter = false
         gameRow.startTime = startTime
         gameRow.sumMode = Int16(gameSumMode.getRawValue())
         
         saveStats()
+    }
+    
+    func getNumberOfCardsPlaced(withRank rank: CardRank) -> Int16 {
+        var nofCards : Int16 = 0
+        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if let card = cell.card {
+                if card.rank! == rank {
+                    nofCards += 1
+                }
+            }
+        }
+        return nofCards
     }
     
     func saveStats() {
