@@ -153,17 +153,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func isGameWon() -> Bool {
 
         for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            
             let allowedRanks = getAllowedRanksByPosition(indexPath: cell.indexPath!)
             // If the spot contains a card that does not match it's designated rank, the function returns false.
             if let card = cell.card {
                 let cardRank = card.rank!
-                if allowedRanks == .jacks && cardRank != .jack {
-                    return false
-                }
-                if allowedRanks == .queens && cardRank != .queen {
-                    return false
-                }
-                if allowedRanks == .kings && cardRank != .king {
+                if (allowedRanks == .jacks && cardRank != .jack) || (allowedRanks == .queens && cardRank != .queen) || (allowedRanks == .kings && cardRank != .king) || (allowedRanks == .notRoyal) {
                     return false
                 }
             // If there is no card at the spot and it is a royal spot, the function returns false.
