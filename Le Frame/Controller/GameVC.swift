@@ -41,10 +41,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // Game Stats
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var deckHash : String?
+    var gameID : UUID?
     var didWin : Bool = false
     var loseReason : String?
     var restartAfter : Bool?
     var startTime : Date?
+    
+    var statsAdded : Bool = false
     
     // Timer
     var timer: Timer?
@@ -89,6 +92,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         deckHash = model.getDeckHash(deck: deck)
         cardsLeft = deck.count + 1
+        
+        gameID = UUID()
+        statsAdded = false
+        secondsPassed = 0
         
         // Handle first card
         getNextCard()
@@ -429,7 +436,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         let restartAction = UIAlertAction(title: "Restart", style: .default) { (action) in
-            self.resetTimer()
+            self.stopTimer()
             self.initializeGame()
         }
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -678,7 +685,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func gameOver() {
-        resetTimer()
+        
+        stopTimer()
         showAlert("Game Over", "You've lost")
         didWin = false
         loseReason = getLoseReason()
@@ -706,7 +714,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func gameWon() {
-        resetTimer()
+        stopTimer()
         showAlert("Congratulations!", "You won")
         didWin = true
         updateNextCardImage()
@@ -768,18 +776,21 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 //        timer?.invalidate()
     }
     
-    func resetTimer() {
+    func stopTimer() {
         timer?.invalidate()
-        secondsPassed = 0
     }
     
     // MARK: - Data Model Functions
     
     func addStats() {
+        if statsAdded {
+            return
+        }
         let gameRow: Game = Game(context: context)
-        gameRow.gameID = UUID()
+        gameRow.gameID = gameID
         gameRow.deck = deckHash
         gameRow.didWin = didWin
+        print("Seconds Passed: \(secondsPassed). Int16: \(Int16(secondsPassed))")
         gameRow.duration = Int16(secondsPassed)
         gameRow.loseReason = loseReason
         gameRow.nofCardsLeft = Int16(cardsLeft!)
@@ -789,6 +800,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         // TODO: Check if restarted after, update row
         gameRow.restartAfter = false
+        
         gameRow.startTime = startTime
         gameRow.sumMode = Int16(gameSumMode.getRawValue())
         
@@ -810,6 +822,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func saveStats() {
         do {
             try context.save()
+            statsAdded = true
         } catch {
             print("Error saving context: \(error)")
         }

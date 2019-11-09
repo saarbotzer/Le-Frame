@@ -71,6 +71,17 @@ class SettingsVC: UITableViewController {
             return 0
         }
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath)!
+        switch cell.tag {
+        case 1:
+            // Statistics pressed
+            performSegue(withIdentifier: "goToStatistics", sender: nil)
+        default:
+            return
+        }
+    }
 
     /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

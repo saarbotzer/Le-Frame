@@ -7,29 +7,49 @@
 //
 
 import UIKit
+import CoreData
 
 class StatisticsVC: UITableViewController {
 
+    var stats : [Game] = [Game]()
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+
+    @IBOutlet weak var averageGameLengthLabel: UILabel!
+    @IBOutlet weak var nofGamesLabel: UILabel!
+    @IBOutlet weak var nofWinsLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        loadStats()
+        
+        updateLabels()
+    }
 
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    @IBAction func resetBtnPressed(_ sender: Any) {
+        deleteAllData()
+    }
+    
+    func updateLabels() {
+        let averageGameLength = getAverageGameLength()
+        let nofGames = getNumberOfGames()
+        let nofWins = getNumberOfWins()
+        
+        averageGameLengthLabel.text = String(averageGameLength)
+        nofGamesLabel.text = String(nofGames)
+        nofWinsLabel.text = String(nofWins)
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return 3
     }
 
     /*
@@ -41,50 +61,50 @@ class StatisticsVC: UITableViewController {
         return cell
     }
     */
+    
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    // MARK: - Statistics Functions
+    func loadStats() {
+        let request : NSFetchRequest<Game> = Game.fetchRequest()
+        do {
+            stats = try context.fetch(request)
+        } catch {
+            print("Error fetching data from context: \(error)")
+        }
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    
+    func getAverageGameLength() -> Double {
+        var totalSeconds : Double = 0
+        var nofGames : Double = 0
+        for game in stats {
+            nofGames += 1
+            totalSeconds += Double(game.duration)
+        }
+        
+        let average = totalSeconds/nofGames
+        return average
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
+    
+    func getNumberOfWins() -> Int {
+        var nofWins = 0
+        for game in stats {
+            if game.didWin {
+                nofWins += 1
+            }
+        }
+        return nofWins
     }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
+    
+    func getNumberOfGames() -> Int {
+        return stats.count
     }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    func deleteAllData() {
+        
+        for game in stats {
+            context.delete(game)
+        }
+        
+        tableView.reloadData()
     }
-    */
-
 }
