@@ -790,7 +790,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         gameRow.gameID = gameID
         gameRow.deck = deckHash
         gameRow.didWin = didWin
-        print("Seconds Passed: \(secondsPassed). Int16: \(Int16(secondsPassed))")
         gameRow.duration = Int16(secondsPassed)
         gameRow.loseReason = loseReason
         gameRow.nofCardsLeft = Int16(cardsLeft!)
