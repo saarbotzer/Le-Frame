@@ -43,7 +43,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var deckHash : String?
     var gameID : UUID?
     var didWin : Bool = false
-    var loseReason : String?
+    var loseReason : String = ""
     var restartAfter : Bool?
     var startTime : Date?
     
@@ -86,12 +86,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         // Get deck
         deck = model.getRoyalTestDeck()
-        deck = model.getRegularTestDeck()
+//        deck = model.getRegularTestDeck()
         deck = model.getCards()
         deck.shuffle()
         
         deckHash = model.getDeckHash(deck: deck)
-        cardsLeft = deck.count + 1
+        cardsLeft = deck.count
         
         gameID = UUID()
         statsAdded = false
@@ -100,6 +100,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // Handle first card
         getNextCard()
         updateNextCardImage()
+        updateCardsLeftLabel()
         addTimer()
         
         
@@ -486,6 +487,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func isNextCardBlocked() -> Bool {
+        if cardsLeft == 0 {
+            return false
+        }
+        
         if let nextCardRank = nextCard.rank {
             if nextCardRank == .jack && !jacksAvailable {
                 return true
@@ -504,10 +509,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func finishedTurn() {
         checkAvailability()
         
+        print(gameStatus)
         
         let boardFull = isBoardFull()
         let cardsToRemove = checkForPairs()
         let nextCardIsBlocked = isNextCardBlocked()
+        
+        updateCardsLeftLabel()
         
         if boardFull {
             if cardsToRemove {
@@ -576,6 +584,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             animateCard(card: nextCard, to: indexPath)
             cell.setCard(nextCard)
             getNextCard()
+            cardsLeft = cardsLeft! - 1
         }
     }
     
@@ -623,15 +632,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func getNextCard() {
         if deck.count > 0 {
             nextCard = deck.remove(at: 0)
-            cardsLeft = cardsLeft! - 1
-            updateCardsLeftLabel()
+            
             updateNextCardImage()
-        } else {
-            if isGameWon() {
-                setGameStatus(status: .won)
-            } else if isGameOver() {
-                setGameStatus(status: .gameOver)
-            }
         }
     }
     
@@ -717,7 +719,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         stopTimer()
         showAlert("Congratulations!", "You won")
         didWin = true
-        updateNextCardImage()
+//        updateNextCardImage()
+        nextCardImageView.image = UIImage(named: spotImageName)
         
         addStats()
     }
