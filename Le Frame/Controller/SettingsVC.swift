@@ -21,7 +21,15 @@ class SettingsVC: UITableViewController {
         super.viewDidLoad()
 
         updateDefaultValues()
+        updateUI()
         
+    }
+    
+    func updateUI() {
+        for cell in tableView.visibleCells {
+            cell.backgroundColor = UIColor.green
+            cell.tintColor = UIColor.green
+        }
     }
     
     func updateDefaultValues() {
@@ -74,6 +82,7 @@ class SettingsVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)!
+        
         switch cell.tag {
         case 1:
             // Statistics pressed
