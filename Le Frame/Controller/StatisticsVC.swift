@@ -26,13 +26,6 @@ class StatisticsVC: UITableViewController {
         updateLabels()
     }
 
-    @IBAction func resetBtnPressed(_ sender: Any) {
-        deleteAllData()
-    }
-    
-    @IBAction func doneBtnTapped(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
     
     func updateLabels() {
         let averageGameLength = getAverageGameLength()

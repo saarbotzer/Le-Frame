@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BC368419236B502500DCC703 /* Data Model.xcdatamodeld */; };
-		BCC28118236478A40020104E /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC28117236478A40020104E /* SettingsVC.swift */; };
 		BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CEE234DEDE400CD951D /* AppDelegate.swift */; };
 		BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */; };
 		BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF2234DEDE400CD951D /* GameVC.swift */; };
@@ -18,7 +17,7 @@
 		BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */; };
 		BCC40D0B234DF4A000CD951D /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40D0A234DF4A000CD951D /* CardModel.swift */; };
 		BCD60748236E2C84000AFA6F /* StatisticsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD60747236E2C84000AFA6F /* StatisticsVC.swift */; };
-		BCD6074A238B3F9D000AFA6F /* NewSettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD60749238B3F9D000AFA6F /* NewSettingsVC.swift */; };
+		BCD6074A238B3F9D000AFA6F /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD60749238B3F9D000AFA6F /* SettingsVC.swift */; };
 		BCD6074C238C6483000AFA6F /* roundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD6074B238C6482000AFA6F /* roundButton.swift */; };
 		BCE12CE9234E340400962F00 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CE8234E340400962F00 /* Card.swift */; };
 		BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CEE234E35E400962F00 /* Utilities.swift */; };
@@ -26,7 +25,6 @@
 
 /* Begin PBXFileReference section */
 		BC36841A236B502500DCC703 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
-		BCC28117236478A40020104E /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		BCC40CEB234DEDE400CD951D /* Le Frame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Le Frame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCC40CEE234DEDE400CD951D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -38,7 +36,7 @@
 		BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
 		BCC40D0A234DF4A000CD951D /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
 		BCD60747236E2C84000AFA6F /* StatisticsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsVC.swift; sourceTree = "<group>"; };
-		BCD60749238B3F9D000AFA6F /* NewSettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSettingsVC.swift; sourceTree = "<group>"; };
+		BCD60749238B3F9D000AFA6F /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		BCD6074B238C6482000AFA6F /* roundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = roundButton.swift; sourceTree = "<group>"; };
 		BCE12CE8234E340400962F00 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = "Le Frame/Model/Card.swift"; sourceTree = SOURCE_ROOT; };
 		BCE12CEE234E35E400962F00 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
@@ -101,8 +99,7 @@
 				BCC40CF2234DEDE400CD951D /* GameVC.swift */,
 				BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */,
 				BCE12CEE234E35E400962F00 /* Utilities.swift */,
-				BCC28117236478A40020104E /* SettingsVC.swift */,
-				BCD60749238B3F9D000AFA6F /* NewSettingsVC.swift */,
+				BCD60749238B3F9D000AFA6F /* SettingsVC.swift */,
 				BCD60747236E2C84000AFA6F /* StatisticsVC.swift */,
 			);
 			path = Controller;
@@ -197,7 +194,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCD6074A238B3F9D000AFA6F /* NewSettingsVC.swift in Sources */,
+				BCD6074A238B3F9D000AFA6F /* SettingsVC.swift in Sources */,
 				BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */,
 				BCD60748236E2C84000AFA6F /* StatisticsVC.swift in Sources */,
 				BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */,
@@ -206,7 +203,6 @@
 				BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */,
 				BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */,
 				BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */,
-				BCC28118236478A40020104E /* SettingsVC.swift in Sources */,
 				BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */,
 				BCC40D0B234DF4A000CD951D /* CardModel.swift in Sources */,
 			);
