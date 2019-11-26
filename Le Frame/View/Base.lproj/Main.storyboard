@@ -181,7 +181,6 @@
                         <outlet property="spotsCollectionView" destination="xln-Id-4BC" id="bkj-Wd-Yui"/>
                         <outlet property="tabBar" destination="IIg-up-Rhk" id="9wS-RZ-kYI"/>
                         <outlet property="timeLabel" destination="MRB-3L-EFt" id="nMz-TW-mNZ"/>
-                        <segue destination="Y1a-BS-Ud5" kind="presentation" identifier="goToSettings1" modalPresentationStyle="fullScreen" id="Vos-Tj-t7y"/>
                         <segue destination="mlG-0d-dDq" kind="presentation" identifier="goToSettings" modalPresentationStyle="automatic" id="j0P-9l-lCJ"/>
                     </connections>
                 </viewController>
@@ -576,7 +575,6 @@
                                                 </state>
                                                 <connections>
                                                     <action selector="rateBtnTapped:" destination="mlG-0d-dDq" eventType="touchUpInside" id="f9w-ZW-xOV"/>
-                                                    <action selector="statsBtnTapped:" destination="mlG-0d-dDq" eventType="touchUpInside" id="3U1-Gt-jCb"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cUE-AV-zmW">
@@ -633,19 +631,19 @@
                         <outlet property="statisticsBtn" destination="QKW-1S-ApK" id="awL-dd-oph"/>
                         <outlet property="sumModeSwitch" destination="uT0-mc-L8s" id="gBt-Ed-xWT"/>
                         <outlet property="switchesStackView" destination="7yq-La-XEu" id="6i4-tR-Cl9"/>
-                        <segue destination="9cc-YC-b3Q" kind="presentation" identifier="goToStatistics" modalPresentationStyle="automatic" id="T3H-SC-zYy"/>
+                        <segue destination="Y1a-BS-Ud5" kind="presentation" identifier="goToStatistics" modalPresentationStyle="fullScreen" id="E5b-Dn-UO1"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QkT-pa-pRz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1790" y="600"/>
         </scene>
-        <!--StatisticsVC-->
+        <!--Statistics-->
         <scene sceneID="qaI-1R-tkA">
             <objects>
                 <tableViewController id="9cc-YC-b3Q" customClass="StatisticsVC" customModule="Le_Frame" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="06z-ob-dVb">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="758"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <sections>
@@ -749,10 +747,15 @@
                             <outlet property="delegate" destination="9cc-YC-b3Q" id="Q3o-bR-XoY"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="6ZU-Lb-ZjE">
-                        <barButtonItem key="rightBarButtonItem" title="Reset" id="t0f-Zt-ji7">
+                    <navigationItem key="navigationItem" title="Statistics" id="6ZU-Lb-ZjE">
+                        <barButtonItem key="leftBarButtonItem" title="Reset" id="t0f-Zt-ji7">
                             <connections>
                                 <action selector="resetBtnPressed:" destination="9cc-YC-b3Q" id="DGq-Rv-M2C"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="lDG-Uc-KeW">
+                            <connections>
+                                <action selector="doneBtnTapped:" destination="9cc-YC-b3Q" id="6iI-CJ-06s"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -764,23 +767,24 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bBm-ai-NSz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1835" y="-143"/>
+            <point key="canvasLocation" x="2953" y="-220"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="L0P-gK-QfR">
             <objects>
                 <navigationController id="Y1a-BS-Ud5" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="86N-ep-gn9"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Zmy-ke-hEy">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="ESL-rj-V34" kind="relationship" relationship="rootViewController" id="Zd9-AO-mYo"/>
+                        <segue destination="9cc-YC-b3Q" kind="relationship" relationship="rootViewController" id="A3f-MX-8oC"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1fD-Uf-Rob" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="170" y="-220"/>
+            <point key="canvasLocation" x="3372" y="499"/>
         </scene>
     </scenes>
     <resources>
@@ -800,6 +804,6 @@
         <image name="trash.circle.fill" catalog="system" width="64" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="T3H-SC-zYy"/>
+        <segue reference="A3f-MX-8oC"/>
     </inferredMetricsTieBreakers>
 </document>
