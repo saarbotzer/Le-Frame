@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StoreKit
 
 class SettingsVC: UIViewController {
 
@@ -33,6 +34,8 @@ class SettingsVC: UIViewController {
     }
     
     func updateUI() {
+        navigationController?.navigationBar.tintColor = UIColor.white
+
         roundButtonUI(button: statisticsBtn, text: "Statistics")
         roundButtonUI(button: infoBtn, text: "Info")
         roundButtonUI(button: shareBtn, text: "Share")
@@ -125,12 +128,22 @@ class SettingsVC: UIViewController {
     }
     
     @IBAction func infoBtnTapped(_ sender: UIButton) {
+        performSegue(withIdentifier: "goToInfo", sender: nil)
     }
     
     @IBAction func rateBtnTapped(_ sender: UIButton) {
+        if #available( iOS 10.3,*){
+            SKStoreReviewController.requestReview()
+        }
+        //TODO: Do something if iOS < 10.3?
     }
     
     @IBAction func shareBtnTapped(_ sender: UIButton) {
+        // TODO: Add actual link
+        
+        let url = URL(string: "https://itunes.apple.com/us/app/myapp/idxxxxxxxx?ls=1&mt=8")
+        let activityViewController = UIActivityViewController(activityItems: [url!], applicationActivities: nil)
+        present(activityViewController, animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -138,8 +151,13 @@ class SettingsVC: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        navigationController?.setNavigationBarHidden(false, animated: animated)
+//    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 }

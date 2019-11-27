@@ -1,64 +1,74 @@
 //
-//  StatisticsVC.swift
+//  NewStatisticsVC.swift
 //  Le Frame
 //
-//  Created by Saar Botzer on 02/11/2019.
+//  Created by Saar Botzer on 27/11/2019.
 //  Copyright © 2019 Saar Botzer. All rights reserved.
 //
 
 import UIKit
 import CoreData
 
-class StatisticsVC: UITableViewController {
+class StatisticsVC: UIViewController {
+
+    @IBOutlet weak var cell1: UIView! // Games played
+    @IBOutlet weak var cell2: UIView! // Games won
+    @IBOutlet weak var cell3: UIView! // Average game length
+    
+    var cells = [UIView]()
 
     var stats : [Game] = [Game]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
-    @IBOutlet weak var averageGameLengthLabel: UILabel!
-    @IBOutlet weak var nofGamesLabel: UILabel!
-    @IBOutlet weak var nofWinsLabel: UILabel!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Do any additional setup after loading the view.
+        
         loadStats()
         
-        updateLabels()
+        cells = [cell1, cell2, cell3]
+        setup()
     }
-
     
-    func updateLabels() {
-        let averageGameLength = getAverageGameLength()
-        let nofGames = getNumberOfGames()
-        let nofWins = getNumberOfWins()
+    @IBAction func resetTapped(_ sender: Any) {
+        //TODO: Implement reset function with alert
+        print("reset")
+    }
+    
+    func setup() {
+        setupUI()
+        setupValue(for: cell1, with: getNumberOfGames())
+        setupValue(for: cell2, with: getNumberOfWins())
+        setupValue(for: cell3, with: getAverageGameLength())
+    }
+    
+    func setupUI() {
+        for cell in cells {
+            cell.backgroundColor = #colorLiteral(red: 0, green: 0.8419571519, blue: 0, alpha: 0.3414490582)
+            cell.layer.cornerRadius = 10
+            cell.layer.borderColor = UIColor.white.cgColor
+            cell.layer.borderWidth = 2
+        }
         
-        averageGameLengthLabel.text = String(averageGameLength)
-        nofGamesLabel.text = String(nofGames)
-        nofWinsLabel.text = String(nofWins)
     }
-
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 3
-    }
-
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
-    }
-    */
     
+    func setupValue(for cell: UIView, with value: Any) {
+        
+        for subview in cell.subviews {
+            if subview.tag == 1 {
+                if let valueLabel = subview as? UILabel {
+                    valueLabel.text = "\(value)"
+                }
+            }
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+
 
     // MARK: - Statistics Functions
     func loadStats() {
@@ -79,7 +89,7 @@ class StatisticsVC: UITableViewController {
         }
         
         let average = totalSeconds/nofGames
-        return average
+        return average.rounded()
     }
     
     func getNumberOfWins() -> Int {
@@ -102,6 +112,5 @@ class StatisticsVC: UITableViewController {
             context.delete(game)
         }
         
-        tableView.reloadData()
     }
 }

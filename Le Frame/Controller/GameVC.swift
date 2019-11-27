@@ -348,11 +348,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         case .removing:
             selectCardForRemoval(at: indexPath)
         case .gameOver:
+            // TODO: What to do when a card was tapped when gameOver/Won
             gameOver()
         case .won:
+            // TODO: What to do when a card was tapped when gameOver/Won
             gameWon()
         default:
-            // TODO: What to do when a card was tapped when gameOver/Won
+            
             return
         }
         
