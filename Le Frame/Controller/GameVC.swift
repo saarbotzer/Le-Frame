@@ -20,6 +20,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var tabBar: UITabBar!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var cardsLeftLabel: UILabel!
+    @IBOutlet weak var removalSumLabel: UILabel!
     
     // Spots available by rank
     var kingsAvailable : Int = 4
@@ -85,6 +86,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func initializeGame() {
         
         gameSumMode = getSumMode()
+        removalSumLabel.text = "\(gameSumMode.getRawValue())"
         
         setGameStatus(status: .placing)
         
@@ -279,7 +281,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         case 1:
             performSegue(withIdentifier: "goToSettings", sender: nil)
         case 2:
-            showHints(caller: "button")
+            showHints(hintType: .tappedHintButton)
         case 3:
             showAlert("New Game?", "Are you sure you want to restart?")
         default:
@@ -488,9 +490,14 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func showRemovalUI(show: Bool) {
         doneRemovingBtn.isHidden = !show
         removeBtn.isHidden = !show
+        removalSumLabel.isHidden = !show
+        removalSumLabel.adjustsFontSizeToFitWidth = true
+        removalSumLabel.minimumScaleFactor = 0.2
+        
         
         if show {
             nextCardImageView.image = UIImage(named: spotImageName)
+            
         }
     }
     
@@ -595,14 +602,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func placeCard(at indexPath: IndexPath) {
         let cell = getSpot(at: indexPath)
 
+        // Start hints procedure (show hints after some time with no taps)
         lastTapTime = Date()
-        
         let timeToShowHint = 3.0
-        
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeToShowHint) {
             if let lastTapTime = self.lastTapTime{
                 if Date().timeIntervalSince(lastTapTime) > timeToShowHint {
-                    self.showHints(caller: "waiting")
+                    self.showHints(hintType: .waitedTooLong)
                 }
             }
         }
@@ -618,7 +624,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             blockedCardTaps += 1
             
             if blockedCardTaps > 2 {
-                self.showHints(caller: "struggling")
+                self.showHints(hintType: .tappedTooManyTimes)
             }
         }
     }
@@ -875,9 +881,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 extension GameVC {
     //MARK: Hints functions
     
-    func showHints(caller: String) {
+    func showHints(hintType : HintType) {
         let isShowHints = getShowHintsOn()
-        if caller != "button" && !isShowHints {
+        if hintType != .tappedHintButton && !isShowHints {
             return
         }
         let hints = getHint()
