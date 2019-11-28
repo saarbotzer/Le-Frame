@@ -56,6 +56,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // Settings
     let defaults = UserDefaults.standard
     var gameSumMode : SumMode = .ten
+    var showHintsOn : Bool = false
+    
+    // Hints
+    var hintToShow : Bool = false
+    var hintsUsed : Int = 0
+    var blockedCardTaps : Int = 0
+    var lastTapTime : Date?
     
     // MARK: viewDidLoad
     override func viewDidLoad() {
@@ -120,6 +127,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
+    func getShowHintsOn() -> Bool {
+        let savedValue = defaults.bool(forKey: "ShowHintsOn")
+        return savedValue
+    }
+    
+    
     /**
      Checks whether the next card can be placed at a spot on the board.
      
@@ -131,7 +144,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func canPutCard(_ card: Card, at indexPath: IndexPath) -> Bool {
         // If the spot is empty then check whether the spot position and the card rank fit
         
-        let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+        let cell = getSpot(at: indexPath)
         if cell.isEmpty {
             
             let cardRank = card.rank!
@@ -266,8 +279,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         case 1:
             performSegue(withIdentifier: "goToSettings", sender: nil)
         case 2:
-            // TODO: hintPressed()
-            print("Hint Pressed")
+            showHints(caller: "button")
         case 3:
             showAlert("New Game?", "Are you sure you want to restart?")
         default:
@@ -289,7 +301,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         // Option 1 - Only one card is selected
         if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath == nil {
-            let firstCardCell = spotsCollectionView.cellForItem(at: firstSelectedCardIndexPath!) as! CardCollectionViewCell
+            let firstCardCell = getSpot(at: firstSelectedCardIndexPath!)
             let firstCard = firstCardCell.card!
             // If the card is 10 - remove
             if gameSumMode == .ten && firstCard.rank! == .ten {
@@ -297,10 +309,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
         // Option 2 - Two cards are selected
         } else if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath != nil {
-            let firstCardCell = spotsCollectionView.cellForItem(at: firstSelectedCardIndexPath!) as! CardCollectionViewCell
+            let firstCardCell = getSpot(at: firstSelectedCardIndexPath!)
             let firstCard = firstCardCell.card!
             
-            let secondCardCell = spotsCollectionView.cellForItem(at: secondSelectedCardIndexPath!) as! CardCollectionViewCell
+            let secondCardCell = getSpot(at: secondSelectedCardIndexPath!)
             let secondCard = secondCardCell.card!
             
             // If the cards match - remove
@@ -394,7 +406,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func animateCard(card: Card, to indexPath: IndexPath) {
         
         // Get destination cell
-        let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+        let cell = getSpot(at: indexPath)
         
         // Create moving imageView
         let tempImageView = UIImageView(image: UIImage(named: "\(card.imageName).jpg"))
@@ -509,8 +521,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func finishedTurn() {
         
-        // TODO: remove or move to a better place
-        print(getHint())
         
         checkAvailability()
         
@@ -583,14 +593,33 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Parameter indexPath: The spot's IndexPath
      */
     func placeCard(at indexPath: IndexPath) {
-        let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+        let cell = getSpot(at: indexPath)
 
+        lastTapTime = Date()
+        
+        let timeToShowHint = 3.0
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeToShowHint) {
+            if let lastTapTime = self.lastTapTime{
+                if Date().timeIntervalSince(lastTapTime) > timeToShowHint {
+                    self.showHints(caller: "waiting")
+                }
+            }
+        }
+        
         if canPutCard(nextCard, at: indexPath) {
             // Put the card in the spot and go to the next card
             animateCard(card: nextCard, to: indexPath)
+            blockedCardTaps = 0
             cell.setCard(nextCard)
             getNextCard()
             cardsLeft = cardsLeft! - 1
+        } else {
+            blockedCardTaps += 1
+            
+            if blockedCardTaps > 2 {
+                self.showHints(caller: "struggling")
+            }
         }
     }
     
@@ -600,7 +629,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Parameter indexPath: The tapped spot's IndexPath
      */
     func selectCardForRemoval(at indexPath: IndexPath) {
-        let tappedSpot = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+        let tappedSpot = getSpot(at: indexPath)
         
         // In case of pressing an empty spot in removal mode
         if tappedSpot.isEmpty {
@@ -806,6 +835,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         gameRow.nofJacksPlaced = getNumberOfCardsPlaced(withRank: .jack)
         gameRow.nofKingsPlaced = getNumberOfCardsPlaced(withRank: .king)
         gameRow.nofQueensPlaced = getNumberOfCardsPlaced(withRank: .queen)
+        gameRow.nofHintsUsed = Int16(hintsUsed)
         
         // TODO: Check if restarted after, update row
         gameRow.restartAfter = false
@@ -844,6 +874,24 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
 extension GameVC {
     //MARK: Hints functions
+    
+    func showHints(caller: String) {
+        let isShowHints = getShowHintsOn()
+        if caller != "button" && !isShowHints {
+            return
+        }
+        let hints = getHint()
+        for indexPath in hints {
+            hintCard(at: indexPath)
+            hintsUsed += 1
+        }
+    }
+    
+    func hintCard(at indexPath: IndexPath) {
+        let spot = getSpot(at: indexPath)
+        
+        spot.setHinted(on: true)
+    }
     
     func getHint() -> [IndexPath] {
         var indexPathsToHint = [IndexPath]()
@@ -971,7 +1019,7 @@ extension GameVC {
         var placedCards = 0
         let spotsIndexPaths = Utilities.getSpots(forRank: rank)
         for indexPath in spotsIndexPaths {
-            let spot = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+            let spot = getSpot(at: indexPath)
             if spot.card?.rank == rank {
                 placedCards += 1
             }
@@ -980,7 +1028,7 @@ extension GameVC {
     }
     
     func isSpotEmpty(indexPath: IndexPath) -> Bool {
-        let spot = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+        let spot = getSpot(at: indexPath)
         return spot.isEmpty
     }
     
@@ -992,5 +1040,14 @@ extension GameVC {
                 return !isSpotEmpty(indexPath: indexPath)
             }
         }
+    }
+    
+    func getSpot(at indexPath: IndexPath) -> CardCollectionViewCell {
+        return spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+    }
+    
+    func getCard(at indexPath: IndexPath) -> Card? {
+        let spot = getSpot(at: indexPath)
+        return spot.card
     }
 }

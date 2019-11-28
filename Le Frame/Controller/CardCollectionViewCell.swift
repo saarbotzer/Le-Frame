@@ -30,6 +30,9 @@ class CardCollectionViewCell: UICollectionViewCell {
     let liftedShadowRadius: CGFloat = 4
     let shadowOffset: CGSize = CGSize(width: -1, height: 1)
     
+    let selectedColor = UIColor(red: 0.9995, green: 0.9883, blue: 0.4726, alpha: 1)
+    let hintedColor = UIColor(red: 0.9995, green: 0.9883, blue: 0.4726, alpha: 1)
+    
     /**
      Initializes the spot with default values and appearance.
      
@@ -98,7 +101,7 @@ class CardCollectionViewCell: UICollectionViewCell {
 
         UIView.animate(withDuration: liftAnimationDuration) {
             
-            self.layer.borderColor = UIColor(red: 0.9995, green: 0.9883, blue: 0.4726, alpha: 1).cgColor
+            self.layer.borderColor = self.selectedColor.cgColor
             self.layer.borderWidth = self.borderWidth
             
             self.transform = scaledTransform
@@ -133,6 +136,35 @@ class CardCollectionViewCell: UICollectionViewCell {
         self.layer.shadowRadius = defaultShadowRadius
 
         self.layer.shadowPath = UIBezierPath(rect: bounds).cgPath
+    }
+    
+    func setHinted(on: Bool) {
+        let wiggleDuration = 0.12
+        let repeatCount : Float = 3.0
+        if on {
+            let transformAnim  = CAKeyframeAnimation(keyPath:"transform")
+            transformAnim.values  = [NSValue(caTransform3D: CATransform3DMakeRotation(0.04, 10, 0.0, 1.0)),NSValue(caTransform3D: CATransform3DMakeRotation(-0.04 , 0, 0, 1))]
+            transformAnim.autoreverses = true
+            transformAnim.duration  = wiggleDuration
+            transformAnim.repeatCount = repeatCount
+            
+            
+            UIView.animate(withDuration: liftAnimationDuration) {
+                
+                self.layer.borderColor = self.hintedColor.cgColor
+                self.layer.borderWidth = self.borderWidth + 2
+                
+            }
+            self.layer.add(transformAnim, forKey: "transform")
+            
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + liftAnimationDuration + wiggleDuration * Double(repeatCount)) {
+                UIView.animate(withDuration: self.liftAnimationDuration) {
+                    self.layer.borderColor = UIColor.clear.cgColor
+                    self.layer.borderWidth = 0
+                    
+                }
+            }
+        }
     }
 }
 
