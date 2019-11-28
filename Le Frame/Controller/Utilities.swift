@@ -29,3 +29,39 @@ public let spotImageName = "green_card.png"
 /// The time that takes for a card to move from the new card spot to it's designated spot.
 public let cardAnimationDuration : Double = 0.3
  
+
+struct Utilities {
+    static func getCenterSpots() -> [IndexPath] {
+        var indexPaths = [IndexPath]()
+        for i in 1...2 {
+            for j in 1...2 {
+                indexPaths.append(IndexPath(row: i, section: j))
+            }
+        }
+        return indexPaths
+    }
+    
+    static func getSpots(forRank rank: CardRank) -> [IndexPath] {
+        var indexPaths = [IndexPath]()
+        var spotsList = [(Int, Int)]()
+        switch rank {
+        case .jack:
+            spotsList = [(0, 1), (0, 2), (3, 1), (3, 2)]
+        case .queen:
+            spotsList = [(1, 0), (2, 0), (1, 3), (2, 3)]
+        case .king:
+            spotsList = [(0, 0), (0, 3), (3, 0), (3, 3)]
+        default:
+            spotsList = [(1, 1), (1, 2), (2, 1), (2, 2)]
+        }
+        
+        indexPaths = spotsList.map({ (indexes) -> IndexPath in
+            return IndexPath(row: indexes.0, section: indexes.1)
+        })
+        return indexPaths
+        
+    }
+}
+
+
+//public let centerSpotsIndexes : [IndexPath] = [IndexPath]

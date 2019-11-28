@@ -22,10 +22,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var cardsLeftLabel: UILabel!
     
     // Spots available by rank
-    var kingsAvailable : Bool = true
-    var queensAvailable : Bool = true
-    var jacksAvailable : Bool = true
-    var spotsAvailable : Bool = true
+    var kingsAvailable : Int = 4
+    var queensAvailable : Int = 4
+    var jacksAvailable : Int = 4
+    var spotsAvailable : Int = 16
     
     // Game Data
     var model = CardModel()
@@ -194,13 +194,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             return true
         }
         // If the next card is royal and all of the relevant spots are taken
-        if !boardFull && nextCardRank == .jack && !jacksAvailable {
+        if !boardFull && nextCardRank == .jack && jacksAvailable == 0 {
             return true
         }
-        if !boardFull && nextCardRank == .queen && !queensAvailable {
+        if !boardFull && nextCardRank == .queen && queensAvailable == 0 {
             return true
         }
-        if !boardFull && nextCardRank == .king && !kingsAvailable {
+        if !boardFull && nextCardRank == .king && kingsAvailable == 0 {
             return true
         }
         
@@ -339,7 +339,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         switch gameStatus {
         case .placing:
             placeCard(at: indexPath)
@@ -494,11 +493,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
         
         if let nextCardRank = nextCard.rank {
-            if nextCardRank == .jack && !jacksAvailable {
+            if nextCardRank == .jack && jacksAvailable == 0 {
                 return true
-            } else if nextCardRank == .queen && !queensAvailable {
+            } else if nextCardRank == .queen && queensAvailable == 0{
                 return true
-            } else if nextCardRank == .king && !kingsAvailable {
+            } else if nextCardRank == .king && kingsAvailable == 0 {
                 return true
             } else {
                 return false
@@ -509,9 +508,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func finishedTurn() {
+        
+        // TODO: remove or move to a better place
+        print(getHint())
+        
         checkAvailability()
         
-        print(gameStatus)
+//        print(gameStatus)
         
         let boardFull = isBoardFull()
         let cardsToRemove = checkForPairs()
@@ -581,6 +584,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      */
     func placeCard(at indexPath: IndexPath) {
         let cell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+
         if canPutCard(nextCard, at: indexPath) {
             // Put the card in the spot and go to the next card
             animateCard(card: nextCard, to: indexPath)
@@ -694,6 +698,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         showAlert("Game Over", "You've lost")
         didWin = false
         loseReason = getLoseReason()
+        print(loseReason)
         updateNextCardImage()
         
         addStats()
@@ -701,13 +706,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func getLoseReason() -> String {
         if let nextCardRank = nextCard.rank {
-            if nextCardRank == .jack && !jacksAvailable {
+            if nextCardRank == .jack && jacksAvailable == 0 {
                 return "noEmptyJackSpots"
             }
-            if nextCardRank == .queen && !queensAvailable {
+            if nextCardRank == .queen && queensAvailable == 0 {
                 return "noEmptyQueenSpots"
             }
-            if nextCardRank == .king && !kingsAvailable {
+            if nextCardRank == .king && kingsAvailable == 0 {
                 return "noEmptyKingSpots"
             }
         }
@@ -729,10 +734,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
     // Game Logic
     func checkAvailability() {
-        kingsAvailable = false
-        queensAvailable = false
-        jacksAvailable = false
-        spotsAvailable = false
+        kingsAvailable = 0
+        queensAvailable = 0
+        jacksAvailable = 0
+        spotsAvailable = 0
         
         for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
             let indexPath = spot.indexPath!
@@ -740,16 +745,16 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             if spot.isEmpty {
                 switch allowedRanks {
                 case .jacks:
-                    jacksAvailable = true
+                    jacksAvailable += 1
                 case .queens:
-                    queensAvailable = true
+                    queensAvailable += 1
                 case .kings:
-                    kingsAvailable = true
+                    kingsAvailable += 1
                 default:
-                    spotsAvailable = true
+                    spotsAvailable += 1
                 }
             }
-            spotsAvailable = spotsAvailable || jacksAvailable || queensAvailable || kingsAvailable
+            spotsAvailable = spotsAvailable + jacksAvailable + queensAvailable + kingsAvailable
         }
     }
     
@@ -831,5 +836,160 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             print("Error saving context: \(error)")
         }
     }
+    
+    
+
 }
 
+
+extension GameVC {
+    //MARK: Hints functions
+    
+    func getHint() -> [IndexPath] {
+        var indexPathsToHint = [IndexPath]()
+        
+        if gameStatus == .placing {
+            if let nextCardRank = nextCard.rank {
+                if nextCardRank.getRawValue() <= 10 {
+                    // center
+                    let emptyCenterSpots = getEmptySpots(atCenter: true)
+                    if emptyCenterSpots.count > 0 {
+                        indexPathsToHint = emptyCenterSpots
+                    } else {
+                        // royal with most empty spot
+                        let emptyRoyalSpots = getEmptySpots(atCenter: false)
+                        indexPathsToHint = emptyRoyalSpots
+                    }
+                    // royal with most placed royal spots
+                    // empty spot
+                } else {
+                    // TODO: Hint appropriate cell for each royal rank
+                }
+            }
+            if indexPathsToHint.count > 0 {
+                indexPathsToHint = [indexPathsToHint.randomElement()!]
+            }
+        } else if gameStatus == .removing {
+            
+        }
+        
+        return indexPathsToHint
+    }
+    
+    func getEmptySpots(atCenter: Bool) -> [IndexPath] {
+        var emptySpots = [IndexPath]()
+        
+        if atCenter {
+            let indexPaths = Utilities.getSpots(forRank: .ace)
+            
+            emptySpots = filterSpots(indexPaths: indexPaths, empty: true)
+            return emptySpots
+            
+        } else {
+            let jackIndexPaths = Utilities.getSpots(forRank: .jack)
+            let emptyJackSpots = filterSpots(indexPaths: jackIndexPaths, empty: true)
+            let queenIndexPaths = Utilities.getSpots(forRank: .queen)
+            let emptyQueenSpots = filterSpots(indexPaths: queenIndexPaths, empty: true)
+            let kingIndexPaths = Utilities.getSpots(forRank: .king)
+            let emptyKingSpots = filterSpots(indexPaths: kingIndexPaths, empty: true)
+            
+            
+            // To find if one of the royal ranks has a larger number of empty spots
+            if emptyJackSpots.count > emptyQueenSpots.count && emptyJackSpots.count > emptyKingSpots.count {
+                emptySpots = emptyJackSpots
+                return emptySpots
+            } else if emptyQueenSpots.count > emptyJackSpots.count && emptyQueenSpots.count > emptyKingSpots.count {
+                emptySpots = emptyQueenSpots
+                return emptySpots
+            } else if emptyKingSpots.count > emptyJackSpots.count && emptyKingSpots.count > emptyQueenSpots.count {
+                emptySpots = emptyKingSpots
+                return emptySpots
+            }
+            
+//            emptySpots = emptyKingSpots + emptyQueenSpots + emptyJackSpots
+            // If two or more royal ranks have the same number of empty spots
+            
+            let placedJacks = getNumberOfPlacedCards(forRank: .jack)
+            let placedQueens = getNumberOfPlacedCards(forRank: .queen)
+            let placedKings = getNumberOfPlacedCards(forRank: .king)
+
+            if emptyJackSpots.count == emptyQueenSpots.count && emptyJackSpots.count == emptyKingSpots.count {
+                // Find rank with most placed royal cards out of the three ranks
+                if placedJacks > placedQueens && placedJacks > placedKings {
+                    return emptyJackSpots
+                } else if placedQueens > placedJacks && placedQueens > placedKings {
+                    return emptyQueenSpots
+                } else if placedKings > placedJacks && placedKings > placedQueens {
+                    return emptyKingSpots
+                }
+                // If two ranks have the same number of placed royal cards
+                if placedJacks == placedQueens && placedJacks == placedKings {
+                    return emptyJackSpots + emptyQueenSpots + emptyKingSpots
+                } else if placedJacks == placedQueens {
+                    return emptyJackSpots + emptyQueenSpots
+                } else if placedKings == placedQueens {
+                    return emptyKingSpots + emptyQueenSpots
+                } else if placedJacks == placedKings {
+                    return emptyJackSpots + emptyKingSpots
+                }
+            } else if emptyJackSpots.count == emptyQueenSpots.count {
+                // Find rank with most placed royal cards out of jacks and queens
+                if placedJacks == placedQueens {
+                    return emptyJackSpots + emptyQueenSpots
+                } else if placedJacks > placedQueens {
+                    return emptyJackSpots
+                } else {
+                    return emptyQueenSpots
+                }
+            } else if emptyQueenSpots.count == emptyKingSpots.count {
+                // Find rank with most placed royal cards out of kings and queens
+                if placedKings == placedQueens {
+                    return emptyKingSpots + emptyQueenSpots
+                } else if placedKings > placedQueens {
+                    return emptyKingSpots
+                } else {
+                    return emptyQueenSpots
+                }
+            } else if emptyJackSpots.count == emptyKingSpots.count {
+                // Find rank with most placed royal cards out of jacks and kings
+                if placedKings == placedJacks {
+                    return emptyKingSpots + emptyJackSpots
+                } else if placedKings > placedJacks {
+                    return emptyKingSpots
+                } else {
+                    return emptyJackSpots
+                }
+            }
+            
+        }
+        
+        return emptySpots
+    }
+    
+    func getNumberOfPlacedCards(forRank rank: CardRank) -> Int {
+        var placedCards = 0
+        let spotsIndexPaths = Utilities.getSpots(forRank: rank)
+        for indexPath in spotsIndexPaths {
+            let spot = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+            if spot.card?.rank == rank {
+                placedCards += 1
+            }
+        }
+        return placedCards
+    }
+    
+    func isSpotEmpty(indexPath: IndexPath) -> Bool {
+        let spot = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+        return spot.isEmpty
+    }
+    
+    func filterSpots(indexPaths: [IndexPath], empty: Bool) -> [IndexPath] {
+        return indexPaths.filter { (indexPath) -> Bool in
+            if empty {
+                return isSpotEmpty(indexPath: indexPath)
+            } else {
+                return !isSpotEmpty(indexPath: indexPath)
+            }
+        }
+    }
+}

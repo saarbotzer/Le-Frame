@@ -14,7 +14,7 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     
     var card: Card?
-    var isEmpty: Bool = false
+    var isEmpty: Bool = true
     var indexPath: IndexPath?
     var originalTransform: CGAffineTransform?
     
