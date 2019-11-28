@@ -38,15 +38,23 @@
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sum:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hlR-oz-qQw">
+                                                <rect key="frame" x="15.333333333333346" y="11.999999999999998" width="49.333333333333343" height="26.333333333333329"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="Exn-zJ-3uA" secondAttribute="trailing" id="468-NH-zCY"/>
                                             <constraint firstAttribute="width" secondItem="snX-zI-LQk" secondAttribute="height" multiplier="2:3" id="7bJ-ba-nMq"/>
                                             <constraint firstItem="Exn-zJ-3uA" firstAttribute="top" secondItem="snX-zI-LQk" secondAttribute="top" id="E2D-5L-fBy"/>
+                                            <constraint firstItem="hlR-oz-qQw" firstAttribute="centerX" secondItem="snX-zI-LQk" secondAttribute="centerX" id="KpE-Va-1bx"/>
                                             <constraint firstItem="ZcU-RU-Flc" firstAttribute="top" secondItem="snX-zI-LQk" secondAttribute="top" id="LfM-oi-hFd"/>
                                             <constraint firstAttribute="trailing" secondItem="ZcU-RU-Flc" secondAttribute="trailing" id="P5B-7e-icK"/>
                                             <constraint firstAttribute="width" constant="80" id="PWo-3W-iw6"/>
+                                            <constraint firstItem="hlR-oz-qQw" firstAttribute="top" secondItem="snX-zI-LQk" secondAttribute="top" constant="12" id="cMN-sE-6h2"/>
                                             <constraint firstAttribute="bottom" secondItem="ZcU-RU-Flc" secondAttribute="bottom" id="e2U-FM-Nft"/>
                                             <constraint firstAttribute="bottom" secondItem="Exn-zJ-3uA" secondAttribute="bottom" id="fav-Ad-zQL"/>
                                             <constraint firstItem="ZcU-RU-Flc" firstAttribute="leading" secondItem="snX-zI-LQk" secondAttribute="leading" id="og8-jK-wJJ"/>
@@ -69,7 +77,7 @@
                                                     <action selector="removePressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8cW-nP-Lfe"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dL5-EI-FeT">
+                                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dL5-EI-FeT">
                                                 <rect key="frame" x="0.0" y="66" width="119.33333333333333" height="29"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                                 <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -202,6 +210,7 @@
                         <outlet property="doneRemovingBtn" destination="dL5-EI-FeT" id="6bC-uj-XEV"/>
                         <outlet property="nextCardImageView" destination="ZcU-RU-Flc" id="ihJ-Sx-jKu"/>
                         <outlet property="removalSumLabel" destination="Exn-zJ-3uA" id="9q6-rS-qwp"/>
+                        <outlet property="removalSumTitleLabel" destination="hlR-oz-qQw" id="jOk-56-p8T"/>
                         <outlet property="removeBtn" destination="SXM-Ax-1UO" id="vDa-x0-cnk"/>
                         <outlet property="spotsCollectionView" destination="xln-Id-4BC" id="bkj-Wd-Yui"/>
                         <outlet property="tabBar" destination="IIg-up-Rhk" id="9wS-RZ-kYI"/>

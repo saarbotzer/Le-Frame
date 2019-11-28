@@ -21,6 +21,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var cardsLeftLabel: UILabel!
     @IBOutlet weak var removalSumLabel: UILabel!
+    @IBOutlet weak var removalSumTitleLabel: UILabel!
     
     // Spots available by rank
     var kingsAvailable : Int = 4
@@ -58,6 +59,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     let defaults = UserDefaults.standard
     var gameSumMode : SumMode = .ten
     var showHintsOn : Bool = false
+    
+    
+    // UI
+    let disabledColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
     
     // Hints
     var hintToShow : Bool = false
@@ -252,6 +257,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // TODO: Move function to appropriate place and improve function
     func updateUI() {
         spotsCollectionView.backgroundColor = UIColor.clear
+        
+        doneRemovingBtn.setTitleColor(UIColor.white, for: .normal)
+        doneRemovingBtn.setTitleColor(disabledColor, for: .disabled)
+        
+        removeBtn.setTitleColor(UIColor.white, for: .normal)
+        removeBtn.setTitleColor(disabledColor, for: .disabled)
+
         updateTabBarUI()
     }
     
@@ -294,6 +306,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
     }
     
+    
+    
+    
     /** Called when **Remove** button is pressed.
      The function checks whether one card or two cards are selected, and removes them if they are summed to 10 or 11 (depending on the mode).
     */
@@ -308,6 +323,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             // If the card is 10 - remove
             if gameSumMode == .ten && firstCard.rank! == .ten {
                 firstCardCell.removeCard()
+                enableDoneRemoving()
             }
         // Option 2 - Two cards are selected
         } else if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath != nil {
@@ -321,6 +337,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == gameSumMode.getRawValue() {
                 firstCardCell.removeCard()
                 secondCardCell.removeCard()
+                enableDoneRemoving()
             }
         }
         resetCardIndexes()
@@ -490,14 +507,21 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func showRemovalUI(show: Bool) {
         doneRemovingBtn.isHidden = !show
         removeBtn.isHidden = !show
+        removeBtn.isEnabled = false
+        doneRemovingBtn.isEnabled = false
         removalSumLabel.isHidden = !show
+        removalSumTitleLabel.isHidden = !show
         removalSumLabel.adjustsFontSizeToFitWidth = true
         removalSumLabel.minimumScaleFactor = 0.2
         
-        
         if show {
             nextCardImageView.image = UIImage(named: spotImageName)
-            
+        }
+    }
+    
+    func enableDoneRemoving() {
+        if !checkForPairs(){
+            doneRemovingBtn.isEnabled = true
         }
     }
     
@@ -636,6 +660,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      */
     func selectCardForRemoval(at indexPath: IndexPath) {
         let tappedSpot = getSpot(at: indexPath)
+        
+        removeBtn.isEnabled = true
         
         // In case of pressing an empty spot in removal mode
         if tappedSpot.isEmpty {
