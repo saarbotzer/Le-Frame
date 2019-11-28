@@ -860,10 +860,11 @@ extension GameVC {
                         let emptyRoyalSpots = getEmptySpots(atCenter: false)
                         indexPathsToHint = emptyRoyalSpots
                     }
-                    // royal with most placed royal spots
-                    // empty spot
                 } else {
                     // TODO: Hint appropriate cell for each royal rank
+                    let rankIndexPaths = Utilities.getSpots(forRank: nextCardRank)
+                    let emptyRankSpots = filterSpots(indexPaths: rankIndexPaths, empty: true)
+                    indexPathsToHint = emptyRankSpots
                 }
             }
             if indexPathsToHint.count > 0 {
