@@ -10,6 +10,8 @@
 		BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BC368419236B502500DCC703 /* Data Model.xcdatamodeld */; };
 		BC7A9B09238F132B002CC9B3 /* StatisticsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7A9B08238F132B002CC9B3 /* StatisticsVC.swift */; };
 		BC7A9B0F238F2148002CC9B3 /* InfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7A9B0E238F2148002CC9B3 /* InfoVC.swift */; };
+		BC7A9B1323914FF4002CC9B3 /* card-flip-2.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1123914FF4002CC9B3 /* card-flip-2.wav */; };
+		BC7A9B1423914FF4002CC9B3 /* card-flip-1.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */; };
 		BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CEE234DEDE400CD951D /* AppDelegate.swift */; };
 		BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */; };
 		BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF2234DEDE400CD951D /* GameVC.swift */; };
@@ -28,6 +30,8 @@
 		BC36841A236B502500DCC703 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
 		BC7A9B08238F132B002CC9B3 /* StatisticsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsVC.swift; sourceTree = "<group>"; };
 		BC7A9B0E238F2148002CC9B3 /* InfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoVC.swift; sourceTree = "<group>"; };
+		BC7A9B1123914FF4002CC9B3 /* card-flip-2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "card-flip-2.wav"; sourceTree = "<group>"; };
+		BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "card-flip-1.wav"; sourceTree = "<group>"; };
 		BCC40CEB234DEDE400CD951D /* Le Frame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Le Frame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCC40CEE234DEDE400CD951D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -55,6 +59,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BC7A9B1023914FCE002CC9B3 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */,
+				BC7A9B1123914FF4002CC9B3 /* card-flip-2.wav */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		BCC40CE2234DEDE400CD951D = {
 			isa = PBXGroup;
 			children = (
@@ -74,6 +87,7 @@
 		BCC40CED234DEDE400CD951D /* Le Frame */ = {
 			isa = PBXGroup;
 			children = (
+				BC7A9B1023914FCE002CC9B3 /* Sounds */,
 				BCE12CEA234E353B00962F00 /* Model */,
 				BCE12CEC234E354E00962F00 /* View */,
 				BCE12CEB234E354500962F00 /* Controller */,
@@ -184,7 +198,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC7A9B1323914FF4002CC9B3 /* card-flip-2.wav in Resources */,
 				BCC40CFB234DEDEB00CD951D /* LaunchScreen.storyboard in Resources */,
+				BC7A9B1423914FF4002CC9B3 /* card-flip-1.wav in Resources */,
 				BCC40CF8234DEDEB00CD951D /* Assets.xcassets in Resources */,
 				BCC40CF6234DEDE400CD951D /* Main.storyboard in Resources */,
 			);

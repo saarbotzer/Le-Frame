@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import AVFoundation
 
 class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, UITabBarDelegate {
 
@@ -60,6 +61,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var gameSumMode : SumMode = .ten
     var showHintsOn : Bool = false
     
+    // Sounds
+    var player: AVAudioPlayer?
     
     // UI
     let disabledColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
@@ -322,6 +325,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             let firstCard = firstCardCell.card!
             // If the card is 10 - remove
             if gameSumMode == .ten && firstCard.rank! == .ten {
+                playSound(named: "card-flip-2.wav")
                 firstCardCell.removeCard()
                 enableDoneRemoving()
             }
@@ -335,6 +339,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             
             // If the cards match - remove
             if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == gameSumMode.getRawValue() {
+                playSound(named: "card-flip-2.wav")
                 firstCardCell.removeCard()
                 secondCardCell.removeCard()
                 enableDoneRemoving()
@@ -642,6 +647,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         if canPutCard(nextCard, at: indexPath) {
             // Put the card in the spot and go to the next card
+            playSound(named: "card-flip-1.wav")
+
             animateCard(card: nextCard, to: indexPath)
             blockedCardTaps = 0
             cell.setCard(nextCard)
@@ -1115,5 +1122,35 @@ extension GameVC {
     func getCard(at indexPath: IndexPath) -> Card? {
         let spot = getSpot(at: indexPath)
         return spot.card
+    }
+}
+
+
+extension GameVC {
+    
+    func playSound(named soundFileFullName: String) {
+
+        let soundFileName = String(soundFileFullName.split(separator: ".")[0])
+        let soundFileExtension = String(soundFileFullName.split(separator: ".")[1])
+        
+        guard let url = Bundle.main.url(forResource: soundFileName, withExtension: soundFileExtension) else { return }
+
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+
+            /* The following line is required for the player to work on iOS 11. Change the file type accordingly*/
+            player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.mp3.rawValue)
+
+            /* iOS 10 and earlier require the following line:
+            player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileTypeMPEGLayer3) */
+
+            guard let player = player else { return }
+
+            player.play()
+
+        } catch let error {
+            print(error.localizedDescription)
+        }
     }
 }
