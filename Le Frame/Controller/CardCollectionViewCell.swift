@@ -15,6 +15,7 @@ class CardCollectionViewCell: UICollectionViewCell {
     
     var card: Card?
     var isEmpty: Bool = true
+    var isSpotSelected: Bool = false
     var indexPath: IndexPath?
     var originalTransform: CGAffineTransform?
     
@@ -30,7 +31,7 @@ class CardCollectionViewCell: UICollectionViewCell {
     let liftedShadowRadius: CGFloat = 4
     let shadowOffset: CGSize = CGSize(width: -1, height: 1)
     
-    let selectedColor = UIColor(red: 0.9995, green: 0.9883, blue: 0.4726, alpha: 1)
+    let selectedColor = UIColor(red: 0.00, green: 0.76, blue: 0.75, alpha: 1)
     let hintedColor = UIColor(red: 0.9995, green: 0.9883, blue: 0.4726, alpha: 1)
     
     /**
@@ -95,35 +96,31 @@ class CardCollectionViewCell: UICollectionViewCell {
     /**
      Changes the appearance of the card to be selected
      */
-    func setSelected() {
-        
-        let scaledTransform = originalTransform!.scaledBy(x: transformBy, y: transformBy)
+    func setSelected(selected: Bool) {
+        isSpotSelected = selected
+        if selected {
+            let scaledTransform = originalTransform!.scaledBy(x: transformBy, y: transformBy)
 
-        UIView.animate(withDuration: liftAnimationDuration) {
-            
-            self.layer.borderColor = self.selectedColor.cgColor
-            self.layer.borderWidth = self.borderWidth
-            
-            self.transform = scaledTransform
-            
-            self.layer.shadowRadius = self.liftedShadowRadius
+            UIView.animate(withDuration: liftAnimationDuration) {
+                
+                self.layer.borderColor = self.selectedColor.cgColor
+                self.layer.borderWidth = self.borderWidth
+                
+                self.transform = scaledTransform
+                
+                self.layer.shadowRadius = self.liftedShadowRadius
+            }
+        } else {
+            UIView.animate(withDuration: liftAnimationDuration) {
+                self.layer.borderColor = UIColor.clear.cgColor
+                self.layer.borderWidth = 0
+                
+                self.transform = self.originalTransform!
+                self.layer.shadowRadius = self.defaultShadowRadius
+            }
         }
-        
     }
     
-    /**
-    Changes the appearance of the card to be deselected
-    */
-    func setNotSelected() {
-        UIView.animate(withDuration: liftAnimationDuration) {
-            self.layer.borderColor = UIColor.clear.cgColor
-            self.layer.borderWidth = 0
-            
-            self.transform = self.originalTransform!
-            self.layer.shadowRadius = self.defaultShadowRadius
-        }
-        
-    }
     
     /**
      Adds a default shadow to the spot
@@ -138,6 +135,9 @@ class CardCollectionViewCell: UICollectionViewCell {
         self.layer.shadowPath = UIBezierPath(rect: bounds).cgPath
     }
     
+    
+    /**
+     */
     func setHinted(on: Bool) {
         let wiggleDuration = 0.12
         let repeatCount : Float = 3.0
@@ -148,20 +148,19 @@ class CardCollectionViewCell: UICollectionViewCell {
             transformAnim.duration  = wiggleDuration
             transformAnim.repeatCount = repeatCount
             
-            
-            UIView.animate(withDuration: liftAnimationDuration) {
-                
-                self.layer.borderColor = self.hintedColor.cgColor
-                self.layer.borderWidth = self.borderWidth + 2
-                
+            if !isSpotSelected {
+                UIView.animate(withDuration: liftAnimationDuration) {
+                    
+                    self.layer.borderColor = self.hintedColor.cgColor
+                    self.layer.borderWidth = self.borderWidth + 2
+                    
+                }
             }
             self.layer.add(transformAnim, forKey: "transform")
             
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + liftAnimationDuration + wiggleDuration * Double(repeatCount)) {
                 UIView.animate(withDuration: self.liftAnimationDuration) {
-                    self.layer.borderColor = UIColor.clear.cgColor
-                    self.layer.borderWidth = 0
-                    
+                    self.setSelected(selected: self.isSpotSelected)
                 }
             }
         }

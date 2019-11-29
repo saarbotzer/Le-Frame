@@ -488,6 +488,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      */
     func setGameStatus(status: GameStatus) {
         
+        lastTapTime = Date()
+        
         gameStatus = status
         switch status {
         case .placing:
@@ -604,13 +606,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func markAllCardAsNotSelected() {
         for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            cell.setNotSelected()
+            cell.setSelected(selected: false)
         }
     }
     
     func markCardAsSelected(at indexPath: IndexPath) {
         if let cell = spotsCollectionView.cellForItem(at: indexPath) as? CardCollectionViewCell {
-            cell.setSelected()
+            cell.setSelected(selected: true)
         }
     }
 
@@ -632,6 +634,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeToShowHint) {
             if let lastTapTime = self.lastTapTime{
                 if Date().timeIntervalSince(lastTapTime) > timeToShowHint {
+                    print("Now")
                     self.showHints(hintType: .waitedTooLong)
                 }
             }
@@ -912,7 +915,7 @@ extension GameVC {
         if hintType != .tappedHintButton && !isShowHints {
             return
         }
-        let hints = getHint()
+        let hints = getHints()
         for indexPath in hints {
             hintCard(at: indexPath)
             hintsUsed += 1
@@ -925,7 +928,7 @@ extension GameVC {
         spot.setHinted(on: true)
     }
     
-    func getHint() -> [IndexPath] {
+    func getHints() -> [IndexPath] {
         var indexPathsToHint = [IndexPath]()
         
         if gameStatus == .placing {
@@ -951,10 +954,41 @@ extension GameVC {
                 indexPathsToHint = [indexPathsToHint.randomElement()!]
             }
         } else if gameStatus == .removing {
-            
+            indexPathsToHint = getCardsToRemove()
         }
         
         return indexPathsToHint
+    }
+    
+    func getCardsToRemove() -> [IndexPath] {
+        var cardsSpots = [IndexPath]()
+        
+        var allPairs = [[IndexPath]]()
+        
+        for spot1 in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if let card1 = spot1.card {
+                let card1RankValue = card1.rank!.getRawValue()
+                if card1RankValue < 11 {
+                    if card1RankValue == gameSumMode.getRawValue() {
+                        return [spot1.indexPath!]
+                    }
+                    for spot2 in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+                        if let card2 = spot2.card {
+                            let card2RankValue = card2.rank!.getRawValue()
+                            if card2RankValue < 11 && spot1 != spot2 {
+                                if card1RankValue + card2RankValue == gameSumMode.getRawValue() {
+                                    allPairs.append([spot1.indexPath!, spot2.indexPath!])
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if let randomPair = allPairs.randomElement() {
+            cardsSpots = randomPair
+        }
+        return cardsSpots
     }
     
     func getEmptySpots(atCenter: Bool) -> [IndexPath] {
