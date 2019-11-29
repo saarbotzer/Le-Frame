@@ -59,10 +59,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // Settings
     let defaults = UserDefaults.standard
     var gameSumMode : SumMode = .ten
-    var showHintsOn : Bool = false
     
     // Sounds
     var player: AVAudioPlayer?
+    
     
     // UI
     let disabledColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
@@ -93,7 +93,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      */
     func initializeGame() {
         
-        gameSumMode = getSumMode()
+        gameSumMode = getSumSetting()
         removalSumLabel.text = "\(gameSumMode.getRawValue())"
         
         setGameStatus(status: .placing)
@@ -128,7 +128,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      Gets the setted SumMode (10/11) for the current game from the user defaults.
      - Returns: The setted SumMode
      */
-    func getSumMode() -> SumMode {
+    func getSumSetting() -> SumMode {
         let savedValue = defaults.integer(forKey: "SumMode")
         if savedValue == 11 {
             return .eleven
@@ -137,8 +137,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    func getShowHintsOn() -> Bool {
+    func getHintsSetting() -> Bool {
         let savedValue = defaults.bool(forKey: "ShowHintsOn")
+        return savedValue
+    }
+    
+    func getSoundSetting() -> Bool {
+        let savedValue = defaults.bool(forKey: "SoundsOn")
         return savedValue
     }
     
@@ -918,7 +923,7 @@ extension GameVC {
     //MARK: Hints functions
     
     func showHints(hintType : HintType) {
-        let isShowHints = getShowHintsOn()
+        let isShowHints = getHintsSetting()
         if hintType != .tappedHintButton && !isShowHints {
             return
         }
@@ -1129,6 +1134,11 @@ extension GameVC {
 extension GameVC {
     
     func playSound(named soundFileFullName: String) {
+        
+        let soundsOn = getSoundSetting()
+        if !soundsOn {
+            return
+        }
 
         let soundFileName = String(soundFileFullName.split(separator: ".")[0])
         let soundFileExtension = String(soundFileFullName.split(separator: ".")[1])
