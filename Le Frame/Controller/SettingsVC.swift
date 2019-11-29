@@ -35,11 +35,23 @@ class SettingsVC: UIViewController {
     
     func updateUI() {
         navigationController?.navigationBar.tintColor = UIColor.white
+        let barAppearance = UINavigationBar.appearance()
+        barAppearance.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        barAppearance.shadowImage = UIImage()
+        barAppearance.isTranslucent = true
 
         roundButtonUI(button: statisticsBtn, text: "Statistics")
         roundButtonUI(button: infoBtn, text: "Info")
         roundButtonUI(button: shareBtn, text: "Share")
         roundButtonUI(button: rateBtn, text: "Rate us!")
+        
+        setTextColor(for: soundsSwitch, color: UIColor.white)
+        setTextColor(for: hintsSwitch, color: UIColor.white)
+        setTextColor(for: sumModeSwitch, color: UIColor.white)
+    }
+    
+    func setTextColor(for segmentedControl: UISegmentedControl, color: UIColor) {
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: color], for: .normal)
     }
     
     func roundButtonUI(button: UIButton, text: String) {
@@ -49,6 +61,7 @@ class SettingsVC: UIViewController {
         let label = UILabel(frame: CGRect(x: 0, y: statisticsBtn.frame.height, width: statisticsBtn.frame.width, height: 20))
         label.textAlignment = .center
         label.text = text
+        label.textColor = UIColor.white
         button.addSubview(label)
     }
     
