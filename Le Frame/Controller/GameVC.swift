@@ -772,6 +772,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         stopTimer()
         showAlert("Game Over", "You've lost")
+        playSound(named: "lose.wav")
         didWin = false
         loseReason = getLoseReason()
         print(loseReason)
@@ -801,6 +802,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func gameWon() {
         stopTimer()
         showAlert("Congratulations!", "You won")
+        playSound(named: "win.wav")
         didWin = true
 //        updateNextCardImage()
         nextCardImageView.image = UIImage(named: spotImageName)
