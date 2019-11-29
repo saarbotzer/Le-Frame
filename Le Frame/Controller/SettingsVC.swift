@@ -56,7 +56,8 @@ class SettingsVC: UIViewController {
     
     func roundButtonUI(button: UIButton, text: String) {
         button.layer.cornerRadius = button.frame.width / 2
-        
+        button.layer.borderColor = UIColor.white.cgColor
+        button.layer.borderWidth = 3
         
         let label = UILabel(frame: CGRect(x: 0, y: statisticsBtn.frame.height, width: statisticsBtn.frame.width, height: 20))
         label.textAlignment = .center

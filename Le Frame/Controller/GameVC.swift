@@ -333,6 +333,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 playSound(named: "card-flip-2.wav")
                 firstCardCell.removeCard()
                 enableDoneRemoving()
+                removeBtn.isEnabled = false
             }
         // Option 2 - Two cards are selected
         } else if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath != nil {
@@ -348,6 +349,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 firstCardCell.removeCard()
                 secondCardCell.removeCard()
                 enableDoneRemoving()
+                removeBtn.isEnabled = false
             }
         }
         resetCardIndexes()
@@ -497,9 +499,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Parameter status: The game status to set
      */
     func setGameStatus(status: GameStatus) {
-        
-        lastTapTime = Date()
-        
+                
         gameStatus = status
         switch status {
         case .placing:
@@ -642,9 +642,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         lastTapTime = Date()
         let timeToShowHint = 3.0
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeToShowHint) {
-            if let lastTapTime = self.lastTapTime{
-                if Date().timeIntervalSince(lastTapTime) > timeToShowHint {
-                    print("Now")
+            if let lastTapTime = self.lastTapTime {
+                if Date().timeIntervalSince(lastTapTime) > timeToShowHint && self.gameStatus == .placing {
                     self.showHints(hintType: .waitedTooLong)
                 }
             }
@@ -694,6 +693,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 firstSelectedCardIndexPath = nil
                 secondSelectedCardIndexPath = nil
                 markAllCardAsNotSelected()
+                removeBtn.isEnabled = false
             }
             // If no second card is selected, select the tapped card
             else if secondSelectedCardIndexPath == nil {
