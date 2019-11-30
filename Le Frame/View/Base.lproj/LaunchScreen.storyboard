@@ -15,6 +15,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background-1" translatesAutoresizingMaskIntoConstraints="NO" id="bcN-vn-bfC">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                            </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="sIh-A6-gHw">
                                 <rect key="frame" x="0.0" y="134" width="375" height="444"/>
                                 <subviews>
@@ -92,7 +95,11 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="sIh-A6-gHw" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="90" id="0t0-A1-xxS"/>
+                            <constraint firstAttribute="bottom" secondItem="bcN-vn-bfC" secondAttribute="bottom" id="3oC-rw-G22"/>
                             <constraint firstItem="sIh-A6-gHw" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="9vo-Xv-h1H"/>
+                            <constraint firstItem="bcN-vn-bfC" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="Rm4-3N-iTW"/>
+                            <constraint firstItem="bcN-vn-bfC" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="WVm-7X-b1z"/>
+                            <constraint firstItem="bcN-vn-bfC" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Xab-dW-xm6"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="sIh-A6-gHw" secondAttribute="bottom" constant="200" id="bbP-ap-6R9"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="sIh-A6-gHw" secondAttribute="trailing" id="mre-TE-Gzp"/>
                         </constraints>
@@ -101,10 +108,11 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="53" y="375"/>
+            <point key="canvasLocation" x="52" y="374.6305418719212"/>
         </scene>
     </scenes>
     <resources>
+        <image name="Background-1" width="375" height="812"/>
         <image name="green_card" width="427" height="600"/>
     </resources>
 </document>

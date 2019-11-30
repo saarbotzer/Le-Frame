@@ -66,6 +66,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     // UI
     let disabledColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
+    var cardHeight : CGFloat = 0
+    var cardWidth : CGFloat = 0
     
     // Hints
     var hintToShow : Bool = false
@@ -262,9 +264,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     
+    
     // TODO: Move function to appropriate place and improve function
     func updateUI() {
         spotsCollectionView.backgroundColor = UIColor.clear
+        
         
         doneRemovingBtn.setTitleColor(UIColor.white, for: .normal)
         doneRemovingBtn.setTitleColor(disabledColor, for: .disabled)
@@ -395,9 +399,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         case .won:
             // TODO: What to do when a card was tapped when gameOver/Won
             gameWon()
-        default:
-            
-            return
         }
         
 //        print("Next card: \(nextCard.imageName)")
@@ -418,12 +419,17 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return UIEdgeInsets(top: 5.0, left: 10.0, bottom: 5.0, right: 10.0)
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        let gridWidth = spotsCollectionView.bounds.width
+        return (gridWidth - (4 * cardWidth)) / 4
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let height = collectionView.frame.height / 4 - 10
-        let width = height / 3 * 2
+        cardHeight = collectionView.frame.height / 4 - 10
+        cardWidth = cardHeight / 3 * 2
         
-        return CGSize(width: width, height: height)
+        return CGSize(width: cardWidth, height: cardHeight)
     }
     // MARK: - Spots Handling and Interface Methods
 
@@ -640,7 +646,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
         // Start hints procedure (show hints after some time with no taps)
         lastTapTime = Date()
-        let timeToShowHint = 3.0
+        let timeToShowHint = 10.0
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeToShowHint) {
             if let lastTapTime = self.lastTapTime {
                 if Date().timeIntervalSince(lastTapTime) > timeToShowHint && self.gameStatus == .placing {
