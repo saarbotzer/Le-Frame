@@ -28,16 +28,17 @@ class CardModel {
     }
     
     func getRoyalTestDeck() -> [Card] {
-        var cards = [Card]()
-        for _ in 1...4 {
-            for rank in [CardRank.jack, CardRank.queen, CardRank.king] {
-                let card = Card()
-                card.createImageName(suit: .club, rank: rank)
-                cards.append(card)
+        let fullDeck = getCards()
+        var newDeck = [Card]()
+        let royalRanks = [CardRank.jack, CardRank.queen, CardRank.king]
+        
+        for card in fullDeck {
+            if royalRanks.contains(card.rank!) {
+                newDeck.append(card)
             }
         }
         
-        return cards
+        return newDeck
     }
     
     func getRegularTestDeck() -> [Card] {

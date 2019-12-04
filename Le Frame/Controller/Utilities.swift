@@ -67,6 +67,26 @@ struct Utilities {
         return indexPaths
         
     }
+    
+    static func getAllowedRanksByPosition(indexPath: IndexPath) -> AllowedRanks {
+        let row = indexPath.row
+        let column = indexPath.section
+        
+        switch (row, column) {
+        // Corners
+        case (0, 0), (0, 3), (3, 0), (3, 3):
+            return .kings
+        // Sides
+        case (1, 0), (2, 0), (1, 3), (2, 3):
+            return .queens
+        // Floor and ceiling
+        case (0, 1), (0, 2), (3, 1), (3, 2):
+            return .jacks
+        // Center
+        default:
+            return .notRoyal
+        }
+    }
 }
 
 

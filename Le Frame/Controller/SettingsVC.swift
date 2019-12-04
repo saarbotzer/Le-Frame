@@ -142,7 +142,8 @@ class SettingsVC: UIViewController {
     }
     
     @IBAction func infoBtnTapped(_ sender: UIButton) {
-        performSegue(withIdentifier: "goToInfo", sender: nil)
+//        performSegue(withIdentifier: "goToInfo", sender: nil)
+        performSegue(withIdentifier: "goToHowTo", sender: nil)
     }
     
     @IBAction func rateBtnTapped(_ sender: UIButton) {

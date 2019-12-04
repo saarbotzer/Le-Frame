@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC13EFF92392CBA600DF4F1C /* HowToVC.swift */; };
 		BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BC368419236B502500DCC703 /* Data Model.xcdatamodeld */; };
 		BC7A9B09238F132B002CC9B3 /* StatisticsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7A9B08238F132B002CC9B3 /* StatisticsVC.swift */; };
 		BC7A9B0F238F2148002CC9B3 /* InfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7A9B0E238F2148002CC9B3 /* InfoVC.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BC13EFF92392CBA600DF4F1C /* HowToVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToVC.swift; sourceTree = "<group>"; };
 		BC36841A236B502500DCC703 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
 		BC7A9B08238F132B002CC9B3 /* StatisticsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsVC.swift; sourceTree = "<group>"; };
 		BC7A9B0E238F2148002CC9B3 /* InfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoVC.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 		BCE12CEB234E354500962F00 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				BC13EFF92392CBA600DF4F1C /* HowToVC.swift */,
 				BCC40CF2234DEDE400CD951D /* GameVC.swift */,
 				BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */,
 				BCE12CEE234E35E400962F00 /* Utilities.swift */,
@@ -221,6 +224,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */,
 				BCD6074A238B3F9D000AFA6F /* SettingsVC.swift in Sources */,
 				BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */,
 				BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */,
