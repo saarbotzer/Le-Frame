@@ -16,11 +16,13 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
                 self.newVC(viewController: "screenTwo"),
                 self.newVC(viewController: "screenThree"),
                 self.newVC(viewController: "screenFour"),
-                self.newVC(viewController: "screenFive")
+                self.newVC(viewController: "screenFive"),
+                self.newVC(viewController: "screenSix")
         ]
     }()
     
     var pageControl = UIPageControl()
+    var currentIndex = 0
     
     var gridView = UIStackView()
     
@@ -34,10 +36,17 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
             ]
     
     let removalGrid = [
-        ["s4", "s10",   "h8", "d13"],
-        ["c3", "c2",    "d5", "h2"],
-        ["d1", "d6",    "h4", "c11"],
-        ["h3", "s9",    "s6", "c5"]
+        ["s13", "s10",   "h8",  "d13"],
+        ["c3",  "c3",    "d5",  "h8"],
+        ["d1",  "d6",    "h1",  "c11"],
+        ["h3",  "s9",    "s12", "c1"]
+    ]
+    
+    let blockedGrid = [
+        ["s13",         "green_card",   "h8",   "d13"],
+        ["c3",          "c3",           "d5",   "h8"],
+        ["green_card",  "d6",           "h1",   "c11"],
+        ["h3",          "green_card",   "s12",  "c1"]
     ]
     
     
@@ -48,7 +57,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         self.delegate = self
         
 
-        addGrid()
+        addGrid(with: royalFrameGrid)
         
         if let firstViewController = orderedViewControllers.first {
             setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
@@ -107,6 +116,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         
         let index = orderedViewControllers.firstIndex(of: pageViewController.viewControllers![0])
         getGridForScreen(atIndex: index ?? 0)
+        currentIndex = index ?? 0
         self.pageControl.currentPage = orderedViewControllers.firstIndex(of: pageContentViewController)!
     }
     
@@ -177,7 +187,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
     
     // MARK: - Grid Functions
     
-    func addGrid() {
+    func addGrid(with gridNames: [[String]]) {
         
         let cardWidth: CGFloat = 50
         let cardHeight: CGFloat = 75
@@ -204,7 +214,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
             gridRowStackView.spacing = horizontalSpace
             
             for j in 0...3 {
-                let imageName = "\(royalFrameGrid[i][j]).jpg"
+                let imageName = "\(gridNames[i][j]).jpg"
                 let imageView = UIImageView()
                 imageView.image = UIImage(named: imageName)
                 imageView.heightAnchor.constraint(equalToConstant: cardHeight).isActive = true
@@ -212,6 +222,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
                 imageView.tag = j
                 addShadow(for: imageView)
                 originalTransform = imageView.transform
+            
                 gridRowStackView.addArrangedSubview(imageView)
                 
             }
@@ -219,12 +230,13 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
             grid.addArrangedSubview(gridRowStackView)
         }
         
+        grid.tag = 5
         self.gridView = grid
         self.view.addSubview(gridView)
     }
     
     func getGridForScreen(atIndex screenIndex: Int) {
-        
+        currentIndex = screenIndex
         switch screenIndex {
         case 0:
             highlightRank(rank: nil)
@@ -233,43 +245,135 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         case 2: // Queens
             highlightRank(rank: .queen)
         case 3: // Jacks
+            removeGrid()
+            addGrid(with: royalFrameGrid)
             highlightRank(rank: .jack)
+//            flipCards(to: royalFrameGrid)
         case 4:
-            flipCards()
+            removeGrid()
+            addGrid(with: removalGrid)
+            highlightRank(rank: nil)
+//            flipCards(to: removalGrid)
+            removalAnimation()
+        case 5:
+            removeGrid()
+            addGrid(with: blockedGrid)
+            highlightRank(rank: nil)
+//            flipCards(to: blockedGrid)
         default:
             highlightRank(rank: nil)
         }
     }
     
-    func flipCards() {
+    func removeGrid() {
+        self.gridView = UIStackView()
+                
+        for subview in view.subviews {
+            if subview.tag == 5 {
+                subview.removeFromSuperview()
+            }
+        }
+    }
+    
+    func flipCards(to gridArrangement: [[String]]) {
         for row in gridView.arrangedSubviews as! [UIStackView] {
             let j = row.tag
             for card in row.arrangedSubviews as! [UIImageView] {
                 let i = card.tag
-                let wantedImage = "\(removalGrid[j][i]).jpg"
-//                flipCard(card: card, flipToCardNamed: wantedImage)
+                let wantedImage = "\(gridArrangement[j][i]).jpg"
+                flipCard(card: card, flipToCardNamed: wantedImage)
             }
         }
     }
     
     func flipCard(card: UIImageView, flipToCardNamed: String) {
+        card.image = UIImage(named: flipToCardNamed)
+    }
+    
+    func removalAnimation() {
         
-        let x = card.frame.minX
-        let y = card.frame.minY
-        let width = card.frame.width
-        let height = card.frame.height
+//        highlightPairs(at: [IndexPath(row: 1, section: 0)], withDelay: 0.5)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+            self.highlightPairs(at: [IndexPath(row: 1, section: 0)], withDelay: 0)
+        }
         
-        let newImageView = UIImageView(image: UIImage(named: flipToCardNamed))
-        newImageView.frame = CGRect(x: x, y: y, width: width, height: height)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+            self.highlightPairs(at: [], withDelay: 0)
+        }
         
-//        UIView.transition(from: card, to: newImageView, duration: 0.3, options: .transitionFlipFromRight, completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+            self.removeCard(at: IndexPath(row: 1, section: 0))
+        }
         
-        self.view.addSubview(newImageView)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3.5) {
+            self.highlightPairs(at: [IndexPath(row: 0, section: 2), IndexPath(row: 1, section: 3)], withDelay: 0)
+        }
         
-//        UIView.animate(withDuration: 0.3) {
-//            card.transform = CGAffineTransform(scaleX: -0, y: 1)
-//            card.image = UIImage(named: flipToCardNamed)
-//        }
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
+            self.highlightPairs(at: [], withDelay: 0)
+        }
+        
+//        highlightPairs(at: [], withDelay: 5)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
+            self.removeCard(at: IndexPath(row: 0, section: 2))
+            self.removeCard(at: IndexPath(row: 1, section: 3))
+        }
+        
+    }
+    
+    func removeCard(at indexPath: IndexPath) {
+        if currentIndex != 4 {
+            return
+        }
+        
+        
+        for row in gridView.arrangedSubviews as! [UIStackView] {
+            let j = row.tag
+            for card in row.arrangedSubviews as! [UIImageView] {
+                let i = card.tag
+                if IndexPath(row: i, section: j) == indexPath {
+                    card.image = UIImage(named: "green_card.jpg")
+                }
+            }
+        }
+    }
+    
+    func highlightPairs(at indexes: [IndexPath], withDelay delay: TimeInterval) {
+        for row in gridView.arrangedSubviews as! [UIStackView] {
+            let j = row.tag
+            for card in row.arrangedSubviews as! [UIImageView] {
+                let i = card.tag
+                let indexPath = IndexPath(row: i, section: j)
+                var highlight = true
+                let transformBy: CGFloat = 1.15
+                let scaledTranfsorm = originalTransform!.scaledBy(x: transformBy, y: transformBy)
+                var transform = scaledTranfsorm
+                                
+                if indexes.contains(indexPath) {
+                    transform = scaledTranfsorm
+                } else {
+                    transform = self.originalTransform!
+                    highlight = false
+                }
+                
+                let animator = UIViewPropertyAnimator(duration: 0.5, curve: .easeOut) {
+                    if self.currentIndex != 4 {
+                        return
+                    }
+                    if self.currentIndex == 4 {
+                        card.transform = transform
+                    }
+                    if highlight {
+                        card.layer.shadowRadius = 4
+                    } else {
+                        card.layer.shadowRadius = 1
+                    }
+                }
+                
+                animator.startAnimation(afterDelay: delay)
+//                animator.startAnimation()
+            }
+        }
     }
 
     func highlightRank(rank: CardRank?) {
@@ -321,10 +425,3 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
     }
 }
 
-
-class FlippableCard: UIView {
-    
-    var firstImageView : UIImageView?
-    var secondsImageView : UIImageView?
-    
-}

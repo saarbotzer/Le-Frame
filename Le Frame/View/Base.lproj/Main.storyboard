@@ -846,9 +846,8 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Once the board is full, remove pairs of cards that sum to 10 or 11, depending on your settings" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2ch-zi-Wl5">
-                                <rect key="frame" x="10" y="10" width="275" height="177"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Once the board is full, remove pairs of cards that sum to 10 or 11, depending on your settings" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2ch-zi-Wl5">
+                                <rect key="frame" x="30" y="553.66666666666663" width="315" height="124.33333333333337"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="26"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -856,12 +855,63 @@
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="2ch-zi-Wl5" firstAttribute="centerX" secondItem="8sk-15-n9I" secondAttribute="centerX" id="GGg-Hq-cyP"/>
+                            <constraint firstItem="5I4-ub-emR" firstAttribute="bottom" secondItem="2ch-zi-Wl5" secondAttribute="bottom" constant="100" id="mAI-H9-U5K"/>
+                            <constraint firstItem="2ch-zi-Wl5" firstAttribute="leading" secondItem="8sk-15-n9I" secondAttribute="leading" constant="30" id="mNU-am-PIF"/>
+                            <constraint firstAttribute="trailing" secondItem="2ch-zi-Wl5" secondAttribute="trailing" constant="30" id="n7t-0p-Nh6"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="5I4-ub-emR"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="57U-d1-57Y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6194" y="102"/>
+            <point key="canvasLocation" x="6202" y="102"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="0Dg-Ny-Zjh">
+            <objects>
+                <viewController storyboardIdentifier="screenSix" id="Uf0-fm-9R9" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="wXP-VM-SLG">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="settings-background" translatesAutoresizingMaskIntoConstraints="NO" id="d9K-tO-cVS">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="13" translatesAutoresizingMaskIntoConstraints="NO" id="djr-fg-aUY">
+                                <rect key="frame" x="30" y="547.66666666666663" width="315" height="130.33333333333337"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="If your next card is royal and it's place is blocked by another card - you lose" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iPc-TR-ZV5">
+                                        <rect key="frame" x="0.0" y="0.0" width="315" height="93.333333333333329"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                        <size key="shadowOffset" width="0.0" height="0.0"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="In this example - no place for a king" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XXw-jk-SOI">
+                                        <rect key="frame" x="0.0" y="106.33333333333337" width="315" height="24"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                        <size key="shadowOffset" width="0.0" height="0.0"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="tE7-5f-KW5" firstAttribute="bottom" secondItem="djr-fg-aUY" secondAttribute="bottom" constant="100" id="V0A-7s-gvE"/>
+                            <constraint firstAttribute="trailing" secondItem="djr-fg-aUY" secondAttribute="trailing" constant="30" id="qmw-5y-bcY"/>
+                            <constraint firstItem="djr-fg-aUY" firstAttribute="leading" secondItem="wXP-VM-SLG" secondAttribute="leading" constant="30" id="sOH-1P-OfE"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="tE7-5f-KW5"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="G3e-gn-yys" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6932" y="102"/>
         </scene>
     </scenes>
     <resources>
