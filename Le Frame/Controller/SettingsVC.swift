@@ -19,7 +19,7 @@ class SettingsVC: UIViewController {
     @IBOutlet weak var buttonsStackView: UIStackView!
     
     @IBOutlet weak var statisticsBtn: UIButton!
-    @IBOutlet weak var infoBtn: UIButton!
+    @IBOutlet weak var howToBtn: UIButton!
     @IBOutlet weak var rateBtn: UIButton!
     @IBOutlet weak var shareBtn: UIButton!
     
@@ -40,24 +40,22 @@ class SettingsVC: UIViewController {
         barAppearance.shadowImage = UIImage()
         barAppearance.isTranslucent = true
 
-        roundButtonUI(button: statisticsBtn, text: "Statistics")
-        roundButtonUI(button: infoBtn, text: "How To Play?")
-        roundButtonUI(button: shareBtn, text: "Share")
-        roundButtonUI(button: rateBtn, text: "Rate us!")
+        setupRoundButton(button: statisticsBtn)
+        setupRoundButton(button: howToBtn)
+        setupRoundButton(button: shareBtn)
+        setupRoundButton(button: rateBtn)
         
-        setTextColor(for: soundsSwitch, color: .white)
-        setTextColor(for: hintsSwitch, color: .white)
-        setTextColor(for: sumModeSwitch, color: .white)
+        setupSegmentedControl(segmentedControl: soundsSwitch)
+        setupSegmentedControl(segmentedControl: hintsSwitch)
+        setupSegmentedControl(segmentedControl: sumModeSwitch)
     }
     
-    func setTextColor(for segmentedControl: UISegmentedControl, color: UIColor) {
+    func setupSegmentedControl(segmentedControl: UISegmentedControl) {
+        let color = UIColor.white
         segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: color], for: .normal)
-//        segmentedControl.selectedSegmentTintColor = #colorLiteral(red: 0, green: 0.7622301579, blue: 0, alpha: 1)
-//        segmentedControl.backgroundColor = #colorLiteral(red: 0, green: 0.5086346865, blue: 0, alpha: 1)
-        
     }
     
-    func roundButtonUI(button: UIButton, text: String) {
+    func setupRoundButton(button: UIButton) {
         
         let buttonWidth = button.frame.width
         
@@ -65,9 +63,7 @@ class SettingsVC: UIViewController {
         button.layer.borderColor = UIColor.white.cgColor
         button.layer.borderWidth = 3
         button.clipsToBounds = true
-        
-        print("Width: \(buttonWidth), radius: \(button.layer.cornerRadius)")
-        
+
         button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
     }
     
@@ -146,7 +142,7 @@ class SettingsVC: UIViewController {
         performSegue(withIdentifier: "goToStatistics", sender: nil)
     }
     
-    @IBAction func infoBtnTapped(_ sender: UIButton) {
+    @IBAction func howToBtnTapped(_ sender: UIButton) {
 //        performSegue(withIdentifier: "goToInfo", sender: nil)
         performSegue(withIdentifier: "goToHowTo", sender: nil)
     }
@@ -170,11 +166,6 @@ class SettingsVC: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
-
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        navigationController?.setNavigationBarHidden(false, animated: animated)
-//    }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

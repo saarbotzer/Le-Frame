@@ -113,6 +113,22 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
+    //TODO: Place in the correct place
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToSettings" {
+            if let destinationVC = segue.destination as? SettingsVC {
+                // Pause Timer? (if game is still on)
+            }
+        }
+    }
+
+    //TODO: Place in the correct place
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        super.dismiss(animated: flag, completion: completion)
+        
+        // Resume Timer (if game is still on)
+        print("VC was dismissed")
+    }
     
     
     // MARK: - Gameflow Functions
@@ -325,6 +341,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     // MARK: - IBActions
+    
+
     
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         switch item.tag {
