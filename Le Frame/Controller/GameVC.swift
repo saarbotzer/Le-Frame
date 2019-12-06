@@ -22,6 +22,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var cardsLeftLabel: UILabel!
     @IBOutlet weak var removalSumLabel: UILabel!
+    @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var removalSumTitleLabel: UILabel!
     
     // Spots available by rank
@@ -68,6 +69,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     let disabledColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
     var cardHeight : CGFloat = 0
     var cardWidth : CGFloat = 0
+    var cellSpacing : CGFloat = 10
     
     // Hints
     var hintToShow : Bool = false
@@ -75,10 +77,22 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var blockedCardTaps : Int = 0
     var lastTapTime : Date?
     
+    
+    func updateViews() {
+        let totalContentHeight = bottomView.frame.height + spotsCollectionView.frame.height
+        let contentRowHeight = totalContentHeight / 5
+        
+        spotsCollectionView.frame = CGRect(x: spotsCollectionView.frame.minX, y: spotsCollectionView.frame.minY, width: spotsCollectionView.frame.width, height: contentRowHeight * 4)
+        
+        bottomView.frame = CGRect(x: bottomView.frame.minX, y: bottomView.frame.minY, width: bottomView.frame.width, height: contentRowHeight)
+    }
+    
     // MARK: viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        updateViews()
+        
         gameVCLoaded = true
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
@@ -428,19 +442,41 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 5.0, left: 10.0, bottom: 5.0, right: 10.0)
+        
+        
+        
+        let totalCardWidth: CGFloat = cardWidth * 4
+        let gridWidth = collectionView.frame.width
+        let spacing: CGFloat = (gridWidth - (4 * cardWidth)) / 4
+        let totalSpacingWidth: CGFloat = spacing * (4 - 1)
+        
+        let leftInset = (gridWidth - CGFloat(totalCardWidth + totalSpacingWidth)) / 2
+        let rightInset = leftInset
+        
+//        return UIEdgeInsets(top: 5.0, left: leftInset, bottom: 5.0, right: rightInset)
+        let edgeInsets = (self.view.frame.size.width - (4 * cardWidth)) / (4 + 1)
+        
+        return UIEdgeInsets(top: 5.0, left: edgeInsets, bottom: 5.0, right: edgeInsets)
+//        return UIEdgeInsets(top: 5.0, left: 5.0, bottom: 5.0, right: 5.0)
+
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        let gridWidth = spotsCollectionView.bounds.width
-        return (gridWidth - (4 * cardWidth)) / 4
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+//        let gridWidth = collectionView.frame.width
+//        let spacing = (gridWidth - (4 * cardWidth)) / 4
+//        
+//        return 5.0
+//    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let gridWidth = collectionView.frame.width
+        let spacing = (gridWidth - (4 * cardWidth)) / 4
         
         cardHeight = collectionView.frame.height / 4 - 10
         cardWidth = cardHeight / 3 * 2
         
+
         return CGSize(width: cardWidth, height: cardHeight)
     }
     // MARK: - Spots Handling and Interface Methods
