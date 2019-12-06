@@ -54,25 +54,21 @@ class SettingsVC: UIViewController {
         segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: color], for: .normal)
 //        segmentedControl.selectedSegmentTintColor = #colorLiteral(red: 0, green: 0.7622301579, blue: 0, alpha: 1)
 //        segmentedControl.backgroundColor = #colorLiteral(red: 0, green: 0.5086346865, blue: 0, alpha: 1)
+        
     }
     
     func roundButtonUI(button: UIButton, text: String) {
-        button.layer.cornerRadius = button.frame.width / 2
+        
+        let buttonWidth = button.frame.width
+        
+        button.layer.cornerRadius = buttonWidth / 2
         button.layer.borderColor = UIColor.white.cgColor
         button.layer.borderWidth = 3
+        button.clipsToBounds = true
         
-        
-        
-        let labelWidthAddition : CGFloat = 30
-        
-        let label = UILabel(frame: CGRect(x: -labelWidthAddition/2, y: statisticsBtn.frame.height, width: statisticsBtn.frame.width + labelWidthAddition, height: 20))
-        label.textAlignment = .center
-        label.text = text
-        label.textColor = UIColor.white
+        print("Width: \(buttonWidth), radius: \(button.layer.cornerRadius)")
         
         button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        
-        button.addSubview(label)
     }
     
     func updateDefaultValues() {
