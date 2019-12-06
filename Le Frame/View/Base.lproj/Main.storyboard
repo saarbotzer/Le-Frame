@@ -219,6 +219,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <navigationItem key="navigationItem" id="VZw-2h-8Q7"/>
                     <connections>
                         <outlet property="cardsLeftLabel" destination="lu5-qc-XIw" id="fro-cT-hWx"/>
                         <outlet property="doneRemovingBtn" destination="dL5-EI-FeT" id="6bC-uj-XEV"/>
@@ -230,6 +231,7 @@
                         <outlet property="tabBar" destination="IIg-up-Rhk" id="9wS-RZ-kYI"/>
                         <outlet property="timeLabel" destination="MRB-3L-EFt" id="nMz-TW-mNZ"/>
                         <segue destination="Sub-aK-rx4" kind="presentation" identifier="goToSettings" modalPresentationStyle="automatic" id="j0P-9l-lCJ"/>
+                        <segue destination="1Pn-E4-7OJ" kind="show" identifier="goToHowTo" id="Tlo-Vj-1Yy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -365,7 +367,7 @@
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="37"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" image="info" catalog="system">
+                                                <state key="normal" image="questionmark.circle.fill" catalog="system">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="32" scale="large"/>
                                                 </state>
@@ -467,7 +469,7 @@
                 </pageViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cHY-67-P0G" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2490" y="102"/>
+            <point key="canvasLocation" x="1063" y="898"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="EcO-U7-qvS">
@@ -922,12 +924,15 @@
         <image name="checkmark.circle.fill" catalog="system" width="64" height="60"/>
         <image name="gear" catalog="system" width="64" height="58"/>
         <image name="green_card" width="427" height="600"/>
-        <image name="info" catalog="system" width="46" height="64"/>
         <image name="lightbulb" catalog="system" width="56" height="64"/>
+        <image name="questionmark.circle.fill" catalog="system" width="64" height="60"/>
         <image name="settings-background" width="375" height="812"/>
         <image name="square.and.arrow.up.fill" catalog="system" width="56" height="64"/>
         <image name="star.fill" catalog="system" width="64" height="58"/>
         <image name="transparent_background" width="1" height="1"/>
         <image name="trash.circle.fill" catalog="system" width="64" height="60"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="Tlo-Vj-1Yy"/>
+    </inferredMetricsTieBreakers>
 </document>

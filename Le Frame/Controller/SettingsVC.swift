@@ -41,17 +41,19 @@ class SettingsVC: UIViewController {
         barAppearance.isTranslucent = true
 
         roundButtonUI(button: statisticsBtn, text: "Statistics")
-        roundButtonUI(button: infoBtn, text: "Info")
+        roundButtonUI(button: infoBtn, text: "How To Play?")
         roundButtonUI(button: shareBtn, text: "Share")
         roundButtonUI(button: rateBtn, text: "Rate us!")
         
-        setTextColor(for: soundsSwitch, color: UIColor.white)
-        setTextColor(for: hintsSwitch, color: UIColor.white)
-        setTextColor(for: sumModeSwitch, color: UIColor.white)
+        setTextColor(for: soundsSwitch, color: .white)
+        setTextColor(for: hintsSwitch, color: .white)
+        setTextColor(for: sumModeSwitch, color: .white)
     }
     
     func setTextColor(for segmentedControl: UISegmentedControl, color: UIColor) {
         segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: color], for: .normal)
+        segmentedControl.selectedSegmentTintColor = #colorLiteral(red: 0, green: 0.7622301579, blue: 0, alpha: 1)
+        segmentedControl.backgroundColor = #colorLiteral(red: 0, green: 0.5086346865, blue: 0, alpha: 1)
     }
     
     func roundButtonUI(button: UIButton, text: String) {
@@ -59,10 +61,20 @@ class SettingsVC: UIViewController {
         button.layer.borderColor = UIColor.white.cgColor
         button.layer.borderWidth = 3
         
-        let label = UILabel(frame: CGRect(x: 0, y: statisticsBtn.frame.height, width: statisticsBtn.frame.width, height: 20))
+        
+        
+        let labelWidthAddition : CGFloat = 30
+        
+        let label = UILabel(frame: CGRect(x: -labelWidthAddition/2, y: statisticsBtn.frame.height, width: statisticsBtn.frame.width + labelWidthAddition, height: 20))
         label.textAlignment = .center
         label.text = text
         label.textColor = UIColor.white
+        
+//        let buttonColor = #colorLiteral(red: 0, green: 0.7622301579, blue: 0, alpha: 1)
+//        button.backgroundColor = .white
+//        button.tintColor = buttonColor
+//        button.layer.borderColor = buttonColor.cgColor
+        
         button.addSubview(label)
     }
     

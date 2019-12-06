@@ -79,6 +79,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        gameVCLoaded = true
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         spotsCollectionView.delegate = self
@@ -88,6 +89,17 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         initializeGame()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+//        var testBool = true
+        var testBool = false
+        
+        if !defaults.bool(forKey: "onboadringShown") || testBool {
+            performSegue(withIdentifier: "goToHowTo", sender: nil)
+        }
+    }
+    
+    
     
     // MARK: - Gameflow Functions
     /**

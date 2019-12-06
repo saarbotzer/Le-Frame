@@ -25,6 +25,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
     var currentIndex = 0
     
     var gridView = UIStackView()
+    let defaults = UserDefaults.standard
     
     var originalTransform: CGAffineTransform?
     
@@ -57,6 +58,8 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         self.delegate = self
         
 
+//        addSkipButton()
+
         addGrid(with: royalFrameGrid)
         
         if let firstViewController = orderedViewControllers.first {
@@ -70,6 +73,60 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
                 break;
             }
         }
+    }
+    
+    func addTopLabel() {
+        
+        // TODO: Add label to view
+        
+        let label = UILabel()
+        label.text = "How to play?"
+        label.font = UIFont(name: "System", size: 20)
+        label.textColor = .white
+        
+        
+        view.addSubview(label)
+        
+    }
+    
+    func getToShowOnboarding() -> Bool {
+        let onboadringShown = defaults.bool(forKey: "onboadringShown")
+        
+        return !onboadringShown
+    }
+    
+    func removeSkipButton() {
+        for subview in view.subviews {
+            if subview.tag == 10 {
+                subview.removeFromSuperview()
+            }
+        }
+    }
+    
+    func addSkipButton() {
+        
+        let skipButtonWidth: CGFloat = 50
+        let skipButtonHeight: CGFloat = 30
+        let x = UIScreen.main.bounds.maxX - skipButtonWidth * 1.5
+        let y = UIScreen.main.bounds.maxY - 150
+        
+        
+        let skipButton = UIButton()
+        skipButton.titleLabel?.textColor = UIColor.white
+        skipButton.frame = CGRect(x: x, y: y, width: skipButtonWidth, height: skipButtonHeight)
+        skipButton.isHidden = false
+//        skipButton.backgroundColor = .blue
+        skipButton.setTitle("Skip", for: .normal)
+        
+        skipButton.addTarget(self, action: #selector(goToGame), for: .touchUpInside)
+        
+        skipButton.tag = 10
+        
+        self.view.addSubview(skipButton)
+    }
+    
+    @objc func goToGame() {
+        performSegue(withIdentifier: "goToGame", sender: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -231,6 +288,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         }
         
         grid.tag = 5
+        
         self.gridView = grid
         self.view.addSubview(gridView)
     }
@@ -291,8 +349,8 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
     }
     
     func removalAnimation() {
+        // TODO: Make the animation reset every time switching to this page
         
-//        highlightPairs(at: [IndexPath(row: 1, section: 0)], withDelay: 0.5)
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
             self.highlightPairs(at: [IndexPath(row: 1, section: 0)], withDelay: 0)
         }

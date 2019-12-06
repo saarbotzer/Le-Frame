@@ -21,7 +21,7 @@ class CardCollectionViewCell: UICollectionViewCell {
     
     // MARK: Design Constants
     // Lift animation
-    let borderWidth: CGFloat = 2.0
+    let borderWidth: CGFloat = 4.0
     let transformBy: CGFloat = 1.06
     let liftAnimationDuration: TimeInterval = 0.3
     let cornerRadius: CGFloat = 4
@@ -31,8 +31,8 @@ class CardCollectionViewCell: UICollectionViewCell {
     let liftedShadowRadius: CGFloat = 4
     let shadowOffset: CGSize = CGSize(width: -1, height: 1)
     
-    let selectedColor = UIColor(red: 0.00, green: 0.76, blue: 0.75, alpha: 1)
-    let hintedColor = UIColor(red: 0.9995, green: 0.9883, blue: 0.4726, alpha: 1)
+    let selectedColor = UIColor(red: 0.00, green: 0.76, blue: 0.75, alpha: 0.7)
+    let hintedColor = UIColor(red: 0.9995, green: 0.9883, blue: 0.4726, alpha: 0.7)
     
     /**
      Initializes the spot with default values and appearance.
@@ -152,7 +152,7 @@ class CardCollectionViewCell: UICollectionViewCell {
                 UIView.animate(withDuration: liftAnimationDuration) {
                     
                     self.layer.borderColor = self.hintedColor.cgColor
-                    self.layer.borderWidth = self.borderWidth + 2
+                    self.layer.borderWidth = self.borderWidth
                     
                 }
             }
