@@ -15,6 +15,18 @@ enum GameStatus {
     case won
 }
 
+enum LoseReason: String {
+    case noEmptyJackSpots = "noEmptyJackSpots"
+    case noEmptyQueenSpots = "noEmptyQueenSpots"
+    case noEmptyKingSpots = "noEmptyKingSpots"
+    case noCardsToRemove = "noCardsToRemove"
+    case unknown = "unknown"
+    
+    func getRawValue() -> String {
+        return self.rawValue
+    }
+}
+
 public enum SumMode: Int {
     case ten = 10
     case eleven = 11
@@ -98,6 +110,31 @@ struct Utilities {
         default:
             return .notRoyal
         }
+    }
+    
+    static func showAlert(payload: AlertPayload, parentViewController: UIViewController) {
+        var customAlertController: RestartAlertController!;
+        if (payload.buttons.count == 2) {
+            customAlertController = instantiateViewController(storyboardName: "Main", viewControllerIdentifier: "RestartAlert") as! RestartAlertController;
+        }
+        else {
+            // Action not supported
+            return;
+        }
+        customAlertController?.payload = payload
+        
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+        alertController.setValue(customAlertController, forKey: "contentViewController")
+        
+        var heightConstraint: NSLayoutConstraint = NSLayoutConstraint(item: alertController.view, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: parentViewController.view.frame.height * 0.30)
+
+        alertController.view.addConstraint(heightConstraint)
+        parentViewController.present(alertController, animated: true, completion: nil)
+    }
+    
+    static func instantiateViewController(storyboardName: String, viewControllerIdentifier: String) -> UIViewController {
+        let storyboard = UIStoryboard(name: storyboardName, bundle: Bundle.main);
+        return storyboard.instantiateViewController(withIdentifier: viewControllerIdentifier);
     }
 }
 

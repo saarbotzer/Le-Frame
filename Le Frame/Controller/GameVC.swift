@@ -47,7 +47,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var deckHash : String?
     var gameID : UUID?
     var didWin : Bool = false
-    var loseReason : String = ""
+    var gameLoseReason : LoseReason = .unknown
     var restartAfter : Bool?
     var startTime : Date?
     
@@ -345,7 +345,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         case 2:
             showHints(hintType: .tappedHintButton)
         case 3:
-            showAlert("New Game?", "Are you sure you want to restart?")
+            showAlert(title: "New Game?", message: "Are you sure you want to start a new game?", dismissText: "Nevermind", confirmText: "Yes")
         default:
             return
         }
@@ -551,20 +551,35 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Parameter title: The title of the alert
      - Parameter message: The message of the alert
      */
-    func showAlert(_ title: String, _ message: String) {
+    func showAlert(title: String, message: String, dismissText: String, confirmText: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-        let restartAction = UIAlertAction(title: "Restart", style: .default) { (action) in
+
+        let restartAction = UIAlertAction(title: confirmText, style: .default) { (action) in
             self.stopTimer()
             self.initializeGame()
         }
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-        
+        let okAction = UIAlertAction(title: dismissText, style: .default, handler: nil)
+
         alert.addAction(restartAction)
         alert.addAction(okAction)
 
         present(alert, animated: true, completion: nil)
         
+        /*
+        let confirmButton = AlertButton(title: "Yes", action: newGame, titleColor: .white, backgroundColor: .lightGray)
+        let dismissButton = AlertButton(title: "Nevermind", action: nil, titleColor: .white, backgroundColor: .lightGray)
+        
+        let alertPayload = AlertPayload(title: title, titleColor: .white, message: message, messageColor: .white, buttons: [confirmButton, dismissButton], backgroundColor: .green)
+
+        Utilities.showAlert(payload: alertPayload, parentViewController: self)
+         */
+        
+    }
+    
+    func newGame() {
+        //TODO: Make it a new game
+        stopTimer()
+        initializeGame()
     }
     
     /**
@@ -847,37 +862,54 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func gameOver() {
         
         stopTimer()
-        showAlert("Game Over", "You've lost")
         playSound(named: "lose.wav")
         didWin = false
-        loseReason = getLoseReason()
-        print(loseReason)
+        gameLoseReason = getLoseReason()
+        let loseReasonText = getLoseReasonText(loseReason: gameLoseReason)
+        print(loseReasonText)
+        showAlert(title: "Game Over", message: loseReasonText, dismissText: "OK", confirmText: "Start a new game")
+        print(gameLoseReason)
         updateNextCardImage()
         
         addStats()
     }
     
-    func getLoseReason() -> String {
+    func getLoseReasonText(loseReason: LoseReason) -> String {
+        switch loseReason {
+        case .noEmptyJackSpots:
+            return "The next card is a Jack and there are no available spots in the sides."
+        case .noEmptyKingSpots:
+            return "The next card is a King and there are no available spots in the corners."
+        case .noEmptyQueenSpots:
+            return "The next card is a Queen and there are no available spots in the top and bottom."
+        case .noCardsToRemove:
+            return "There aren't any cards that sum up to \(gameSumMode) to remove."
+        default:
+            return ""
+        }
+    }
+    
+    func getLoseReason() -> LoseReason {
         if let nextCardRank = nextCard.rank {
             if nextCardRank == .jack && jacksAvailable == 0 {
-                return "noEmptyJackSpots"
+                return .noEmptyJackSpots
             }
             if nextCardRank == .queen && queensAvailable == 0 {
-                return "noEmptyQueenSpots"
+                return .noEmptyQueenSpots
             }
             if nextCardRank == .king && kingsAvailable == 0 {
-                return "noEmptyKingSpots"
+                return .noEmptyKingSpots
             }
         }
         if isBoardFull() && !checkForPairs() {
-            return "noCardsToRemove"
+            return .noCardsToRemove
         }
-        return "unknown"
+        return .unknown
     }
     
     func gameWon() {
         stopTimer()
-        showAlert("Congratulations!", "You won")
+        showAlert(title: "You Won!", message: "Good job! You filled the frame with royal cards", dismissText: "Great", confirmText: "Start a new game")
         playSound(named: "win.wav")
         didWin = true
 //        updateNextCardImage()
@@ -923,7 +955,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         gameRow.deck = deckHash
         gameRow.didWin = didWin
         gameRow.duration = Int16(secondsPassed)
-        gameRow.loseReason = loseReason
+        gameRow.loseReason = gameLoseReason.getRawValue()
         gameRow.nofCardsLeft = Int16(cardsLeft!)
         gameRow.nofJacksPlaced = getNumberOfCardsPlaced(withRank: .jack)
         gameRow.nofKingsPlaced = getNumberOfCardsPlaced(withRank: .king)
@@ -1234,7 +1266,7 @@ extension GameVC {
         
         switch feedbackType {
         case .placeError:
-            notificationFeedbackGenerator.notificationOccurred(.warning)
+            notificationFeedbackGenerator.notificationOccurred(.error)
         case .removeError:
             notificationFeedbackGenerator.notificationOccurred(.error)
         case .placeSuccess:
