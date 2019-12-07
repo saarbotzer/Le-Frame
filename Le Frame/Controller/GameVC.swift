@@ -116,8 +116,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     //TODO: Place in the correct place
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToSettings" {
-            if let destinationVC = segue.destination as? SettingsVC {
-                // Pause Timer? (if game is still on)
+            if segue.destination is SettingsVC {
+                // TODO: Pause Timer? (if game is still on)
             }
         }
     }
@@ -126,7 +126,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         super.dismiss(animated: flag, completion: completion)
         
-        // Resume Timer (if game is still on)
+        // TODO: Resume Timer (if game is still on)
         print("VC was dismissed")
     }
     
@@ -208,7 +208,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             
             let cardRank = card.rank!
             
-            let allowedRanks = getAllowedRanksByPosition(indexPath: indexPath)
+            let allowedRanks = getDesignatedRanksByPosition(indexPath: indexPath)
             
             switch cardRank {
             case .jack:
@@ -234,7 +234,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
         for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
             
-            let allowedRanks = getAllowedRanksByPosition(indexPath: cell.indexPath!)
+            let allowedRanks = getDesignatedRanksByPosition(indexPath: cell.indexPath!)
             // If the spot contains a card that does not match it's designated rank, the function returns false.
             if let card = cell.card {
                 let cardRank = card.rank!
@@ -279,13 +279,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return false
     }
     
-    // TODO: Maybe change AllowedRanks to "DesignatedRanks" or something like it
     /**
      Checks for a certain IndexPath which type of cards should be placed.
      - Parameter indexPath: The spot's IndexPath
      - Returns: The appropriate AllowedRanks for the spot
      */
-    func getAllowedRanksByPosition(indexPath: IndexPath) -> AllowedRanks {
+    func getDesignatedRanksByPosition(indexPath: IndexPath) -> DesignatedRanks {
         let row = indexPath.row
         let column = indexPath.section
         
@@ -379,9 +378,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             // If the card is 10 - remove
             if gameSumMode == .ten && firstCard.rank! == .ten {
                 playSound(named: "card-flip-2.wav")
+                haptic(of: .removeSuccess)
                 firstCardCell.removeCard()
                 enableDoneRemoving()
                 removeBtn.isEnabled = false
+            } else {
+                haptic(of: .removeError)
             }
         // Option 2 - Two cards are selected
         } else if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath != nil {
@@ -394,15 +396,20 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             // If the cards match - remove
             if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == gameSumMode.getRawValue() {
                 playSound(named: "card-flip-2.wav")
+                haptic(of: .removeSuccess)
                 firstCardCell.removeCard()
                 secondCardCell.removeCard()
                 enableDoneRemoving()
                 removeBtn.isEnabled = false
+            } else {
+                haptic(of: .removeError)
             }
         }
         resetCardIndexes()
         markAllCardAsNotSelected()
     }
+    
+    
     
     /** Called when **Done** button is pressed.
      Switches between removing and placing game modes and deselects all cards.
@@ -728,9 +735,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             animateCard(card: nextCard, to: indexPath)
             blockedCardTaps = 0
             cell.setCard(nextCard)
+            haptic(of: .placeSuccess)
             getNextCard()
             cardsLeft = cardsLeft! - 1
         } else {
+            haptic(of: .placeError)
             blockedCardTaps += 1
             
             if blockedCardTaps > 2 {
@@ -891,7 +900,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
             let indexPath = spot.indexPath!
-            let allowedRanks = getAllowedRanksByPosition(indexPath: indexPath)
+            let allowedRanks = getDesignatedRanksByPosition(indexPath: indexPath)
             if spot.isEmpty {
                 switch allowedRanks {
                 case .jacks:
@@ -1206,6 +1215,24 @@ extension GameVC {
 
 
 extension GameVC {
+    
+    func haptic(of feedbackType: HapticFeedbackType) {
+        
+        let notificationFeedbackGenerator = UINotificationFeedbackGenerator()
+        notificationFeedbackGenerator.prepare()
+        
+        
+        switch feedbackType {
+        case .placeError:
+            notificationFeedbackGenerator.notificationOccurred(.warning)
+        case .removeError:
+            notificationFeedbackGenerator.notificationOccurred(.error)
+        case .placeSuccess:
+            notificationFeedbackGenerator.notificationOccurred(.success)
+        case .removeSuccess:
+            notificationFeedbackGenerator.notificationOccurred(.success)
+        }
+    }
     
     func playSound(named soundFileFullName: String) {
         

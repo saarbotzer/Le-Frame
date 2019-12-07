@@ -168,7 +168,7 @@ class CardCollectionViewCell: UICollectionViewCell {
 }
 
 
-enum AllowedRanks {
+enum DesignatedRanks {
     case kings
     case jacks
     case queens

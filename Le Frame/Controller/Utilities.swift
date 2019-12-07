@@ -30,6 +30,13 @@ public enum HintType {
     case tappedHintButton
 }
 
+enum HapticFeedbackType {
+    case removeError
+    case removeSuccess
+    case placeError
+    case placeSuccess
+}
+
 public let spotImageName = "card-spot.png"
 
 /// The time that takes for a card to move from the new card spot to it's designated spot.
@@ -70,7 +77,7 @@ struct Utilities {
         
     }
     
-    static func getAllowedRanksByPosition(indexPath: IndexPath) -> AllowedRanks {
+    static func getAllowedRanksByPosition(indexPath: IndexPath) -> DesignatedRanks {
         let row = indexPath.row
         let column = indexPath.section
         
