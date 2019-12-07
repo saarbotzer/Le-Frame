@@ -54,8 +54,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var statsAdded : Bool = false
     
     // Timer
-    var timer: Timer?
-    var secondsPassed: Int = 0
+//    var timer: Timer?
+    
+    var labelUpdatingTimer: Timer = Timer()
+//    var secondsPassed: Int = 0
     
     // Settings
     let defaults = UserDefaults.standard
@@ -116,18 +118,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     //TODO: Place in the correct place
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToSettings" {
-            if segue.destination is SettingsVC {
-                // TODO: Pause Timer? (if game is still on)
-            }
+            pauseTimer()
         }
-    }
-
-    //TODO: Place in the correct place
-    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        super.dismiss(animated: flag, completion: completion)
-        
-        // TODO: Resume Timer (if game is still on)
-        print("VC was dismissed")
     }
     
     
@@ -162,7 +154,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         getNextCard()
         updateNextCardImage()
         updateCardsLeftLabel()
-        addTimer()
+        
+        // Timer
+        addCountingTimer()
+        addLabelTimer()
         
         
         startTime = Date()
@@ -917,38 +912,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    // MARK: Misc Functions
-    
-    func addTimer() {
-        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerElapsed), userInfo: nil, repeats: true)
-        RunLoop.main.add(timer!, forMode: .common)
-    }
-    
-    @objc func timerElapsed() {
-        secondsPassed += 1
-        
-        let hours = secondsPassed / 3600
-        let minutes = secondsPassed / 60 % 60
-        let seconds = secondsPassed % 60
-        
-        var timeString = ""
-        
-        if hours > 0 {
-            timeString = String(format: "%02i:%02i:%02i", hours, minutes, seconds)
-        } else {
-            timeString = String(format: "%02i:%02i", minutes, seconds)
-        }
-        
-        timeLabel.text = "TIME: \(timeString)"
-        
-        // Stop the timer
-//        timer?.invalidate()
-    }
-    
-    func stopTimer() {
-        timer?.invalidate()
-    }
-    
     // MARK: - Data Model Functions
     
     func addStats() {
@@ -1211,10 +1174,57 @@ extension GameVC {
         let spot = getSpot(at: indexPath)
         return spot.card
     }
-}
 
-
-extension GameVC {
+    
+    
+    
+    // MARK: - Time
+    
+    func addLabelTimer() {
+        labelUpdatingTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(updateLabel), userInfo: nil, repeats: true)
+    }
+    
+    
+    func addCountingTimer() {
+        if countingTimer.isValid == false {
+            countingTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerElapsed), userInfo: nil, repeats: true)
+        }
+    }
+    
+    func stopTimer() {
+        if countingTimer.isValid == true {
+            countingTimer.invalidate()
+        }
+    }
+    
+    @objc func updateLabel() {
+        let hours = secondsPassed / 3600
+        let minutes = secondsPassed / 60 % 60
+        let seconds = secondsPassed % 60
+        
+        var timeString = ""
+        
+        if hours > 0 {
+            timeString = String(format: "%02i:%02i:%02i", hours, minutes, seconds)
+        } else {
+            timeString = String(format: "%02i:%02i", minutes, seconds)
+        }
+        
+        timeLabel.text = "TIME: \(timeString)"
+    }
+    
+    @objc func timerElapsed() {
+        secondsPassed += 1
+    }
+    
+    func pauseTimer() {
+        if countingTimer.isValid == true {
+            countingTimer.invalidate()
+        }
+    }
+    
+    
+    // MARK: - Feedbacks
     
     func haptic(of feedbackType: HapticFeedbackType) {
         

@@ -170,5 +170,17 @@ class SettingsVC: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+        
+         
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if countingTimer.isValid == false {
+            countingTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerElapsed), userInfo: nil, repeats: true)
+        }
+    }
+    
+    @objc func timerElapsed() {
+        secondsPassed += 1
     }
 }
