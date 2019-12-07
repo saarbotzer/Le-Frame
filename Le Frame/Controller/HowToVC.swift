@@ -60,11 +60,14 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
 
 //        addSkipButton()
 
-        addGrid(with: royalFrameGrid)
+        
         
         if let firstViewController = orderedViewControllers.first {
             setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
         }
+        
+        configureConstraints()
+        
         configurePageControl()
         
         for subview in self.view.subviews {
@@ -75,18 +78,42 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         }
     }
     
+    
+    
+    func configureConstraints() {
+        
+    }
+    
+    override func loadView() {
+        super.loadView()
+        addTopLabel()
+    }
+    
     func addTopLabel() {
         
         // TODO: Add label to view
         
-        let label = UILabel()
+        let label = UILabel(frame: .zero)
         label.text = "How to play?"
-        label.font = UIFont(name: "System", size: 20)
+        label.font = UIFont(name: "System", size: 30)
         label.textColor = .white
+        label.textAlignment = .center
         
-        
+        label.translatesAutoresizingMaskIntoConstraints = false
+
         view.addSubview(label)
         
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+            label.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+            label.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+            label.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        addGrid(with: royalFrameGrid)
     }
     
     func getToShowOnboarding() -> Bool {
@@ -149,6 +176,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         let x = UIScreen.main.bounds.maxX / 2 - pageControlWidth / 2
         let y = UIScreen.main.bounds.maxY - 150
         
+        
         pageControl = UIPageControl(frame: CGRect(x: x, y: y, width: pageControlWidth, height: pageControlHeight))
         
         pageControl.layer.cornerRadius = 8
@@ -161,6 +189,33 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         pageControl.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: .touchUpInside)
         self.view.addSubview(pageControl)
+        
+        
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+
+        let container = UIView(frame: .zero)
+        
+        
+        container.addSubview(pageControl)
+        
+        NSLayoutConstraint.activate([
+            pageControl.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            pageControl.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            pageControl.heightAnchor.constraint(equalToConstant: pageControlHeight),
+            pageControl.widthAnchor.constraint(equalToConstant: pageControlWidth)
+
+        ])
+        
+        container.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(container)
+        
+        NSLayoutConstraint.activate([
+            container.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+            container.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+            container.heightAnchor.constraint(equalToConstant: 40)
+        ])
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
@@ -246,10 +301,16 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
     
     func addGrid(with gridNames: [[String]]) {
         
-        let cardWidth: CGFloat = 50
-        let cardHeight: CGFloat = 75
+        
+        let safeAreaHeight = self.view.safeAreaLayoutGuide.layoutFrame.size.height
+//        print(view.safeAreaInsets)
+//        print(view.safeAreaLayoutGuide.layoutFrame)
         let horizontalSpace: CGFloat = 10.0
         let verticalSpace: CGFloat = 10.0
+        
+        let cardHeight: CGFloat = safeAreaHeight / 2 / 4 - verticalSpace
+        let cardWidth: CGFloat = cardHeight * 2 / 3
+        
         
         let grid = UIStackView()
         grid.axis = .vertical
@@ -259,7 +320,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         let gridHeight = cardHeight * 4 + 3 * verticalSpace
         let gridWidth = cardWidth * 4 + 3 * horizontalSpace
         let gridX = (self.view.frame.width - gridWidth) / 2
-        let gridY: CGFloat = 100
+        let gridY: CGFloat = 50
         
         grid.frame = CGRect(x: gridX, y: gridY, width: gridWidth, height: gridHeight)
         
@@ -288,9 +349,21 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         }
         
         grid.tag = 5
-        
+
+        grid.translatesAutoresizingMaskIntoConstraints = false
+
         self.gridView = grid
         self.view.addSubview(gridView)
+        
+
+        NSLayoutConstraint.activate([
+//            grid.topAnchor.constraint(equalTo: self..centerXAnchor,),
+            grid.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            grid.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            grid.heightAnchor.constraint(equalToConstant: safeAreaHeight / 2),
+//            pageControl.widthAnchor.constraint(equalToConstant: pageControlWidth)
+
+        ])
     }
     
     func getGridForScreen(atIndex screenIndex: Int) {
