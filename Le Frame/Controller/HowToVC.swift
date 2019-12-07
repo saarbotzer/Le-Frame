@@ -12,13 +12,19 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
     
 
     lazy var orderedViewControllers: [UIViewController] = {
-        return [self.newVC(viewController: "screenOne"),
+        let VCs = [
+                self.newVC(viewController: "screenOne"),
                 self.newVC(viewController: "screenTwo"),
                 self.newVC(viewController: "screenThree"),
                 self.newVC(viewController: "screenFour"),
                 self.newVC(viewController: "screenFive"),
                 self.newVC(viewController: "screenSix")
         ]
+        
+        // TODO: Add Welcome screen and Start Playing screen if it's the first time playing
+        if 1==1 {
+            return VCs
+        }
     }()
     
     var pageControl = UIPageControl()
@@ -67,7 +73,6 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         }
         
         configureConstraints()
-        
         configurePageControl()
         
         for subview in self.view.subviews {
@@ -186,7 +191,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         pageControl.tintColor = .black
         pageControl.pageIndicatorTintColor = .white
         pageControl.currentPageIndicatorTintColor = .black
-        pageControl.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
+        pageControl.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: .touchUpInside)
         self.view.addSubview(pageControl)
         
