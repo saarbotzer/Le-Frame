@@ -47,6 +47,8 @@ enum HapticFeedbackType {
     case removeSuccess
     case placeError
     case placeSuccess
+    case gameOver
+    case win
 }
 
 public let spotImageName = "card-spot.png"
@@ -59,6 +61,7 @@ public var gameVCLoaded : Bool = false
 
 public var countingTimer : Timer = Timer()
 public var secondsPassed : Int = 0
+public var gameSumMode : SumMode = .ten
 
 struct Utilities {
     static func getCenterSpots() -> [IndexPath] {

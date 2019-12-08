@@ -61,7 +61,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     // Settings
     let defaults = UserDefaults.standard
-    var gameSumMode : SumMode = .ten
     
     // Sounds
     var player: AVAudioPlayer?
@@ -441,10 +440,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             selectCardForRemoval(at: indexPath)
         case .gameOver:
             // TODO: What to do when a card was tapped when gameOver/Won
-            gameOver()
+            gameOver(toAddStats: false)
         case .won:
             // TODO: What to do when a card was tapped when gameOver/Won
-            gameWon()
+            gameWon(toAddStats: false)
         }
         
 //        print("Next card: \(nextCard.imageName)")
@@ -560,8 +559,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
         let okAction = UIAlertAction(title: dismissText, style: .default, handler: nil)
 
-        alert.addAction(restartAction)
         alert.addAction(okAction)
+        alert.addAction(restartAction)
 
         present(alert, animated: true, completion: nil)
         
@@ -598,10 +597,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             showRemovalUI(show: true)
         case .gameOver:
             showRemovalUI(show: false)
-            gameOver()
+            gameOver(toAddStats: true)
         case .won:
             showRemovalUI(show: false)
-            gameWon()
+            gameWon(toAddStats: true)
         }
     }
     
@@ -859,19 +858,51 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return true
     }
     
-    func gameOver() {
+    func gameOver(toAddStats: Bool) {
         
         stopTimer()
         playSound(named: "lose.wav")
+        haptic(of: .gameOver)
         didWin = false
         gameLoseReason = getLoseReason()
         let loseReasonText = getLoseReasonText(loseReason: gameLoseReason)
-        print(loseReasonText)
-        showAlert(title: "Game Over", message: loseReasonText, dismissText: "OK", confirmText: "Start a new game")
-        print(gameLoseReason)
+        
+        let statsText = getGameStatsText()
+        let messageText = "\(loseReasonText)\n\n\(statsText)"
+        showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game")
         updateNextCardImage()
         
-        addStats()
+        if toAddStats {
+            addStats()
+        }
+    }
+    
+    func getGameStatsText() -> String {
+        var cardsLeftText = ""
+        if cardsLeft != nil && cardsLeft! > 0 {
+            cardsLeftText = "Cards Left: \(cardsLeft!)"
+        }
+        
+        let timeText = "Time: \(formatSeconds(seconds: secondsPassed))"
+        let statsText = "\(timeText)\n\(cardsLeftText)"
+        return statsText
+    }
+    
+    func formatSeconds(seconds: Int) -> String {
+        let hours = secondsPassed / 3600
+        let minutes = secondsPassed / 60 % 60
+        let seconds = secondsPassed % 60
+        
+        var timeString = ""
+        
+        if hours > 0 {
+            timeString = String(format: "%02i:%02i:%02i hours", hours, minutes, seconds)
+//            timeString += ""
+        } else {
+            timeString = String(format: "%02i:%02i minutes", minutes, seconds)
+        }
+        
+        return timeString
     }
     
     func getLoseReasonText(loseReason: LoseReason) -> String {
@@ -907,15 +938,23 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return .unknown
     }
     
-    func gameWon() {
+    func gameWon(toAddStats: Bool) {
         stopTimer()
-        showAlert(title: "You Won!", message: "Good job! You filled the frame with royal cards", dismissText: "Great", confirmText: "Start a new game")
+        
         playSound(named: "win.wav")
+        haptic(of: .win)
         didWin = true
-//        updateNextCardImage()
+        
+        let statsText = getGameStatsText()
+        let messageText = "Good job! You filled the frame with royal cards\n\n\(statsText)"
+        
+        showAlert(title: "You Won!", message: messageText, dismissText: "Great", confirmText: "Start a new game")
+        
         nextCardImageView.image = UIImage(named: spotImageName)
         
-        addStats()
+        if toAddStats {
+            addStats()
+        }
     }
 
     // Game Logic
@@ -1272,6 +1311,13 @@ extension GameVC {
         case .placeSuccess:
             notificationFeedbackGenerator.notificationOccurred(.success)
         case .removeSuccess:
+            notificationFeedbackGenerator.notificationOccurred(.success)
+        case .gameOver:
+            notificationFeedbackGenerator.notificationOccurred(.error)
+            notificationFeedbackGenerator.notificationOccurred(.error)
+        case .win:
+            notificationFeedbackGenerator.notificationOccurred(.success)
+            notificationFeedbackGenerator.notificationOccurred(.success)
             notificationFeedbackGenerator.notificationOccurred(.success)
         }
     }

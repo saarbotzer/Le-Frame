@@ -25,7 +25,6 @@ class SettingsVC: UIViewController {
     
     let defaults = UserDefaults.standard
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -96,16 +95,34 @@ class SettingsVC: UIViewController {
 
     @IBAction func sumSwitched(_ sender: UISegmentedControl) {
         let chosenSegmentIndex = sender.selectedSegmentIndex
-
-        // TODO: Make sumMode change for the next game
+        
+        var chosenSumMode = 10
+        
         switch chosenSegmentIndex {
         case 0:
-            defaults.set(10, forKey: "SumMode")
+            chosenSumMode = 10
         case 1:
-            defaults.set(11, forKey: "SumMode")
+            chosenSumMode = 11
         default:
             return
         }
+        
+        if gameSumMode.getRawValue() == chosenSumMode {
+            return
+        }
+        
+        defaults.set(chosenSumMode, forKey: "SumMode")
+        
+        let alertTitle = "Removal sum"
+        let alertMessage = "Removal sum for the current game has already been set on \(gameSumMode.getRawValue()). This change will be active in the next game"
+        let alert = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
+
+        let okAction = UIAlertAction(title: "Got it", style: .default, handler: nil)
+
+        alert.addAction(okAction)
+
+        present(alert, animated: true, completion: nil)
+        
     }
     
     @IBAction func showHintsSwitched(_ sender: UISegmentedControl) {
