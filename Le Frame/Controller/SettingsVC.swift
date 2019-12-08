@@ -188,11 +188,16 @@ class SettingsVC: UIViewController {
         super.viewDidDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
         
+        resumeTimer()
          
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        if countingTimer.isValid == false {
+        
+    }
+    
+    func resumeTimer() {
+        if countingTimer.isValid == false && gameFinished == false{
             countingTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerElapsed), userInfo: nil, repeats: true)
         }
     }

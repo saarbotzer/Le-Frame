@@ -62,6 +62,7 @@ public var gameVCLoaded : Bool = false
 public var countingTimer : Timer = Timer()
 public var secondsPassed : Int = 0
 public var gameSumMode : SumMode = .ten
+public var gameFinished : Bool = false
 
 struct Utilities {
     static func getCenterSpots() -> [IndexPath] {

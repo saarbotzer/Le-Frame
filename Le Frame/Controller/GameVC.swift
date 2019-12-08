@@ -40,7 +40,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var secondSelectedCardIndexPath: IndexPath?
     var cardsLeft : Int?
     
-    var gameStatus = GameStatus.placing
+    var gameStatus: GameStatus = .placing
     
     // Game Stats
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -142,6 +142,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         deck = model.getCards()
         deck.shuffle()
         restartAfter = false
+        gameFinished = false
         
         deckHash = model.getDeckHash(deck: deck)
         cardsLeft = deck.count
@@ -602,9 +603,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             showRemovalUI(show: true)
         case .gameOver:
             showRemovalUI(show: false)
+            gameFinished = true
             gameOver(toAddStats: true)
         case .won:
             showRemovalUI(show: false)
+            gameFinished = true
             gameWon(toAddStats: true)
         }
     }
