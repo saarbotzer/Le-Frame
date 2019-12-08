@@ -33,15 +33,32 @@ class StatisticsVC: UIViewController {
     
     @IBAction func resetTapped(_ sender: Any) {
         //TODO: Implement reset function with alert
-        print("reset")
-        deleteAllData()
+        let title = "Reset Data?"
+        let message = "Are you sure you want to reset all data? This cannot be undone"
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+        let deleteAction = UIAlertAction(title: "Reset", style: .destructive) { (action) in
+            self.deleteAllData()
+            self.loadStats()
+            self.setup()
+        }
+        let nevermindAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+
+        alert.addAction(nevermindAction)
+        alert.addAction(deleteAction)
+
+        present(alert, animated: true, completion: nil)
     }
     
     func setup() {
         setupUI()
         setupValue(for: cell1, with: getNumberOfGames())
         setupValue(for: cell2, with: getNumberOfWins())
-        setupValue(for: cell3, with: getAverageGameLength())
+        
+        let averageGameLength = getAverageGameLength()
+        let averageGameLengthText = Utilities.formatSeconds(seconds: averageGameLength)
+        setupValue(for: cell3, with: averageGameLengthText)
     }
     
     func setupUI() {
@@ -55,7 +72,6 @@ class StatisticsVC: UIViewController {
     }
     
     func setupValue(for cell: UIView, with value: Any) {
-        
         for subview in cell.subviews {
             if subview.tag == 1 {
                 if let valueLabel = subview as? UILabel {
@@ -81,16 +97,19 @@ class StatisticsVC: UIViewController {
         }
     }
     
-    func getAverageGameLength() -> Double {
+    func getAverageGameLength() -> Int {
         var totalSeconds : Double = 0
         var nofGames : Double = 0
         for game in stats {
             nofGames += 1
             totalSeconds += Double(game.duration)
         }
+        if nofGames == 0 {
+            return 0
+        }
         
         let average = totalSeconds/nofGames
-        return average.rounded()
+        return Int(average.rounded())
     }
     
     func getNumberOfWins() -> Int {

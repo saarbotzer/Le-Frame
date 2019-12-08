@@ -139,6 +139,24 @@ struct Utilities {
         let storyboard = UIStoryboard(name: storyboardName, bundle: Bundle.main);
         return storyboard.instantiateViewController(withIdentifier: viewControllerIdentifier);
     }
+    
+    static func formatSeconds(seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = seconds / 60 % 60
+        let seconds = seconds % 60
+        
+        var timeString = ""
+        
+        if hours > 0 {
+            timeString = String(format: "%02i:%02i:%02i hrs", hours, minutes, seconds)
+        } else if minutes > 0 {
+            timeString = String(format: "%02i:%02i mins", minutes, seconds)
+        } else {
+            timeString = String(format: "%02i secs", seconds)
+        }
+        
+        return timeString
+    }
 }
 
 

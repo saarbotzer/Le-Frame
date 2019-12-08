@@ -562,7 +562,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             self.addStats()
             self.initializeGame()
         }
-        let okAction = UIAlertAction(title: dismissText, style: .default, handler: nil)
+        let okAction = UIAlertAction(title: dismissText, style: .cancel, handler: nil)
 
         alert.addAction(okAction)
         alert.addAction(restartAction)
@@ -889,26 +889,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             cardsLeftText = "Cards Left: \(cardsLeft!)"
         }
         
-        let timeText = "Time: \(formatSeconds(seconds: secondsPassed))"
+        let timeText = "Time: \(Utilities.formatSeconds(seconds: secondsPassed))"
         let statsText = "\(timeText)\n\(cardsLeftText)"
         return statsText
-    }
-    
-    func formatSeconds(seconds: Int) -> String {
-        let hours = secondsPassed / 3600
-        let minutes = secondsPassed / 60 % 60
-        let seconds = secondsPassed % 60
-        
-        var timeString = ""
-        
-        if hours > 0 {
-            timeString = String(format: "%02i:%02i:%02i hours", hours, minutes, seconds)
-//            timeString += ""
-        } else {
-            timeString = String(format: "%02i:%02i minutes", minutes, seconds)
-        }
-        
-        return timeString
     }
     
     func getLoseReasonText(loseReason: LoseReason) -> String {
