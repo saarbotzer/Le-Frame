@@ -34,6 +34,7 @@ class StatisticsVC: UIViewController {
     @IBAction func resetTapped(_ sender: Any) {
         //TODO: Implement reset function with alert
         print("reset")
+        deleteAllData()
     }
     
     func setup() {

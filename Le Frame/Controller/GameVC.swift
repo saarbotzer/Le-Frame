@@ -45,10 +45,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // Game Stats
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var deckHash : String?
-    var gameID : UUID?
+    var gameID : UUID = UUID()
     var didWin : Bool = false
     var gameLoseReason : LoseReason = .unknown
-    var restartAfter : Bool?
+    var restartAfter : Bool = false
     var startTime : Date?
     
     var statsAdded : Bool = false
@@ -141,11 +141,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 //        deck = model.getRegularTestDeck()
         deck = model.getCards()
         deck.shuffle()
+        restartAfter = false
         
         deckHash = model.getDeckHash(deck: deck)
         cardsLeft = deck.count
         
         gameID = UUID()
+        print("Started new game \(gameID.uuidString)")
         statsAdded = false
         secondsPassed = 0
         
@@ -431,6 +433,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+                
         switch gameStatus {
         case .placing:
             placeCard(at: indexPath)
@@ -555,6 +558,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
         let restartAction = UIAlertAction(title: confirmText, style: .default) { (action) in
             self.stopTimer()
+            self.restartAfter = true
+            self.addStats()
             self.initializeGame()
         }
         let okAction = UIAlertAction(title: dismissText, style: .default, handler: nil)
@@ -765,12 +770,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func selectCardForRemoval(at indexPath: IndexPath) {
         let tappedSpot = getSpot(at: indexPath)
         
-        removeBtn.isEnabled = true
-        
         // In case of pressing an empty spot in removal mode
         if tappedSpot.isEmpty {
             return
         }
+        
+        removeBtn.isEnabled = true
         
         // If this is the first selected card, select the tapped card
         if firstSelectedCardIndexPath == nil {
@@ -873,6 +878,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         updateNextCardImage()
         
         if toAddStats {
+            print("Will add stats")
             addStats()
         }
     }
@@ -985,31 +991,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     // MARK: - Data Model Functions
     
-    func addStats() {
-        if statsAdded {
-            return
-        }
-        let gameRow: Game = Game(context: context)
-        gameRow.gameID = gameID
-        gameRow.deck = deckHash
-        gameRow.didWin = didWin
-        gameRow.duration = Int16(secondsPassed)
-        gameRow.loseReason = gameLoseReason.getRawValue()
-        gameRow.nofCardsLeft = Int16(cardsLeft!)
-        gameRow.nofJacksPlaced = getNumberOfCardsPlaced(withRank: .jack)
-        gameRow.nofKingsPlaced = getNumberOfCardsPlaced(withRank: .king)
-        gameRow.nofQueensPlaced = getNumberOfCardsPlaced(withRank: .queen)
-        gameRow.nofHintsUsed = Int16(hintsUsed)
-        
-        // TODO: Check if restarted after, update row
-        gameRow.restartAfter = false
-        
-        gameRow.startTime = startTime
-        gameRow.sumMode = Int16(gameSumMode.getRawValue())
-        
-        saveStats()
-    }
-    
     func getNumberOfCardsPlaced(withRank rank: CardRank) -> Int16 {
         var nofCards : Int16 = 0
         for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
@@ -1022,17 +1003,65 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return nofCards
     }
     
+    func addStats() {
+        
+        let gameSavedStats = getStats(for: gameID)
+        
+        if let gameStatsToAdd = gameSavedStats {
+            print("Just updating data")
+            gameStatsToAdd.restartAfter = restartAfter
+        } else {
+            print("Adding data")
+            let gameStatsToAdd = Game(context: context)
+            gameStatsToAdd.gameID = gameID
+            gameStatsToAdd.deck = deckHash
+            gameStatsToAdd.didWin = didWin
+            gameStatsToAdd.duration = Int16(secondsPassed)
+            gameStatsToAdd.loseReason = gameLoseReason.getRawValue()
+            gameStatsToAdd.nofCardsLeft = Int16(cardsLeft!)
+            gameStatsToAdd.nofJacksPlaced = getNumberOfCardsPlaced(withRank: .jack)
+            gameStatsToAdd.nofKingsPlaced = getNumberOfCardsPlaced(withRank: .king)
+            gameStatsToAdd.nofQueensPlaced = getNumberOfCardsPlaced(withRank: .queen)
+            gameStatsToAdd.nofHintsUsed = Int16(hintsUsed)
+            gameStatsToAdd.restartAfter = restartAfter
+            gameStatsToAdd.startTime = startTime
+            gameStatsToAdd.sumMode = Int16(gameSumMode.getRawValue())
+            gameStatsToAdd.synced = false
+        }
+        
+        saveStats()
+    }
+    
+    
     func saveStats() {
         do {
             try context.save()
-            statsAdded = true
+//            statsAdded = true
+            print("Stats added")
         } catch {
             print("Error saving context: \(error)")
         }
     }
     
-    
-
+    func getStats(for gameID: UUID) -> Game? {
+        var gameRow: Game? = nil
+        
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest.init(entityName: "Game")
+        fetchRequest.predicate = NSPredicate(format: "gameID = %@", gameID.uuidString)
+        do {
+            let results = try context.fetch(fetchRequest)
+            if results.count == 1 {
+                gameRow = results[0] as? Game
+            } else if results.count > 1 {
+                gameRow = results[0] as? Game
+                // TODO: Delete other results if there is more than one
+            }
+        }
+        catch {
+            print(error)
+        }
+        return gameRow
+    }
 }
 
 
@@ -1073,7 +1102,6 @@ extension GameVC {
                         indexPathsToHint = emptyRoyalSpots
                     }
                 } else {
-                    // TODO: Hint appropriate cell for each royal rank
                     let rankIndexPaths = Utilities.getSpots(forRank: nextCardRank)
                     let emptyRankSpots = filterSpots(indexPaths: rankIndexPaths, empty: true)
                     indexPathsToHint = emptyRankSpots

@@ -14,10 +14,11 @@
         <attribute name="restartAfter" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="startTime" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="sumMode" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="synced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
     </entity>
     <entity name="TestEntity" representedClassName=".TestEntity" syncable="YES" codeGenerationType="class"/>
     <elements>
-        <element name="Game" positionX="-63" positionY="-18" width="128" height="238"/>
+        <element name="Game" positionX="-63" positionY="-18" width="128" height="253"/>
         <element name="TestEntity" positionX="-54" positionY="81" width="128" height="43"/>
     </elements>
 </model>
