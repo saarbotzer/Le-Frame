@@ -17,7 +17,6 @@
 		BC7A9B1823918A5B002CC9B3 /* lose.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1723918A5B002CC9B3 /* lose.wav */; };
 		BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */; };
 		BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CEE234DEDE400CD951D /* AppDelegate.swift */; };
-		BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */; };
 		BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF2234DEDE400CD951D /* GameVC.swift */; };
 		BCC40CF6234DEDE400CD951D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF4234DEDE400CD951D /* Main.storyboard */; };
 		BCC40CF8234DEDEB00CD951D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF7234DEDEB00CD951D /* Assets.xcassets */; };
@@ -28,6 +27,7 @@
 		BCD6074C238C6483000AFA6F /* roundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD6074B238C6482000AFA6F /* roundButton.swift */; };
 		BCE12CE9234E340400962F00 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CE8234E340400962F00 /* Card.swift */; };
 		BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CEE234E35E400962F00 /* Utilities.swift */; };
+		BCF57EAE239ED8F200F762FA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF57EAD239ED8F200F762FA /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,9 +40,8 @@
 		BC7A9B1523918798002CC9B3 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = win.wav; sourceTree = "<group>"; };
 		BC7A9B1723918A5B002CC9B3 /* lose.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = lose.wav; sourceTree = "<group>"; };
 		BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestartAlertController.swift; sourceTree = "<group>"; };
-		BCC40CEB234DEDE400CD951D /* Le Frame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Le Frame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BCC40CEB234DEDE400CD951D /* Royal Frame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Royal Frame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCC40CEE234DEDE400CD951D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		BCC40CF2234DEDE400CD951D /* GameVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameVC.swift; sourceTree = "<group>"; };
 		BCC40CF5234DEDE400CD951D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		BCC40CF7234DEDEB00CD951D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -54,6 +53,7 @@
 		BCD6074B238C6482000AFA6F /* roundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = roundButton.swift; sourceTree = "<group>"; };
 		BCE12CE8234E340400962F00 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = "Le Frame/Model/Card.swift"; sourceTree = SOURCE_ROOT; };
 		BCE12CEE234E35E400962F00 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		BCF57EAD239ED8F200F762FA /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +89,7 @@
 		BCC40CEC234DEDE400CD951D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BCC40CEB234DEDE400CD951D /* Le Frame.app */,
+				BCC40CEB234DEDE400CD951D /* Royal Frame.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,8 +102,8 @@
 				BCE12CEC234E354E00962F00 /* View */,
 				BCE12CEB234E354500962F00 /* Controller */,
 				BCC40CFC234DEDEB00CD951D /* Info.plist */,
-				BCC40CF0234DEDE400CD951D /* SceneDelegate.swift */,
 				BCC40CF7234DEDEB00CD951D /* Assets.xcassets */,
+				BCF57EAD239ED8F200F762FA /* SceneDelegate.swift */,
 				BCE12CED234E355E00962F00 /* Other */,
 			);
 			path = "Le Frame";
@@ -169,7 +169,7 @@
 			);
 			name = "Le Frame";
 			productName = "Le Frame";
-			productReference = BCC40CEB234DEDE400CD951D /* Le Frame.app */;
+			productReference = BCC40CEB234DEDE400CD951D /* Royal Frame.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -228,6 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */,
+				BCF57EAE239ED8F200F762FA /* SceneDelegate.swift in Sources */,
 				BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */,
 				BCD6074A238B3F9D000AFA6F /* SettingsVC.swift in Sources */,
 				BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */,
@@ -238,7 +239,6 @@
 				BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */,
 				BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */,
 				BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */,
-				BCC40CF1234DEDE400CD951D /* SceneDelegate.swift in Sources */,
 				BC7A9B09238F132B002CC9B3 /* StatisticsVC.swift in Sources */,
 				BCC40D0B234DF4A000CD951D /* CardModel.swift in Sources */,
 			);
@@ -387,12 +387,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3N4HXSP3Z;
 				INFOPLIST_FILE = "Le Frame/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.saarbotzer.Le-Frame";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MARKETING_VERSION = 0.8;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.saarbotzer.Royal-Frame";
+				PRODUCT_NAME = "Royal Frame";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -405,12 +407,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3N4HXSP3Z;
 				INFOPLIST_FILE = "Le Frame/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.saarbotzer.Le-Frame";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MARKETING_VERSION = 0.8;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.saarbotzer.Royal-Frame";
+				PRODUCT_NAME = "Royal Frame";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
