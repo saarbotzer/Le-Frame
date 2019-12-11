@@ -44,7 +44,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     // Game Stats
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    var deckHash : String?
+    var deckString : String?
     var gameID : UUID = UUID()
     var didWin : Bool = false
     var gameLoseReason : LoseReason = .unknown
@@ -56,7 +56,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // Timer
 //    var timer: Timer?
     
-    var labelUpdatingTimer: Timer = Timer()
+    var timer: Timer = Timer()
 //    var secondsPassed: Int = 0
     
     // Settings
@@ -79,30 +79,17 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var lastTapTime : Date?
     
     
-    func updateViews() {
-        let totalContentHeight = bottomView.frame.height + spotsCollectionView.frame.height
-        let contentRowHeight = totalContentHeight / 5
-        
-        spotsCollectionView.frame = CGRect(x: spotsCollectionView.frame.minX, y: spotsCollectionView.frame.minY, width: spotsCollectionView.frame.width, height: contentRowHeight * 4)
-        
-        bottomView.frame = CGRect(x: bottomView.frame.minX, y: bottomView.frame.minY, width: bottomView.frame.width, height: contentRowHeight)
-    }
     
-    // MARK: viewDidLoad
+    // MARK: - ViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        updateViews()
-        
-        gameVCLoaded = true
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        spotsCollectionView.delegate = self
-        spotsCollectionView.dataSource = self
+        setDelegates()
         
         updateUI()
         
-        initializeGame()
+        startNewGame()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -114,59 +101,94 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    //TODO: Place in the correct place
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "goToSettings" {
-            pauseTimer()
+    func setDelegates() {
+        spotsCollectionView.delegate = self
+        spotsCollectionView.dataSource = self
+        tabBar.delegate = self
+    }
+    
+    // MARK: - UI Functions
+    
+    /**
+     Gathers all UI functions for initializing the views
+     */
+    func updateUI() {
+        updateViews()
+        updateTabBarUI()
+    }
+    
+    /**
+     Updates the appearance of the spots grid and the bottom view.
+     */
+    func updateViews() {
+        let totalContentHeight = bottomView.frame.height + spotsCollectionView.frame.height
+        let contentRowHeight = totalContentHeight / 5
+        
+        // Spots grid
+        spotsCollectionView.frame = CGRect(x: spotsCollectionView.frame.minX, y: spotsCollectionView.frame.minY, width: spotsCollectionView.frame.width, height: contentRowHeight * 4)
+        spotsCollectionView.backgroundColor = UIColor.clear
+        
+        // Bottom view
+        bottomView.frame = CGRect(x: bottomView.frame.minX, y: bottomView.frame.minY, width: bottomView.frame.width, height: contentRowHeight)
+        
+        doneRemovingBtn.setTitleColor(UIColor.white, for: .normal)
+        doneRemovingBtn.setTitleColor(disabledColor, for: .disabled)
+        
+        removeBtn.setTitleColor(UIColor.white, for: .normal)
+        removeBtn.setTitleColor(disabledColor, for: .disabled)
+    }
+    
+    
+    /**
+     Updates the TabBar UI
+     */
+    func updateTabBarUI() {
+        tabBar.layer.borderWidth = 0.5
+        tabBar.layer.borderColor = UIColor.clear.cgColor
+        tabBar.clipsToBounds = true
+        
+        tabBar.backgroundColor = UIColor.clear
+        
+        // Changing the tabBar items' color to black
+        for item in tabBar.items! {
+            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.white], for: .normal)
         }
     }
     
-    
-    // MARK: - Gameflow Functions
     /**
-     Starts a new game.
+     Switches between showing and hiding the removal mode UI
+     
+     - Parameter show: True if show removal mode UI, false otherwise
      */
-    func initializeGame() {
+    func showRemovalUI(show: Bool) {
+        doneRemovingBtn.isHidden = !show
+        removeBtn.isHidden = !show
+        removeBtn.isEnabled = false
+        doneRemovingBtn.isEnabled = false
+        removalSumLabel.isHidden = !show
+        removalSumTitleLabel.isHidden = !show
+        removalSumLabel.adjustsFontSizeToFitWidth = true
+        removalSumLabel.minimumScaleFactor = 0.2
         
-        gameSumMode = getSumSetting()
-        removalSumLabel.text = "\(gameSumMode.getRawValue())"
-        
-        setGameStatus(status: .placing)
-        
-        markAllCardAsNotSelected()
-        removeAllCards()
-        
-        // Get deck
-        deck = model.getRoyalTestDeck()
-//        deck = model.getRegularTestDeck()
-        deck = model.getCards()
-        deck.shuffle()
-        restartAfter = false
-        gameFinished = false
-        
-        deckHash = model.getDeckHash(deck: deck)
-        cardsLeft = deck.count
-        
-        gameID = UUID()
-        print("Started new game \(gameID.uuidString)")
-        statsAdded = false
-        secondsPassed = 0
-        
-        // Handle first card
-        getNextCard()
-        updateNextCardImage()
-        updateCardsLeftLabel()
-        
-        // Timer
-        addCountingTimer()
-        addLabelTimer()
-        
-        
-        startTime = Date()
+        if show {
+            nextCardImageView.image = UIImage(named: spotImageName)
+        }
     }
     
     /**
+     Enables the Done Removing button
+     */
+    func enableDoneRemoving() {
+        if !checkForPairs(){
+            doneRemovingBtn.isEnabled = true
+        }
+    }
+    
+    // MARK: - Settings Getters
+    
+    /**
      Gets the setted SumMode (10/11) for the current game from the user defaults.
+     
      - Returns: The setted SumMode
      */
     func getSumSetting() -> SumMode {
@@ -178,16 +200,69 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
+    /**
+     Gets the setted hints settings (whether to show hints or not)
+     
+     - Returns: True if show hints, false otherwise
+     */
     func getHintsSetting() -> Bool {
         let savedValue = defaults.bool(forKey: "ShowHintsOn")
         return savedValue
     }
     
+    /**
+     Gets the setted sounds settings
+     
+     - Returns: True if play sounds, false otherwise
+     */
     func getSoundSetting() -> Bool {
         let savedValue = defaults.bool(forKey: "SoundsOn")
         return savedValue
     }
     
+    // MARK: - Game Flow
+    
+    /**
+         Starts a new game.
+         */
+        func startNewGame() {
+            
+            // Get game settings
+            gameSumMode = getSumSetting()
+            setGameStatus(status: .placing)
+            
+            restartAfter = false
+            gameFinished = false
+            gameID = UUID()
+            startTime = Date()
+            statsAdded = false
+            secondsPassed = 0
+            
+            // UI
+            removalSumLabel.text = "\(gameSumMode.getRawValue())"
+            markAllCardAsNotSelected()
+            removeAllCards()
+            
+            // Get deck
+            deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
+    //        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
+    //        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
+    //        deck = model.getDeck(ofType: .fromString, random: false, from: "h13c13d13s13h12c12d12s12h11c11d11s11h10c10", fullDeck: false)
+            
+            deckString = model.getDeckString(deck: deck)
+            
+            cardsLeft = deck.count
+            
+            print("Started new game \(gameID.uuidString)")
+            
+            // Handle first card
+            getNextCard()
+            updateNextCardImage()
+            updateCardsLeftLabel()
+            
+            // Timer
+            addTimer()
+        }
     
     /**
      Checks whether the next card can be placed at a spot on the board.
@@ -276,69 +351,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return false
     }
     
-    /**
-     Checks for a certain IndexPath which type of cards should be placed.
-     - Parameter indexPath: The spot's IndexPath
-     - Returns: The appropriate AllowedRanks for the spot
-     */
-    func getDesignatedRanksByPosition(indexPath: IndexPath) -> DesignatedRanks {
-        let row = indexPath.row
-        let column = indexPath.section
-        
-        switch (row, column) {
-        // Corners
-        case (0, 0), (0, 3), (3, 0), (3, 3):
-            return .kings
-        // Sides
-        case (1, 0), (2, 0), (1, 3), (2, 3):
-            return .queens
-        // Floor and ceiling
-        case (0, 1), (0, 2), (3, 1), (3, 2):
-            return .jacks
-        // Center
-        default:
-            return .notRoyal
-        }
-    }
-    
-    
-    
-    // TODO: Move function to appropriate place and improve function
-    func updateUI() {
-        spotsCollectionView.backgroundColor = UIColor.clear
-        
-        
-        doneRemovingBtn.setTitleColor(UIColor.white, for: .normal)
-        doneRemovingBtn.setTitleColor(disabledColor, for: .disabled)
-        
-        removeBtn.setTitleColor(UIColor.white, for: .normal)
-        removeBtn.setTitleColor(disabledColor, for: .disabled)
-
-        updateTabBarUI()
-    }
-    
-    // TODO: Move function to appropriate place
-    func updateTabBarUI() {
-        tabBar.layer.borderWidth = 0.50
-        tabBar.layer.borderColor = UIColor.clear.cgColor
-        tabBar.clipsToBounds = true
-        
-        tabBar.backgroundColor = UIColor.clear
-        
-        // Changing the tabBar items' color to black
-        for item in tabBar.items! {
-//            item.image = item.image?.withRenderingMode(.alwaysOriginal)
-            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.white], for: .normal)
-        }
-        
-        
-        // TODO: Move to another place
-        tabBar.delegate = self
-    }
-    
     // MARK: - IBActions
-    
-
     
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         switch item.tag {
@@ -357,9 +370,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
         
     }
-    
-    
-    
     
     /** Called when **Remove** button is pressed.
      The function checks whether one card or two cards are selected, and removes them if they are summed to 10 or 11 (depending on the mode).
@@ -407,7 +417,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     
-    
     /** Called when **Done** button is pressed.
      Switches between removing and placing game modes and deselects all cards.
      */
@@ -443,30 +452,14 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         case .removing:
             selectCardForRemoval(at: indexPath)
         case .gameOver:
-            // TODO: What to do when a card was tapped when gameOver/Won
             gameOver(toAddStats: false)
         case .won:
-            // TODO: What to do when a card was tapped when gameOver/Won
             gameWon(toAddStats: false)
         }
-        
-//        print("Next card: \(nextCard.imageName)")
-        
-        
-        
-//        if gameStatus != .removing {
-//            if isGameOver() {
-//                setGameStatus(status: .gameOver)
-//            } else if isGameWon() {
-//                setGameStatus(status: .won)
-//            }
-//        }
     }
     
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        
-        
         
         let totalCardWidth: CGFloat = cardWidth * 4
         let gridWidth = collectionView.frame.width
@@ -480,16 +473,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let edgeInsets = (self.view.frame.size.width - (4 * cardWidth)) / (4 + 1)
         
         return UIEdgeInsets(top: 5.0, left: edgeInsets, bottom: 5.0, right: edgeInsets)
-//        return UIEdgeInsets(top: 5.0, left: 5.0, bottom: 5.0, right: 5.0)
 
     }
-    
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-//        let gridWidth = collectionView.frame.width
-//        let spacing = (gridWidth - (4 * cardWidth)) / 4
-//        
-//        return 5.0
-//    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
@@ -502,6 +487,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
         return CGSize(width: cardWidth, height: cardHeight)
     }
+    
     // MARK: - Spots Handling and Interface Methods
 
     /**
@@ -561,7 +547,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             self.stopTimer()
             self.restartAfter = true
             self.addStats()
-            self.initializeGame()
+            self.startNewGame()
         }
         let okAction = UIAlertAction(title: dismissText, style: .cancel, handler: nil)
 
@@ -584,7 +570,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func newGame() {
         //TODO: Make it a new game
         stopTimer()
-        initializeGame()
+        startNewGame()
     }
     
     /**
@@ -612,26 +598,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    func showRemovalUI(show: Bool) {
-        doneRemovingBtn.isHidden = !show
-        removeBtn.isHidden = !show
-        removeBtn.isEnabled = false
-        doneRemovingBtn.isEnabled = false
-        removalSumLabel.isHidden = !show
-        removalSumTitleLabel.isHidden = !show
-        removalSumLabel.adjustsFontSizeToFitWidth = true
-        removalSumLabel.minimumScaleFactor = 0.2
-        
-        if show {
-            nextCardImageView.image = UIImage(named: spotImageName)
-        }
-    }
-    
-    func enableDoneRemoving() {
-        if !checkForPairs(){
-            doneRemovingBtn.isEnabled = true
-        }
-    }
     
     func resetCardIndexes() {
         firstSelectedCardIndexPath = nil
@@ -753,6 +719,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             blockedCardTaps = 0
             cell.setCard(nextCard)
             haptic(of: .placeSuccess)
+            
             getNextCard()
             cardsLeft = cardsLeft! - 1
         } else {
@@ -814,6 +781,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             nextCard = deck.remove(at: 0)
             
             updateNextCardImage()
+        } else {
+            setGameStatus(status: .won)
         }
     }
     
@@ -826,11 +795,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         if let image = UIImage(named: "\(nextCard.imageName).jpg") {
             nextCardImageView.image = image
         }
-//        if gameStatus == .placing || gameStatus == .removing {
-//            nextCardImageView.image = UIImage(named: "\(nextCard.imageName).jpg")
-//        } else {
-////            nextCardImageView.image = UIImage(named: spotImageName)
-//        }
     }
     
     // Game Logic
@@ -881,7 +845,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         updateNextCardImage()
         
         if toAddStats {
-            print("Will add stats")
             addStats()
         }
     }
@@ -975,39 +938,28 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    // MARK: - Data Model Functions
+    // MARK: - Stats Functions
     
-    func getNumberOfCardsPlaced(withRank rank: CardRank) -> Int16 {
-        var nofCards : Int16 = 0
-        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if let card = cell.card {
-                if card.rank! == rank {
-                    nofCards += 1
-                }
-            }
-        }
-        return nofCards
-    }
-    
+    /**
+     Adds the game stats to the context.
+     */
     func addStats() {
         
         let gameSavedStats = getStats(for: gameID)
         
         if let gameStatsToAdd = gameSavedStats {
-            print("Just updating data")
             gameStatsToAdd.restartAfter = restartAfter
         } else {
-            print("Adding data")
             let gameStatsToAdd = Game(context: context)
             gameStatsToAdd.gameID = gameID
-            gameStatsToAdd.deck = deckHash
+            gameStatsToAdd.deck = deckString
             gameStatsToAdd.didWin = didWin
             gameStatsToAdd.duration = Int16(secondsPassed)
             gameStatsToAdd.loseReason = gameLoseReason.getRawValue()
             gameStatsToAdd.nofCardsLeft = Int16(cardsLeft!)
-            gameStatsToAdd.nofJacksPlaced = getNumberOfCardsPlaced(withRank: .jack)
-            gameStatsToAdd.nofKingsPlaced = getNumberOfCardsPlaced(withRank: .king)
-            gameStatsToAdd.nofQueensPlaced = getNumberOfCardsPlaced(withRank: .queen)
+            gameStatsToAdd.nofJacksPlaced = Int16(getNumberOfCardsPlaced(withRank: .jack))
+            gameStatsToAdd.nofKingsPlaced = Int16(getNumberOfCardsPlaced(withRank: .king))
+            gameStatsToAdd.nofQueensPlaced = Int16(getNumberOfCardsPlaced(withRank: .queen))
             gameStatsToAdd.nofHintsUsed = Int16(hintsUsed)
             gameStatsToAdd.restartAfter = restartAfter
             gameStatsToAdd.startTime = startTime
@@ -1018,17 +970,23 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         saveStats()
     }
     
-    
+    /**
+     Save the stats that are staged in the context.
+     */
     func saveStats() {
         do {
             try context.save()
-//            statsAdded = true
-            print("Stats added")
         } catch {
             print("Error saving context: \(error)")
         }
     }
     
+    /**
+     Gets the stats for a gameID
+     
+     - Parameter gameID: The gameID to get the stats for
+     - Returns: The game object with all the stats
+     */
     func getStats(for gameID: UUID) -> Game? {
         var gameRow: Game? = nil
         
@@ -1047,6 +1005,76 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             print(error)
         }
         return gameRow
+    }
+    
+    
+    // MARK: - Helper Functions
+    
+    /**
+     Checks for a certain IndexPath which type of cards should be placed.
+     - Parameter indexPath: The spot's IndexPath
+     - Returns: The appropriate AllowedRanks for the spot
+     */
+    func getDesignatedRanksByPosition(indexPath: IndexPath) -> DesignatedRanks {
+        let row = indexPath.row
+        let column = indexPath.section
+        
+        switch (row, column) {
+        // Corners
+        case (0, 0), (0, 3), (3, 0), (3, 3):
+            return .kings
+        // Sides
+        case (1, 0), (2, 0), (1, 3), (2, 3):
+            return .queens
+        // Floor and ceiling
+        case (0, 1), (0, 2), (3, 1), (3, 2):
+            return .jacks
+        // Center
+        default:
+            return .notRoyal
+        }
+    }
+    
+    /**
+     Gets the number of cards that are currently placed on the board
+     
+     - Parameter rank: The rank of which to count placed cards
+     - Returns: The numebr of cards of the specified rank placed on the board
+     */
+    func getNumberOfCardsPlaced(withRank rank: CardRank) -> Int {
+        var nofCards : Int = 0
+        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if let card = cell.card {
+                if card.rank! == rank {
+                    nofCards += 1
+                }
+            }
+        }
+        return nofCards
+    }
+    
+    func isSpotEmpty(indexPath: IndexPath) -> Bool {
+        let spot = getSpot(at: indexPath)
+        return spot.isEmpty
+    }
+    
+    func filterSpots(indexPaths: [IndexPath], empty: Bool) -> [IndexPath] {
+        return indexPaths.filter { (indexPath) -> Bool in
+            if empty {
+                return isSpotEmpty(indexPath: indexPath)
+            } else {
+                return !isSpotEmpty(indexPath: indexPath)
+            }
+        }
+    }
+    
+    func getSpot(at indexPath: IndexPath) -> CardCollectionViewCell {
+        return spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+    }
+    
+    func getCard(at indexPath: IndexPath) -> Card? {
+        let spot = getSpot(at: indexPath)
+        return spot.card
     }
 }
 
@@ -1167,9 +1195,9 @@ extension GameVC {
 //            emptySpots = emptyKingSpots + emptyQueenSpots + emptyJackSpots
             // If two or more royal ranks have the same number of empty spots
             
-            let placedJacks = getNumberOfPlacedCards(forRank: .jack)
-            let placedQueens = getNumberOfPlacedCards(forRank: .queen)
-            let placedKings = getNumberOfPlacedCards(forRank: .king)
+            let placedJacks = getNumberOfCardsPlaced(withRank: .jack)
+            let placedQueens = getNumberOfCardsPlaced(withRank: .queen)
+            let placedKings = getNumberOfCardsPlaced(withRank: .king)
 
             if emptyJackSpots.count == emptyQueenSpots.count && emptyJackSpots.count == emptyKingSpots.count {
                 // Find rank with most placed royal cards out of the three ranks
@@ -1224,61 +1252,22 @@ extension GameVC {
         return emptySpots
     }
     
-    func getNumberOfPlacedCards(forRank rank: CardRank) -> Int {
-        var placedCards = 0
-        let spotsIndexPaths = Utilities.getSpots(forRank: rank)
-        for indexPath in spotsIndexPaths {
-            let spot = getSpot(at: indexPath)
-            if spot.card?.rank == rank {
-                placedCards += 1
-            }
-        }
-        return placedCards
-    }
-    
-    func isSpotEmpty(indexPath: IndexPath) -> Bool {
-        let spot = getSpot(at: indexPath)
-        return spot.isEmpty
-    }
-    
-    func filterSpots(indexPaths: [IndexPath], empty: Bool) -> [IndexPath] {
-        return indexPaths.filter { (indexPath) -> Bool in
-            if empty {
-                return isSpotEmpty(indexPath: indexPath)
-            } else {
-                return !isSpotEmpty(indexPath: indexPath)
-            }
-        }
-    }
-    
-    func getSpot(at indexPath: IndexPath) -> CardCollectionViewCell {
-        return spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
-    }
-    
-    func getCard(at indexPath: IndexPath) -> Card? {
-        let spot = getSpot(at: indexPath)
-        return spot.card
-    }
 
     
     
     
-    // MARK: - Time
+    // MARK: - Timer
     
-    func addLabelTimer() {
-        labelUpdatingTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(updateLabel), userInfo: nil, repeats: true)
-    }
-    
-    
-    func addCountingTimer() {
-        if countingTimer.isValid == false {
-            countingTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerElapsed), userInfo: nil, repeats: true)
-        }
+    /**
+
+     */
+    func addTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerElapsed), userInfo: nil, repeats: true)
     }
     
     func stopTimer() {
-        if countingTimer.isValid == true {
-            countingTimer.invalidate()
+        if timer.isValid == true {
+            timer.invalidate()
         }
     }
     
@@ -1299,12 +1288,10 @@ extension GameVC {
     }
     
     @objc func timerElapsed() {
-        secondsPassed += 1
-    }
-    
-    func pauseTimer() {
-        if countingTimer.isValid == true {
-            countingTimer.invalidate()
+        // If another view controller is presented than pause the timer
+        if presentedViewController == nil {
+            secondsPassed += 1
+            updateLabel()
         }
     }
     

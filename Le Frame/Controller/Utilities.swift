@@ -57,9 +57,6 @@ public let spotImageName = "card-spot.png"
 public let cardAnimationDuration : Double = 0.3
  
 
-public var gameVCLoaded : Bool = false
-
-public var countingTimer : Timer = Timer()
 public var secondsPassed : Int = 0
 public var gameSumMode : SumMode = .ten
 public var gameFinished : Bool = false

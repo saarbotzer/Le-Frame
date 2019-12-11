@@ -14,7 +14,7 @@ class Card {
     var rank: CardRank?
     var suit: CardSuit?
     
-    func createImageName(suit: CardSuit, rank: CardRank) {
+    func createCard(withSuit suit: CardSuit, withRank rank: CardRank) {
         self.imageName = "\(suit.getRawValue())\(rank.getRawValue())"
         self.rank = rank
         self.suit = suit
