@@ -85,8 +85,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         super.viewDidLoad()
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        // TODO: Remove
-        defaults.set(false, forKey: "firstGamePlayed")
+        
+        // Un-comment to view onboarding screen every time
+//        defaults.set(false, forKey: "firstGamePlayed")
         
         
         setDelegates()

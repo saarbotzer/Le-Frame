@@ -18,12 +18,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         return true
     }
+    
+    func applicationWillResignActive(_ application: UIApplication) {
+        print("applicationWillResignActive")
+    }
+    
 
     func applicationWillTerminate(_ application: UIApplication) {
         
+        // TODO: Save current game data
+        print("applicationWillTerminate")
         self.saveContext()
     }
     
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        print("applicationDidEnterBackground")
+    }
     
 
     // MARK: - Core Data stack
