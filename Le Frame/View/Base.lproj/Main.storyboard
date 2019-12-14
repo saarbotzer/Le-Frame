@@ -485,6 +485,16 @@
                                     <constraint firstItem="cUE-AV-zmW" firstAttribute="width" secondItem="QKW-1S-ApK" secondAttribute="width" id="yTM-dJ-xez"/>
                                 </constraints>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YNi-Oj-S8L">
+                                <rect key="frame" x="268" y="61" width="42" height="30"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Close">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="closeBtnTapped:" destination="mlG-0d-dDq" eventType="touchUpInside" id="aba-Zg-a58"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
@@ -493,9 +503,11 @@
                             <constraint firstAttribute="bottom" secondItem="FRX-yj-leX" secondAttribute="bottom" id="9h9-Lb-oJV"/>
                             <constraint firstItem="FRX-yj-leX" firstAttribute="top" secondItem="FFw-Up-gNP" secondAttribute="top" id="9lD-BZ-P9F"/>
                             <constraint firstItem="8B7-Uy-VZ2" firstAttribute="trailing" secondItem="Ux4-Uh-jxB" secondAttribute="trailing" constant="90" id="E47-hH-UqX"/>
+                            <constraint firstItem="8B7-Uy-VZ2" firstAttribute="trailing" secondItem="YNi-Oj-S8L" secondAttribute="trailing" constant="10" id="EX9-U8-Ugt"/>
                             <constraint firstItem="Ux4-Uh-jxB" firstAttribute="top" secondItem="8B7-Uy-VZ2" secondAttribute="top" constant="20" id="Hmu-n8-hpg"/>
                             <constraint firstItem="7yq-La-XEu" firstAttribute="centerX" secondItem="FFw-Up-gNP" secondAttribute="centerX" id="QyG-J5-I5Z"/>
                             <constraint firstItem="p49-zn-IPE" firstAttribute="top" secondItem="7yq-La-XEu" secondAttribute="bottom" constant="40" id="bU4-WH-gwI"/>
+                            <constraint firstItem="YNi-Oj-S8L" firstAttribute="top" secondItem="8B7-Uy-VZ2" secondAttribute="top" constant="5" id="e3Q-xE-yEz"/>
                             <constraint firstItem="p49-zn-IPE" firstAttribute="centerX" secondItem="FFw-Up-gNP" secondAttribute="centerX" id="fT3-ce-qBc"/>
                             <constraint firstItem="FRX-yj-leX" firstAttribute="leading" secondItem="8B7-Uy-VZ2" secondAttribute="leading" id="jeC-av-Lnc"/>
                             <constraint firstItem="7yq-La-XEu" firstAttribute="top" secondItem="Ux4-Uh-jxB" secondAttribute="bottom" constant="30" id="k5K-r6-o4K"/>
@@ -507,6 +519,7 @@
                     <navigationItem key="navigationItem" id="b2u-h6-DVX"/>
                     <connections>
                         <outlet property="buttonsStackView" destination="lAq-cs-Wxf" id="8t8-gh-U34"/>
+                        <outlet property="closeBtn" destination="YNi-Oj-S8L" id="hnF-2F-OcY"/>
                         <outlet property="hintsSwitch" destination="QER-nH-R6I" id="yw6-qZ-gmB"/>
                         <outlet property="howToBtn" destination="vmL-hl-8VE" id="nKt-re-IAg"/>
                         <outlet property="rateBtn" destination="3BO-yB-Z7a" id="bXx-j7-4gv"/>
@@ -1396,6 +1409,6 @@
         <image name="transparent_background" width="1" height="1"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Tlo-Vj-1Yy"/>
+        <segue reference="sb9-fP-NsH"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -11,6 +11,8 @@ import StoreKit
 
 class SettingsVC: UIViewController {
 
+    @IBOutlet weak var closeBtn: UIButton!
+    
     @IBOutlet weak var sumModeSwitch: UISegmentedControl!
     @IBOutlet weak var soundsSwitch: UISegmentedControl!
     @IBOutlet weak var hintsSwitch: UISegmentedControl!
@@ -38,6 +40,10 @@ class SettingsVC: UIViewController {
         barAppearance.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         barAppearance.shadowImage = UIImage()
         barAppearance.isTranslucent = true
+        
+        if #available(iOS 13.0, *) {
+            closeBtn.isHidden = true
+        }
 
         setupRoundButton(button: statisticsBtn)
         setupRoundButton(button: howToBtn)
@@ -48,6 +54,7 @@ class SettingsVC: UIViewController {
         setupSegmentedControl(segmentedControl: hintsSwitch)
         setupSegmentedControl(segmentedControl: sumModeSwitch)
     }
+    
     
     func setupSegmentedControl(segmentedControl: UISegmentedControl) {
         let color = UIColor.white
@@ -181,6 +188,10 @@ class SettingsVC: UIViewController {
         let url = URL(string: "https://itunes.apple.com/us/app/myapp/idxxxxxxxx?ls=1&mt=8")
         let activityViewController = UIActivityViewController(activityItems: [url!], applicationActivities: nil)
         present(activityViewController, animated: true, completion: nil)
+    }
+    
+    @IBAction func closeBtnTapped(_ sender: UIButton) {
+        self.dismiss(animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
