@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import AVFoundation
+import Firebase
 
 class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, UITabBarDelegate {
 
@@ -103,6 +104,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         if viewingMode == .onboarding {
             performSegue(withIdentifier: "goToHowTo", sender: nil)
             defaults.set(true, forKey: "firstGamePlayed")
+            
+            // TODO: Verify that this is a good place and a way to create uuids
+            defaults.set(UUID().uuidString, forKey: "uuid")
         }
     }
     
@@ -966,9 +970,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func addStats() {
         
         let gameSavedStats = getStats(for: gameID)
+        var firebaseGameObj = gameSavedStats
         
         if let gameStatsToAdd = gameSavedStats {
             gameStatsToAdd.restartAfter = restartAfter
+            
+            let synced = uploadStats(forGame: gameStatsToAdd)
+            gameStatsToAdd.synced = synced
         } else {
             let gameStatsToAdd = Game(context: context)
             gameStatsToAdd.gameID = gameID
@@ -985,6 +993,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             gameStatsToAdd.startTime = startTime
             gameStatsToAdd.sumMode = Int16(gameSumMode.getRawValue())
             gameStatsToAdd.synced = false
+            
+            let synced = uploadStats(forGame: gameStatsToAdd)
+            gameStatsToAdd.synced = synced
         }
         
         saveStats()
@@ -1025,6 +1036,63 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             print(error)
         }
         return gameRow
+    }
+    
+    func uploadStats(forGame game: Game?) -> Bool {
+        var statsUploaded = false
+        
+        if let game = game {
+            if game.gameID == nil {
+                return false
+            }
+            
+            let dataToAdd : [String: Any] = [
+//                "userID": defaults.string(forKey: "uuid"),
+                "deck": game.deck,
+                "didWin": game.didWin,
+                "duration": game.duration,
+                "loseReason": game.loseReason,
+                "numberOfCardsLeft": game.nofCardsLeft,
+                "numberOfJacksPlaced": game.nofJacksPlaced,
+                "numberOfKingsPlaced": game.nofKingsPlaced,
+                "numberOfQueensPlaced": game.nofQueensPlaced,
+                "numberOfHintsUsed": game.nofHintsUsed,
+                "didRestartAfter": game.restartAfter,
+                "startTime": game.startTime,
+                "sumMode": game.sumMode,
+                "synced": true
+            ]
+            
+            let uuid = defaults.string(forKey: "uuid")
+
+            var dataToAddUser = dataToAdd
+            dataToAddUser["gameID"] = game.gameID!.uuidString
+            
+            var dataToAddGame = dataToAdd
+            dataToAddGame["userID"] = uuid
+            
+            let gameDataUploaded = up(referenceString: "games/\(game.gameID!)", dataToAdd: dataToAddGame)
+            let userDataUploaded = up(referenceString: "users/\(uuid!)/games/\(game.gameID!)", dataToAdd: dataToAddUser)
+            statsUploaded = gameDataUploaded && userDataUploaded
+        }
+        return statsUploaded
+    }
+    
+    func up(referenceString: String, dataToAdd: [String: Any]) -> Bool {
+        var statsUploaded = false
+        print(referenceString)
+        var ref = Firestore.firestore().document(referenceString)
+        
+        ref.setData(dataToAdd) { (err) in
+            if let err = err {
+                print("Error adding document: \(err)")
+                statsUploaded = false
+            } else {
+                print("Document added with ID: \(ref.documentID)")
+                statsUploaded = true
+            }
+        }
+        return statsUploaded
     }
     
     

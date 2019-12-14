@@ -8,7 +8,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
          <BreakpointContent
             uuid = "096B5400-1BD0-4799-9709-33FACF8F6EB3"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             symbolName = "UIApplicationEndBackgroundTaskError"
@@ -16,7 +16,7 @@
             <Locations>
                <Location
                   uuid = "096B5400-1BD0-4799-9709-33FACF8F6EB3 - f2e10d4c094b9b69"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "UIApplicationEndBackgroundTaskError"

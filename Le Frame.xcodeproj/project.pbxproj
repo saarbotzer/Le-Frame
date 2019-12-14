@@ -16,6 +16,7 @@
 		BC7A9B1623918799002CC9B3 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1523918798002CC9B3 /* win.wav */; };
 		BC7A9B1823918A5B002CC9B3 /* lose.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1723918A5B002CC9B3 /* lose.wav */; };
 		BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */; };
+		BC8197FF23A5941300DC3257 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */; };
 		BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CEE234DEDE400CD951D /* AppDelegate.swift */; };
 		BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF2234DEDE400CD951D /* GameVC.swift */; };
 		BCC40CF6234DEDE400CD951D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF4234DEDE400CD951D /* Main.storyboard */; };
@@ -28,9 +29,12 @@
 		BCE12CE9234E340400962F00 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CE8234E340400962F00 /* Card.swift */; };
 		BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CEE234E35E400962F00 /* Utilities.swift */; };
 		BCF57EAE239ED8F200F762FA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF57EAD239ED8F200F762FA /* SceneDelegate.swift */; };
+		CA16A858B73314A99CA99614 /* Pods_Le_Frame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B1A4FD84B0357CE21C4F165 /* Pods_Le_Frame.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		036C2198B029470711D4357C /* Pods-Le Frame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Le Frame.debug.xcconfig"; path = "Target Support Files/Pods-Le Frame/Pods-Le Frame.debug.xcconfig"; sourceTree = "<group>"; };
+		2B1A4FD84B0357CE21C4F165 /* Pods_Le_Frame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Le_Frame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC13EFF92392CBA600DF4F1C /* HowToVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToVC.swift; sourceTree = "<group>"; };
 		BC36841A236B502500DCC703 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
 		BC7A9B08238F132B002CC9B3 /* StatisticsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsVC.swift; sourceTree = "<group>"; };
@@ -40,6 +44,7 @@
 		BC7A9B1523918798002CC9B3 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = win.wav; sourceTree = "<group>"; };
 		BC7A9B1723918A5B002CC9B3 /* lose.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = lose.wav; sourceTree = "<group>"; };
 		BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestartAlertController.swift; sourceTree = "<group>"; };
+		BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BCC40CEB234DEDE400CD951D /* Royal Frame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Royal Frame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCC40CEE234DEDE400CD951D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BCC40CF2234DEDE400CD951D /* GameVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameVC.swift; sourceTree = "<group>"; };
@@ -54,6 +59,7 @@
 		BCE12CE8234E340400962F00 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = "Le Frame/Model/Card.swift"; sourceTree = SOURCE_ROOT; };
 		BCE12CEE234E35E400962F00 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		BCF57EAD239ED8F200F762FA /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		F376892DEEA52434674AAC1F /* Pods-Le Frame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Le Frame.release.xcconfig"; path = "Target Support Files/Pods-Le Frame/Pods-Le Frame.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,12 +67,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA16A858B73314A99CA99614 /* Pods_Le_Frame.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2E892A0E1CD99C552889607E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2B1A4FD84B0357CE21C4F165 /* Pods_Le_Frame.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8CDC3A5BCE1CEEC1D4E1D2E7 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				036C2198B029470711D4357C /* Pods-Le Frame.debug.xcconfig */,
+				F376892DEEA52434674AAC1F /* Pods-Le Frame.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		BC7A9B1023914FCE002CC9B3 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +108,8 @@
 			children = (
 				BCC40CED234DEDE400CD951D /* Le Frame */,
 				BCC40CEC234DEDE400CD951D /* Products */,
+				8CDC3A5BCE1CEEC1D4E1D2E7 /* Pods */,
+				2E892A0E1CD99C552889607E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -147,6 +174,7 @@
 		BCE12CED234E355E00962F00 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */,
 				BCC40CEE234DEDE400CD951D /* AppDelegate.swift */,
 			);
 			path = Other;
@@ -159,9 +187,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BCC40CFF234DEDEB00CD951D /* Build configuration list for PBXNativeTarget "Le Frame" */;
 			buildPhases = (
+				69D6BAF196D9E676ACE7EB2E /* [CP] Check Pods Manifest.lock */,
 				BCC40CE7234DEDE400CD951D /* Sources */,
 				BCC40CE8234DEDE400CD951D /* Frameworks */,
 				BCC40CE9234DEDE400CD951D /* Resources */,
+				B83EB72B37EC3AFAFDE86280 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -211,6 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC7A9B1323914FF4002CC9B3 /* card-flip-2.wav in Resources */,
+				BC8197FF23A5941300DC3257 /* GoogleService-Info.plist in Resources */,
 				BCC40CFB234DEDEB00CD951D /* LaunchScreen.storyboard in Resources */,
 				BC7A9B1423914FF4002CC9B3 /* card-flip-1.wav in Resources */,
 				BC7A9B1823918A5B002CC9B3 /* lose.wav in Resources */,
@@ -221,6 +252,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		69D6BAF196D9E676ACE7EB2E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Le Frame-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B83EB72B37EC3AFAFDE86280 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Le Frame/Pods-Le Frame-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Le Frame/Pods-Le Frame-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Le Frame/Pods-Le Frame-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BCC40CE7234DEDE400CD951D /* Sources */ = {
@@ -382,6 +455,7 @@
 		};
 		BCC40D00234DEDEB00CD951D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 036C2198B029470711D4357C /* Pods-Le Frame.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -403,6 +477,7 @@
 		};
 		BCC40D01234DEDEB00CD951D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F376892DEEA52434674AAC1F /* Pods-Le Frame.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
