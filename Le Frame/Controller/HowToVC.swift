@@ -18,16 +18,21 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
                 self.newVC(viewController: "screenThree"),
                 self.newVC(viewController: "screenFour"),
                 self.newVC(viewController: "screenFive"),
-                self.newVC(viewController: "screenSix")
+                self.newVC(viewController: "screenSix"),
+                self.newVC(viewController: "screenSeven")
         ]
         
-        // TODO: Add Welcome screen and Start Playing screen if it's the first time playing
-        if 1==1 {
+        // TODO: Add Welcome screen
+        
+        if getViewingMode() == .onboarding {
             return VCs
+        } else {
+            return Array(VCs[0...5])
         }
     }()
     
     var pageControl = UIPageControl()
+    let bottomContainer = UIView(frame: .zero)
     var currentIndex = 0
     
     var gridView = UIStackView()
@@ -63,27 +68,50 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         self.dataSource = self
         self.delegate = self
         
-
-//        addSkipButton()
-
-        
         
         if let firstViewController = orderedViewControllers.first {
             setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
         }
         
+        configureBottomContainer()
         configureConstraints()
         configurePageControl()
+        configureLastScreenButton()
+        
+        if getViewingMode() == .onboarding {
+            addSkipButton()
+        }
         
         for subview in self.view.subviews {
             if let scrollView = subview as? UIScrollView {
                 scrollView.delegate = self
-                break;
+                break
             }
         }
     }
     
+    func configureLastScreenButton() {
+        for vc in orderedViewControllers {
+            for view in vc.view.subviews {
+                if let button = view as? UIButton {
+                    button.addTarget(self, action: #selector(goToGame), for: .touchUpInside)
+                }
+            }
+        }
+    }
     
+    func configureBottomContainer() {
+        bottomContainer.translatesAutoresizingMaskIntoConstraints = false
+         
+         view.addSubview(bottomContainer)
+         
+         NSLayoutConstraint.activate([
+             bottomContainer.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+             bottomContainer.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+             bottomContainer.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+             bottomContainer.heightAnchor.constraint(equalToConstant: 40)
+         ])
+    }
     
     func configureConstraints() {
         
@@ -118,13 +146,9 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        addGrid(with: royalFrameGrid)
-    }
-    
-    func getToShowOnboarding() -> Bool {
-        let onboadringShown = defaults.bool(forKey: "onboadringShown")
-        
-        return !onboadringShown
+        if getViewingMode() == .howTo {
+            addGrid(with: royalFrameGrid)
+        }
     }
     
     func removeSkipButton() {
@@ -139,9 +163,8 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         
         let skipButtonWidth: CGFloat = 50
         let skipButtonHeight: CGFloat = 30
-        let x = UIScreen.main.bounds.maxX - skipButtonWidth * 1.5
-        let y = UIScreen.main.bounds.maxY - 150
-        
+        let x = bottomContainer.bounds.width * 0.9
+        let y = bottomContainer.bounds.height / 2
         
         let skipButton = UIButton()
         skipButton.titleLabel?.textColor = UIColor.white
@@ -154,11 +177,18 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         
         skipButton.tag = 10
         
-        self.view.addSubview(skipButton)
+        skipButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        bottomContainer.addSubview(skipButton)
+        
+        NSLayoutConstraint.activate([
+            skipButton.trailingAnchor.constraint(equalTo: bottomContainer.trailingAnchor, constant: -20),
+            skipButton.centerYAnchor.constraint(equalTo: bottomContainer.centerYAnchor),
+        ])
     }
     
     @objc func goToGame() {
-        performSegue(withIdentifier: "goToGame", sender: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -197,30 +227,17 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         
         
         pageControl.translatesAutoresizingMaskIntoConstraints = false
-
-        let container = UIView(frame: .zero)
         
-        
-        container.addSubview(pageControl)
+        bottomContainer.addSubview(pageControl)
         
         NSLayoutConstraint.activate([
-            pageControl.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-            pageControl.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            pageControl.centerXAnchor.constraint(equalTo: bottomContainer.centerXAnchor),
+            pageControl.centerYAnchor.constraint(equalTo: bottomContainer.centerYAnchor),
             pageControl.heightAnchor.constraint(equalToConstant: pageControlHeight),
             pageControl.widthAnchor.constraint(equalToConstant: pageControlWidth)
 
         ])
-        
-        container.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(container)
-        
-        NSLayoutConstraint.activate([
-            container.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
-            container.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
-            container.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
-            container.heightAnchor.constraint(equalToConstant: 40)
-        ])
+ 
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
@@ -306,10 +323,9 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
     
     func addGrid(with gridNames: [[String]]) {
         
+//        print("index: \(currentIndex)")
         
         let safeAreaHeight = self.view.safeAreaLayoutGuide.layoutFrame.size.height
-//        print(view.safeAreaInsets)
-//        print(view.safeAreaLayoutGuide.layoutFrame)
         let horizontalSpace: CGFloat = 10.0
         let verticalSpace: CGFloat = 10.0
         
@@ -373,6 +389,7 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
     
     func getGridForScreen(atIndex screenIndex: Int) {
         currentIndex = screenIndex
+        
         switch screenIndex {
         case 0:
             highlightRank(rank: nil)
@@ -396,6 +413,8 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
             addGrid(with: blockedGrid)
             highlightRank(rank: nil)
 //            flipCards(to: blockedGrid)
+        case 6:
+            removeGrid()
         default:
             highlightRank(rank: nil)
         }
@@ -559,5 +578,28 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
         view.layer.shadowRadius = 1
 
     }
+    
+    
+    
+    func getToShowOnboarding() -> Bool {
+        let onboadringShown = defaults.bool(forKey: "onboadringShown")
+        
+        return !onboadringShown
+    }
+    
+    func getViewingMode() -> OnboardingViewingMode {
+        let firstGame = !defaults.bool(forKey: "firstGamePlayed")
+        
+        if firstGame {
+            return .onboarding
+        } else {
+            return .howTo
+        }
+    }
+}
+
+
+enum OnboardingViewingMode {
+    case onboarding, howTo
 }
 

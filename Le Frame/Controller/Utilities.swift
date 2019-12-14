@@ -113,6 +113,7 @@ struct Utilities {
         }
     }
     
+    /*
     static func showAlert(payload: AlertPayload, parentViewController: UIViewController) {
         var customAlertController: RestartAlertController!;
         if (payload.buttons.count == 2) {
@@ -132,11 +133,13 @@ struct Utilities {
         alertController.view.addConstraint(heightConstraint)
         parentViewController.present(alertController, animated: true, completion: nil)
     }
+ 
     
     static func instantiateViewController(storyboardName: String, viewControllerIdentifier: String) -> UIViewController {
         let storyboard = UIStoryboard(name: storyboardName, bundle: Bundle.main);
         return storyboard.instantiateViewController(withIdentifier: viewControllerIdentifier);
     }
+ */
     
     static func formatSeconds(seconds: Int) -> String {
         let hours = seconds / 3600

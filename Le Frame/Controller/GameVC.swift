@@ -85,6 +85,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         super.viewDidLoad()
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
+        // TODO: Remove
+        defaults.set(false, forKey: "firstGamePlayed")
+        
+        
         setDelegates()
         
         updateUI()
@@ -93,11 +97,21 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     override func viewDidAppear(_ animated: Bool) {
-//        var testBool = true
-        var testBool = false
         
-        if !defaults.bool(forKey: "onboadringShown") || testBool {
+        let viewingMode = getViewingMode()
+        if viewingMode == .onboarding {
             performSegue(withIdentifier: "goToHowTo", sender: nil)
+            defaults.set(true, forKey: "firstGamePlayed")
+        }
+    }
+    
+    func getViewingMode() -> OnboardingViewingMode {
+        let firstGame = !defaults.bool(forKey: "firstGamePlayed")
+        
+        if firstGame {
+            return .onboarding
+        } else {
+            return .howTo
         }
     }
     
@@ -130,10 +144,18 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         // Bottom view
         bottomView.frame = CGRect(x: bottomView.frame.minX, y: bottomView.frame.minY, width: bottomView.frame.width, height: contentRowHeight)
+    
         
+        let doneIcon = doneRemovingBtn.image(for: .normal)?.withRenderingMode(.alwaysTemplate)
+        doneRemovingBtn.setImage(doneIcon, for: .normal)
+
         doneRemovingBtn.setTitleColor(UIColor.white, for: .normal)
+        doneRemovingBtn.tintColor = .white
         doneRemovingBtn.setTitleColor(disabledColor, for: .disabled)
         
+        let removeIcon = removeBtn.image(for: .normal)?.withRenderingMode(.alwaysTemplate)
+        removeBtn.setImage(removeIcon, for: .normal)
+        removeBtn.tintColor = .white
         removeBtn.setTitleColor(UIColor.white, for: .normal)
         removeBtn.setTitleColor(disabledColor, for: .disabled)
     }
@@ -247,7 +269,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
     //        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
     //        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
-    //        deck = model.getDeck(ofType: .fromString, random: false, from: "h13c13d13s13h12c12d12s12h11c11d11s11h10c10", fullDeck: false)
+//            deck = model.getDeck(ofType: .fromString, random: true, from: "h13c13d13s13h12c12d12s12h11c11d11s11h10c10", fullDeck: false)
             
             deckString = model.getDeckString(deck: deck)
             
@@ -461,15 +483,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         
-        let totalCardWidth: CGFloat = cardWidth * 4
+//        let totalCardWidth: CGFloat = cardWidth * 4
         let gridWidth = collectionView.frame.width
         let spacing: CGFloat = (gridWidth - (4 * cardWidth)) / 4
-        let totalSpacingWidth: CGFloat = spacing * (4 - 1)
+//        let totalSpacingWidth: CGFloat = spacing * (4 - 1)
         
-        let leftInset = (gridWidth - CGFloat(totalCardWidth + totalSpacingWidth)) / 2
-        let rightInset = leftInset
-        
-//        return UIEdgeInsets(top: 5.0, left: leftInset, bottom: 5.0, right: rightInset)
         let edgeInsets = (self.view.frame.size.width - (4 * cardWidth)) / (4 + 1)
         
         return UIEdgeInsets(top: 5.0, left: edgeInsets, bottom: 5.0, right: edgeInsets)
@@ -479,7 +497,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let gridWidth = collectionView.frame.width
-        let spacing = (gridWidth - (4 * cardWidth)) / 4
+//        let spacing = (gridWidth - (4 * cardWidth)) / 4
         
         cardHeight = collectionView.frame.height / 4 - 10
         cardWidth = cardHeight / 3 * 2
@@ -626,7 +644,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func finishedTurn() {
         
-        
         checkAvailability()
         
 //        print(gameStatus)
@@ -647,6 +664,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             setGameStatus(status: .gameOver)
         } else if gameStatus == .removing {
             setGameStatus(status: .placing)
+        } else if cardsLeft == 0 {
+            setGameStatus(status: .removing)
         }
         if isGameWon() {
             setGameStatus(status: .won)
@@ -779,10 +798,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func getNextCard() {
         if deck.count > 0 {
             nextCard = deck.remove(at: 0)
-            
             updateNextCardImage()
         } else {
-            setGameStatus(status: .won)
+            nextCardImageView.image = UIImage(named: "green_card.jpg")
+//            setGameStatus(status: .won)
         }
     }
     

@@ -62,8 +62,12 @@ class SettingsVC: UIViewController {
         button.layer.borderColor = UIColor.white.cgColor
         button.layer.borderWidth = 3
         button.clipsToBounds = true
+        
+        let whiteImage = button.image(for: .normal)?.withRenderingMode(.alwaysTemplate)
+        button.setImage(whiteImage, for: .normal)
+        button.tintColor = .white
 
-        button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        button.imageEdgeInsets = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
     }
     
     func updateDefaultValues() {
