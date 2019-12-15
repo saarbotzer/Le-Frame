@@ -40,6 +40,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var firstSelectedCardIndexPath: IndexPath?
     var secondSelectedCardIndexPath: IndexPath?
     var cardsLeft : Int?
+    var removedCards : [[Card]] = [[Card]]()
     
     var gameStatus: GameStatus = .placing
     
@@ -250,135 +251,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     // MARK: - Game Flow
     
-    /**
-         Starts a new game.
-     */
-    func startNewGame() {
-            
-        // Get game settings
-        gameSumMode = getSumSetting()
-        setGameStatus(status: .placing)
-        
-        restartAfter = false
-        gameFinished = false
-        gameID = UUID()
-        startTime = Date()
-        statsAdded = false
-        secondsPassed = 0
-        
-        // UI
-        removalSumLabel.text = "\(gameSumMode.getRawValue())"
-        markAllCardAsNotSelected()
-        removeAllCards()
-        confettiEmitter.removeFromSuperlayer()
-        
-        // Get deck
-        deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
-        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
-//        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
-//            deck = model.getDeck(ofType: .fromString, random: true, from: "h13c13d13s13h12c12d12s12h11c11d11s11h10c10", fullDeck: false)
-        
-        deckString = model.getDeckString(deck: deck)
-        
-        cardsLeft = deck.count
-        
-        print("Started new game \(gameID.uuidString)")
-        
-        // Handle first card
-        getNextCard()
-        updateNextCardImage()
-        updateCardsLeftLabel()
-        
-        // Timer
-        addTimer()
-    }
     
-    /**
-     Checks whether the next card can be placed at a spot on the board.
-     
-     - Parameter card: The card to check
-     - Parameter indexPath: The designated spot to place the card at
-     
-     - Returns: True if the card can be placed at the spot, false otherwise
-     */
-    func canPutCard(_ card: Card, at indexPath: IndexPath) -> Bool {
-        // If the spot is empty then check whether the spot position and the card rank fit
-        
-        let cell = getSpot(at: indexPath)
-        if cell.isEmpty {
-            
-            let cardRank = card.rank!
-            
-            let allowedRanks = getDesignatedRanksByPosition(indexPath: indexPath)
-            
-            switch cardRank {
-            case .jack:
-                return allowedRanks == .jacks
-            case .queen:
-                return allowedRanks == .queens
-            case.king:
-                return allowedRanks == .kings
-            default:
-                // If the card is not royal - true
-                return true
-            }
-        }
-        return false
-    }
     
-    /**
-     Checks whether the game was completed and the user have won.
-     
-     - Returns: True if the user won the game, false otherwise
-     */
-    func isGameWon() -> Bool {
-
-        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            
-            let allowedRanks = getDesignatedRanksByPosition(indexPath: cell.indexPath!)
-            // If the spot contains a card that does not match it's designated rank, the function returns false.
-            if let card = cell.card {
-                let cardRank = card.rank!
-                if (allowedRanks == .jacks && cardRank != .jack) || (allowedRanks == .queens && cardRank != .queen) || (allowedRanks == .kings && cardRank != .king) || (allowedRanks == .notRoyal) {
-                    return false
-                }
-            // If there is no card at the spot and it is a royal spot, the function returns false.
-            } else if allowedRanks != .notRoyal{
-                return false
-            }
-        }
-        
-        return true
-    }
     
-    /**
-     Checks whether the user lose. It's using the nextCard so must be called after a turn
-     
-     - Returns: True if the game is over, false otherwise
-     */
-    func isGameOver() -> Bool {
-        
-        let boardFull = isBoardFull()
-        let pairsToRemove = checkForPairs()
-        let nextCardRank = nextCard.rank!
-        
-        // If the board is full and there are no cards to remove
-        if boardFull && !pairsToRemove {
-            return true
-        }
-        // If the next card is royal and all of the relevant spots are taken
-        if !boardFull && nextCardRank == .jack && jacksAvailable == 0 {
-            return true
-        }
-        if !boardFull && nextCardRank == .queen && queensAvailable == 0 {
-            return true
-        }
-        if !boardFull && nextCardRank == .king && kingsAvailable == 0 {
-            return true
-        }
-        
-        return false
-    }
+    
+    
     
     // MARK: - IBActions
     
@@ -387,6 +264,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         case 1:
             performSegue(withIdentifier: "goToSettings", sender: nil)
         case 2:
+            if isGameOver() {
+                gameOver(toAddStats: false)
+            } else if isGameWon() {
+                gameWon(toAddStats: false)
+            }
             showHints(hintType: .tappedHintButton)
         case 3:
             showAlert(title: "New Game?", message: "Are you sure you want to start a new game?", dismissText: "Nevermind", confirmText: "Yes")
@@ -407,6 +289,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // Validity checks (no index paths, same index path)
         // TODO: maybe change ifs to if lets
         
+        var newlyRemovedCards = [Card]()
+        
         // Option 1 - Only one card is selected
         if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath == nil {
             let firstCardCell = getSpot(at: firstSelectedCardIndexPath!)
@@ -415,6 +299,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             if gameSumMode == .ten && firstCard.rank! == .ten {
                 playSound(named: "card-flip-2.wav")
                 haptic(of: .removeSuccess)
+                newlyRemovedCards.append(firstCard)
                 firstCardCell.removeCard()
                 enableDoneRemoving()
                 removeBtn.isEnabled = false
@@ -433,6 +318,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == gameSumMode.getRawValue() {
                 playSound(named: "card-flip-2.wav")
                 haptic(of: .removeSuccess)
+                newlyRemovedCards.append(firstCard)
+                newlyRemovedCards.append(secondCard)
                 firstCardCell.removeCard()
                 secondCardCell.removeCard()
                 enableDoneRemoving()
@@ -441,8 +328,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 haptic(of: .removeError)
             }
         }
+        
+        removedCards.append(newlyRemovedCards)
         resetCardIndexes()
         markAllCardAsNotSelected()
+        finishedRemovingCard()
     }
     
     
@@ -450,7 +340,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      Switches between removing and placing game modes and deselects all cards.
      */
     @IBAction func doneRemovingPressed(_ sender: Any) {
-        finishedTurn()
+        finishedPlacingCard()
         markAllCardAsNotSelected()
     }
 
@@ -476,8 +366,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         switch gameStatus {
         case .placing:
             placeCard(at: indexPath)
-            finishedTurn()
-//            finishedPlacingCard()
+            finishedPlacingCard()
         case .removing:
             selectCardForRemoval(at: indexPath)
         case .gameOver:
@@ -649,7 +538,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    func finishedTurn() {
+    func finishedPlacingCard() {
         
         checkAvailability()
         
@@ -679,21 +568,24 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    func finishedPlacingCard() {
-        checkAvailability()
+    /**
+     Handles what happens after pressed remove.
+     The function checks if it is the case of a full frame with middle cards that can't be removed (whilst no more cards in the deck) and if so it sets the game as over.
+     */
+    func finishedRemovingCard() {
         
-        // TODO: Add winning game option
+        let cardsToRemove = getCardsToRemove()
+
+        let cardsAtCenter = getEmptySpots(atCenter: true)
         
-        if isGameOver() {
-            setGameStatus(status: .gameOver)
-        } else {
-            if isBoardFull() {
-                setGameStatus(status: .removing)
+        if let cardsLeft = cardsLeft {
+            if cardsLeft == 0 && cardsToRemove.count == 0 && cardsAtCenter.count != 4 {
+                setGameStatus(status: .gameOver)
+                nextCardImageView.image = UIImage(named: "green_card.jpg")
             } else {
-                setGameStatus(status: .placing)
+//                updateNextCardImage()
             }
         }
-        
     }
 
     func removeAllCards() {
@@ -818,6 +710,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     // Game Logic?
     func updateNextCardImage() {
+        // TODO: Don't change image to the previous card when there are no cards left
         if let image = UIImage(named: "\(nextCard.imageName).jpg") {
             nextCardImageView.image = image
         }
@@ -868,8 +761,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let statsText = getGameStatsText()
         let messageText = "\(loseReasonText)\n\n\(statsText)"
         showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game")
-        updateNextCardImage()
         
+        if let cardsLeft = cardsLeft {
+            if cardsLeft > 0 {
+                updateNextCardImage()
+            }
+        }
+
         if toAddStats {
             addStats()
         }
@@ -902,6 +800,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func getLoseReason() -> LoseReason {
+        if !checkForPairs() {
+            return .noCardsToRemove
+        }
+        
         if let nextCardRank = nextCard.rank {
             if nextCardRank == .jack && jacksAvailable == 0 {
                 return .noEmptyJackSpots
@@ -912,9 +814,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             if nextCardRank == .king && kingsAvailable == 0 {
                 return .noEmptyKingSpots
             }
-        }
-        if isBoardFull() && !checkForPairs() {
-            return .noCardsToRemove
         }
         return .unknown
     }
@@ -1168,9 +1067,147 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
 }
 
+// MARK: - Game Logic
 
 extension GameVC {
-    //MARK: Hints functions
+    
+    /**
+     Starts a new game.
+     */
+    func startNewGame() {
+            
+        // Get game settings
+        gameSumMode = getSumSetting()
+        setGameStatus(status: .placing)
+        
+        restartAfter = false
+        gameFinished = false
+        gameID = UUID()
+        startTime = Date()
+        statsAdded = false
+        secondsPassed = 0
+        
+        // UI
+        removalSumLabel.text = "\(gameSumMode.getRawValue())"
+        markAllCardAsNotSelected()
+        removeAllCards()
+        confettiEmitter.removeFromSuperlayer()
+        
+        // Get deck
+        deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
+//        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
+//        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
+//        deck = model.getDeck(ofType: .fromString, random: false, from: "h10c10c05h13c13d13s13h12c12d12s12h11c11d11s11", fullDeck: false)
+        
+        deckString = model.getDeckString(deck: deck)
+        
+        cardsLeft = deck.count
+        
+        print("Started new game \(gameID.uuidString)")
+        
+        // Handle first card
+        getNextCard()
+        updateNextCardImage()
+        updateCardsLeftLabel()
+        
+        // Timer
+        addTimer()
+    }
+    
+    /**
+     Checks whether the next card can be placed at a spot on the board.
+     
+     - Parameter card: The card to check
+     - Parameter indexPath: The designated spot to place the card at
+     
+     - Returns: True if the card can be placed at the spot, false otherwise
+     */
+    func canPutCard(_ card: Card, at indexPath: IndexPath) -> Bool {
+        // If the spot is empty then check whether the spot position and the card rank fit
+        
+        let cell = getSpot(at: indexPath)
+        if cell.isEmpty {
+            
+            let cardRank = card.rank!
+            
+            let allowedRanks = getDesignatedRanksByPosition(indexPath: indexPath)
+            
+            switch cardRank {
+            case .jack:
+                return allowedRanks == .jacks
+            case .queen:
+                return allowedRanks == .queens
+            case.king:
+                return allowedRanks == .kings
+            default:
+                // If the card is not royal - true
+                return true
+            }
+        }
+        return false
+    }
+    
+    /**
+     Checks whether the game was completed and the user have won.
+     Game is won if all royal cards are placed at appropriate place and no cards are in the center.
+     
+     - Returns: True if the user won the game, false otherwise
+     */
+    func isGameWon() -> Bool {
+
+        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            
+            let allowedRanks = getDesignatedRanksByPosition(indexPath: cell.indexPath!)
+            // If the spot contains a card that does not match it's designated rank, the function returns false.
+            if let card = cell.card {
+                let cardRank = card.rank!
+                if (allowedRanks == .jacks && cardRank != .jack) || (allowedRanks == .queens && cardRank != .queen) || (allowedRanks == .kings && cardRank != .king) || (allowedRanks == .notRoyal) {
+                    return false
+                }
+            // If there is no card at the spot and it is a royal spot, the function returns false.
+            } else if allowedRanks != .notRoyal{
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    /**
+     Checks whether the user lose. It's using the nextCard so must be called after a turn
+     Game is over if board is full and there are no cards that can be removed or if the next card is royal and it's spots are taken
+     
+     - Returns: True if the game is over, false otherwise
+     */
+    func isGameOver() -> Bool {
+        
+        let boardFull = isBoardFull()
+        let pairsToRemove = checkForPairs()
+        let nextCardRank = nextCard.rank!
+        
+        // If the board is full and there are no cards to remove
+        if boardFull && !pairsToRemove {
+            return true
+        }
+        // If the next card is royal and all of the relevant spots are taken
+        if !boardFull && nextCardRank == .jack && jacksAvailable == 0 {
+            return true
+        }
+        if !boardFull && nextCardRank == .queen && queensAvailable == 0 {
+            return true
+        }
+        if !boardFull && nextCardRank == .king && kingsAvailable == 0 {
+            return true
+        }
+        
+        return false
+    }
+}
+
+
+//MARK: - Hints functions
+
+extension GameVC {
     
     func showHints(hintType : HintType) {
         let isShowHints = getHintsSetting()
