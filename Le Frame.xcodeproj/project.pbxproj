@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -88,7 +88,6 @@
 				036C2198B029470711D4357C /* Pods-Le Frame.debug.xcconfig */,
 				F376892DEEA52434674AAC1F /* Pods-Le Frame.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -459,7 +458,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = D3N4HXSP3Z;
 				INFOPLIST_FILE = "Le Frame/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -481,7 +480,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = D3N4HXSP3Z;
 				INFOPLIST_FILE = "Le Frame/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;

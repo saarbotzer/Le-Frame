@@ -66,6 +66,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // Sounds
     var player: AVAudioPlayer?
     
+    var confettiEmitter = CAEmitterLayer()
     
     // UI
     let disabledColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
@@ -251,45 +252,46 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     /**
          Starts a new game.
-         */
-        func startNewGame() {
+     */
+    func startNewGame() {
             
-            // Get game settings
-            gameSumMode = getSumSetting()
-            setGameStatus(status: .placing)
-            
-            restartAfter = false
-            gameFinished = false
-            gameID = UUID()
-            startTime = Date()
-            statsAdded = false
-            secondsPassed = 0
-            
-            // UI
-            removalSumLabel.text = "\(gameSumMode.getRawValue())"
-            markAllCardAsNotSelected()
-            removeAllCards()
-            
-            // Get deck
-            deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
-    //        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
-    //        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
+        // Get game settings
+        gameSumMode = getSumSetting()
+        setGameStatus(status: .placing)
+        
+        restartAfter = false
+        gameFinished = false
+        gameID = UUID()
+        startTime = Date()
+        statsAdded = false
+        secondsPassed = 0
+        
+        // UI
+        removalSumLabel.text = "\(gameSumMode.getRawValue())"
+        markAllCardAsNotSelected()
+        removeAllCards()
+        confettiEmitter.removeFromSuperlayer()
+        
+        // Get deck
+        deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
+        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
+//        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
 //            deck = model.getDeck(ofType: .fromString, random: true, from: "h13c13d13s13h12c12d12s12h11c11d11s11h10c10", fullDeck: false)
-            
-            deckString = model.getDeckString(deck: deck)
-            
-            cardsLeft = deck.count
-            
-            print("Started new game \(gameID.uuidString)")
-            
-            // Handle first card
-            getNextCard()
-            updateNextCardImage()
-            updateCardsLeftLabel()
-            
-            // Timer
-            addTimer()
-        }
+        
+        deckString = model.getDeckString(deck: deck)
+        
+        cardsLeft = deck.count
+        
+        print("Started new game \(gameID.uuidString)")
+        
+        // Handle first card
+        getNextCard()
+        updateNextCardImage()
+        updateCardsLeftLabel()
+        
+        // Timer
+        addTimer()
+    }
     
     /**
      Checks whether the next card can be placed at a spot on the board.
@@ -921,6 +923,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         stopTimer()
         
         playSound(named: "win.wav")
+        confetti()
         haptic(of: .win)
         didWin = true
         
@@ -1080,7 +1083,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func up(referenceString: String, dataToAdd: [String: Any]) -> Bool {
         var statsUploaded = false
-        print(referenceString)
         var ref = Firestore.firestore().document(referenceString)
         
         ref.setData(dataToAdd) { (err) in
@@ -1088,7 +1090,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 print("Error adding document: \(err)")
                 statsUploaded = false
             } else {
-                print("Document added with ID: \(ref.documentID)")
+//                print("Document added with ID: \(ref.documentID)")
                 statsUploaded = true
             }
         }
@@ -1412,7 +1414,7 @@ extension GameVC {
     }
     
     func playSound(named soundFileFullName: String) {
-        
+             
         let soundsOn = getSoundSetting()
         if !soundsOn {
             return
@@ -1441,4 +1443,98 @@ extension GameVC {
             print(error.localizedDescription)
         }
     }
+    
+    // MARK: - Confetti
+    
+    func confetti() {
+        confettiEmitter.removeFromSuperlayer()
+        
+        confettiEmitter = CAEmitterLayer()
+        confettiEmitter.emitterPosition = CGPoint(x: self.view.frame.size.width / 2, y: -10)
+        confettiEmitter.emitterShape = CAEmitterLayerEmitterShape.line
+        confettiEmitter.emitterSize = CGSize(width: self.view.frame.size.width, height: 2.0)
+        confettiEmitter.emitterCells = generateEmitterCells()
+
+        confettiEmitter.beginTime = CACurrentMediaTime()
+        
+        self.view.layer.addSublayer(confettiEmitter)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+            self.confettiEmitter.lifetime = 0.0
+        }
+    }
+    
+    func generateEmitterCells() -> [CAEmitterCell] {
+        
+        var colors:[UIColor] = [
+            UIColor.red,
+            UIColor.blue,
+            UIColor.green,
+            UIColor.yellow
+        ]
+        
+        var images:[UIImage] = [
+            UIImage(named: "Diamond.png")!,
+            UIImage(named: "Club.png")!,
+            UIImage(named: "Heart.png")!,
+            UIImage(named: "Spade.png")!,
+            UIImage(named: "Crown-small.png")!
+        ]
+        
+        var velocities:[Int] = [
+            100
+            , 500
+            , 90
+            , 900
+            , 200
+            , 150
+            , 720
+        ]
+        
+        
+        var cells:[CAEmitterCell] = [CAEmitterCell]()
+        for index in 0..<images.count*2 {
+            let cell = CAEmitterCell()
+            cell.birthRate = 4.0
+            cell.lifetime = 14.0
+            cell.lifetimeRange = 0
+            cell.velocity = CGFloat(velocities[getRandomNumber(velocities.count)])
+            cell.velocityRange = 10
+            cell.emissionLongitude = CGFloat(Double.pi)
+            cell.emissionRange = 0.5
+            cell.spin = 3.5
+            cell.spinRange = 0
+//            cell.color = getNextColor(colors: colors, i: index)
+//            cell.color = UIColor.purple.cgColor
+            cell.contents = images[index % images.count].cgImage!
+            cell.scaleRange = 0.25
+            cell.scale = 0.1
+            cell.alphaSpeed = -1.0/cell.lifetime
+            cells.append(cell)
+        }
+        return cells
+    }
+    
+    
+    private func getRandomNumber(_ limit: Int) -> Int {
+        return Int(arc4random_uniform(UInt32(limit)))
+    }
+    
+    private func getNextColor(colors: [UIColor], i:Int) -> CGColor {
+        if i <= 4 {
+            return colors[0].cgColor
+        } else if i <= 8 {
+            return colors[1].cgColor
+        } else if i <= 12 {
+            return colors[2].cgColor
+        } else {
+            return colors[3].cgColor
+        }
+    }
+    
+    private func getNextImage(images: [UIImage], i:Int) -> CGImage {
+        return images[i % 4].cgImage!
+    }
 }
+
+
