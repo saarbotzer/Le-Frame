@@ -159,6 +159,3 @@ struct Utilities {
         return timeString
     }
 }
-
-
-//public let centerSpotsIndexes : [IndexPath] = [IndexPath]

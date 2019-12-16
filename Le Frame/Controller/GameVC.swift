@@ -264,10 +264,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         case 1:
             performSegue(withIdentifier: "goToSettings", sender: nil)
         case 2:
-            if isGameOver() {
-                gameOver(toAddStats: false)
-            } else if isGameWon() {
+            if isGameWon() {
                 gameWon(toAddStats: false)
+            } else if isGameOver() {
+                gameOver(toAddStats: false)
             }
             showHints(hintType: .tappedHintButton)
         case 3:
@@ -1503,14 +1503,7 @@ extension GameVC {
     
     func generateEmitterCells() -> [CAEmitterCell] {
         
-        var colors:[UIColor] = [
-            UIColor.red,
-            UIColor.blue,
-            UIColor.green,
-            UIColor.yellow
-        ]
-        
-        var images:[UIImage] = [
+        let confettiImages:[UIImage] = [
             UIImage(named: "Diamond.png")!,
             UIImage(named: "Club.png")!,
             UIImage(named: "Heart.png")!,
@@ -1518,7 +1511,7 @@ extension GameVC {
             UIImage(named: "Crown-small.png")!
         ]
         
-        var velocities:[Int] = [
+        let velocities:[Int] = [
             100
             , 500
             , 90
@@ -1528,9 +1521,8 @@ extension GameVC {
             , 720
         ]
         
-        
         var cells:[CAEmitterCell] = [CAEmitterCell]()
-        for index in 0..<images.count*2 {
+        for index in 0..<confettiImages.count*2 {
             let cell = CAEmitterCell()
             cell.birthRate = 4.0
             cell.lifetime = 14.0
@@ -1541,9 +1533,7 @@ extension GameVC {
             cell.emissionRange = 0.5
             cell.spin = 3.5
             cell.spinRange = 0
-//            cell.color = getNextColor(colors: colors, i: index)
-//            cell.color = UIColor.purple.cgColor
-            cell.contents = images[index % images.count].cgImage!
+            cell.contents = confettiImages[index % confettiImages.count].cgImage!
             cell.scaleRange = 0.25
             cell.scale = 0.1
             cell.alphaSpeed = -1.0/cell.lifetime
@@ -1556,22 +1546,7 @@ extension GameVC {
     private func getRandomNumber(_ limit: Int) -> Int {
         return Int(arc4random_uniform(UInt32(limit)))
     }
-    
-    private func getNextColor(colors: [UIColor], i:Int) -> CGColor {
-        if i <= 4 {
-            return colors[0].cgColor
-        } else if i <= 8 {
-            return colors[1].cgColor
-        } else if i <= 12 {
-            return colors[2].cgColor
-        } else {
-            return colors[3].cgColor
-        }
-    }
-    
-    private func getNextImage(images: [UIImage], i:Int) -> CGImage {
-        return images[i % 4].cgImage!
-    }
+
 }
 
 
