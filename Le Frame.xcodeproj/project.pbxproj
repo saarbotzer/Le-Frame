@@ -17,6 +17,7 @@
 		BC7A9B1823918A5B002CC9B3 /* lose.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1723918A5B002CC9B3 /* lose.wav */; };
 		BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */; };
 		BC8197FF23A5941300DC3257 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */; };
+		BC81982123AD893700DC3257 /* NewSettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC81982023AD893700DC3257 /* NewSettingsVC.swift */; };
 		BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CEE234DEDE400CD951D /* AppDelegate.swift */; };
 		BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF2234DEDE400CD951D /* GameVC.swift */; };
 		BCC40CF6234DEDE400CD951D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF4234DEDE400CD951D /* Main.storyboard */; };
@@ -45,6 +46,7 @@
 		BC7A9B1723918A5B002CC9B3 /* lose.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = lose.wav; sourceTree = "<group>"; };
 		BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestartAlertController.swift; sourceTree = "<group>"; };
 		BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BC81982023AD893700DC3257 /* NewSettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSettingsVC.swift; sourceTree = "<group>"; };
 		BCC40CEB234DEDE400CD951D /* Royal Frame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Royal Frame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCC40CEE234DEDE400CD951D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BCC40CF2234DEDE400CD951D /* GameVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameVC.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 				BC7A9B08238F132B002CC9B3 /* StatisticsVC.swift */,
 				BC7A9B0E238F2148002CC9B3 /* InfoVC.swift */,
 				BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */,
+				BC81982023AD893700DC3257 /* NewSettingsVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 				BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */,
 				BCF57EAE239ED8F200F762FA /* SceneDelegate.swift in Sources */,
 				BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */,
+				BC81982123AD893700DC3257 /* NewSettingsVC.swift in Sources */,
 				BCD6074A238B3F9D000AFA6F /* SettingsVC.swift in Sources */,
 				BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */,
 				BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */,
