@@ -133,7 +133,6 @@ class SettingsVC: UIViewController {
         alert.addAction(okAction)
 
         present(alert, animated: true, completion: nil)
-        
     }
     
     @IBAction func showHintsSwitched(_ sender: UISegmentedControl) {

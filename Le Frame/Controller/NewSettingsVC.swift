@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import StoreKit
+import MessageUI
 
 class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
@@ -14,37 +16,41 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var closeButton: UIButton!
     
     // MARK: - Properties
     /// A dict that contains all of the settings. The key is the section name.
     let settingsSections: [String : [Setting]] =
         [
-            "Game": [
-                Setting(label: "Removal sum", segmentedControlSegments: ["10", "11"], segmentedControlPropertyName: "removeSum", segmentedControlAlertText: "Yes", segueName: nil),
-                Setting(label: "Remove when full board", segmentedControlSegments: ["Yes", "No"], segmentedControlPropertyName: "removeWhenFullBoard", segmentedControlAlertText: "Yes", segueName: nil),
-                Setting(label: "Show hints?", segmentedControlSegments: ["Yes", "No"], segmentedControlPropertyName: "showHints", segmentedControlAlertText: "No", segueName: nil),
-                Setting(label: "Statistics", segmentedControlSegments: nil, segmentedControlPropertyName: nil, segmentedControlAlertText: nil, segueName: "goToStatistics")
+            "GAME": [
+                Setting(label: "Removal sum", segmentedControlSegments: ["10", "11"], segmentedControlSettingKey: .sumMode, segmentedControlAlertText: "Yes", segueName: nil),
+//                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
+                Setting(label: "Hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No", segueName: nil),
+                Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No", segueName: nil),
+                Setting(label: "Statistics", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToStatistics")
             ],
-            "Help": [
-                Setting(label: "Tutorial", segmentedControlSegments: nil, segmentedControlPropertyName: nil, segmentedControlAlertText: nil, segueName: "goToTutorial"),
-                Setting(label: "FAQ", segmentedControlSegments: nil, segmentedControlPropertyName: nil, segmentedControlAlertText: nil, segueName: "goToFAQ")
+            "HELP": [
+                Setting(label: "Tutorial", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToTutorial"),
+//                Setting(label: "FAQ", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToFAQ")
             ],
-            "About": [
-                Setting(label: "About us", segmentedControlSegments: nil, segmentedControlPropertyName: nil, segmentedControlAlertText: nil, segueName: "goToAboutUs"),
-                Setting(label: "Privacy Policy", segmentedControlSegments: nil, segmentedControlPropertyName: nil, segmentedControlAlertText: nil, segueName: "goToPrivacyPolicy"),
-                Setting(label: "Rate us!", segmentedControlSegments: nil, segmentedControlPropertyName: nil, segmentedControlAlertText: nil, segueName: "rateUs"),
-                Setting(label: "Contact us", segmentedControlSegments: nil, segmentedControlPropertyName: nil, segmentedControlAlertText: nil, segueName: "goToContactUs")
+            "ABOUT": [
+                Setting(label: "About us", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToAboutUs"),
+                Setting(label: "Privacy Policy", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "PrivacyPolicy"),
+                Setting(label: "Rate us!", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "rateUs"),
+                Setting(label: "Contact us", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToContactUs")
             ]
     ]
     
     /// All of the section names in the wanted order.
-    let sectionNames = ["Game", "Help", "About"]
+    let sectionNames = ["GAME", "HELP", "ABOUT"]
     
     let sectionFontName = "Kefa"
     let settingFontName = "Kefa"
     let sectionFontSize: CGFloat = 30.0
     let settingFontSize: CGFloat = 14.0
     
+    let defaults = UserDefaults.standard
+
     
     // MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -52,6 +58,10 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
 
         tableView.delegate = self
         tableView.dataSource = self
+        
+        if #available(iOS 13.0, *) {
+            closeButton.isHidden = true
+        }
         
         updateUI()
     }
@@ -64,11 +74,14 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         barAppearance.isTranslucent = true
         
         tableView.backgroundColor = .clear
-        tableView.separatorStyle = .singleLine
+        tableView.separatorStyle = .none
         tableView.sectionHeaderHeight = 70
         
     }
     
+    @IBAction func closeButtonTapped(_ sender: UIButton) {
+        self.dismiss(animated: true, completion: nil)
+    }
     
     // MARK: - TableView Functions
     
@@ -118,7 +131,21 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         let sectionName = sectionNames[indexPath.section]
         
         if let segueName = settingsSections[sectionName]?[indexPath.row].segueName {
-            performSegue(withIdentifier: segueName, sender: nil)
+            if segueName == "rateUs" {
+                if #available(iOS 10.3,*){
+                    SKStoreReviewController.requestReview()
+                    tableView.deselectRow(at: indexPath, animated: true)
+                }
+            } else if segueName == "PrivacyPolicy" {
+                guard let url = URL(string: "http://www.freeprivacypolicy.com/privacy/view/2a29fd7a265d51d96bf75c8f422b751c") else { return }
+                UIApplication.shared.open(url)
+                tableView.deselectRow(at: indexPath, animated: true)
+            } else if segueName == "goToContactUs" {
+                sendEmail()
+                tableView.deselectRow(at: indexPath, animated: true)
+            } else {
+                performSegue(withIdentifier: segueName, sender: nil)
+            }
         }
     }
     
@@ -131,7 +158,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
      - Parameter setting: The Setting objects which contains the data to created the segmented control
      - Returns: The segmented control with the properties defined in setting, nil if the row doesn't have a segmented control
      */
-    func createSegmentedControl(for setting: Setting) -> UISegmentedControl? {
+    func createSegmentedControl(for setting: Setting) -> CustomSegmentedControl? {
         let goldColor = UIColor(red: 1, green: 215.0/255.0, blue: 0, alpha: 1)
         let backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         let selectedColor = goldColor
@@ -142,10 +169,10 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         let font = UIFont(name: settingFontName, size: settingFontSize)
         
         if let items = setting.segmentedControlSegments {
-            let segmentedControl = UISegmentedControl(items: items)
+            let segmentedControl = CustomSegmentedControl(setting: setting)
             segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-            segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: font], for: .normal)
-            segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: selectedTextColor, NSAttributedString.Key.font: font], for: .selected)
+            segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: font!], for: .normal)
+            segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: selectedTextColor, NSAttributedString.Key.font: font!], for: .selected)
 
             if #available(iOS 13.0, *) {
                 segmentedControl.layer.borderColor = borderColor.cgColor
@@ -156,11 +183,104 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 segmentedControl.tintColor = selectedColor
             }
             // TODO: Determine which item is selected by default settings
-            // TODO: Add action to change the default setting (by setting.segmentedControlPropertyName), also add action (segmentedControlAlertText)
+//            let currentValue = defaults.object(forKey: setting.segmentedControlPropertyName!)
+                        
+            segmentedControl.selectedSegmentIndex = updateDefaultSettings(for: setting.segmentedControlSettingKey)
+            
+            // TODO: Add action to change the default setting (by setting.segmentedControlPropertyName), also add alert (segmentedControlAlertText)
+            
+            segmentedControl.addTarget(self, action: #selector(segmentControlValueChanged(sender:)), for: .valueChanged)
+            
+            
             return segmentedControl
         }
         return nil
     }
+    
+    @objc
+    func segmentControlValueChanged(sender: CustomSegmentedControl) {
+//        print(sender.settingKey)
+        
+        if let settingKey = sender.settingKey {
+            let keyRawValue = settingKey.getRawValue()
+            switch settingKey {
+            case .sumMode:
+                let newSumMode = sender.selectedSegmentIndex == 0 ? 10 : 11
+                defaults.set(newSumMode, forKey: keyRawValue)
+                // TODO: Show alert
+                if gameSumMode.getRawValue() != newSumMode {
+                    alertChange(for: sender.name!, currentValue: gameSumMode)
+                }
+            case .removeWhenFull:
+                let newRemoveWhenFull = sender.selectedSegmentIndex == 0
+                defaults.set(newRemoveWhenFull, forKey: keyRawValue)
+                // TODO: Show alert
+            case .showHints:
+                let newShowHints = sender.selectedSegmentIndex == 0
+                defaults.set(newShowHints, forKey: keyRawValue)
+            case .soundsOn:
+                let newSoundsOn = sender.selectedSegmentIndex == 0
+                defaults.set(newSoundsOn, forKey: keyRawValue)
+            }
+        }
+    }
+    
+    func alertChange(for settingName: String, currentValue: Any) {
+        let title = settingName
+        let message = "This setting for the current game has already been set on \(currentValue). This change will be active in the next game"
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+        let okAction = UIAlertAction(title: "Got it", style: .default, handler: nil)
+
+        alert.addAction(okAction)
+
+        present(alert, animated: true, completion: nil)
+
+    }
+    
+    /**
+     Updates the defaults settings and returns the selected index for the segmented control.
+     
+     */
+    func updateDefaultSettings(for settingKey: SettingKey?) -> Int {
+        var selectedSegmentIndex = 0
+
+        let currentlySavedKeys = defaults.dictionaryRepresentation().keys
+        
+        if let defaultsKey = settingKey {
+            let keyRawValue = defaultsKey.getRawValue()
+            let keyExists = currentlySavedKeys.contains(keyRawValue)
+            switch defaultsKey {
+            case .sumMode:
+                if keyExists {
+                    let sumMode = defaults.integer(forKey: keyRawValue)
+                    selectedSegmentIndex = sumMode == 10 ? 0 : 1
+                } else {
+                    defaults.set(10, forKey: keyRawValue)
+                    selectedSegmentIndex = 0
+                }
+            case .showHints, .removeWhenFull:
+                if keyExists {
+                    let showHints = defaults.bool(forKey: keyRawValue)
+                    selectedSegmentIndex = showHints ? 0 : 1
+                } else {
+                    defaults.set(true, forKey: keyRawValue)
+                }
+            case .soundsOn:
+                if keyExists {
+                    let soundsOn = defaults.bool(forKey: keyRawValue)
+                    selectedSegmentIndex = soundsOn ? 0 : 1
+                } else {
+                    defaults.set(true, forKey: keyRawValue)
+                }
+            }
+        }
+        
+        return selectedSegmentIndex
+    }
+    
+    
     
     /**
      Creates a header for the section
@@ -209,10 +329,10 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         if let segmentedControl = createSegmentedControl(for: setting) {
             cell.addSubview(segmentedControl)
             NSLayoutConstraint.activate([
-            segmentedControl.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10),
-            segmentedControl.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-            segmentedControl.heightAnchor.constraint(equalToConstant: 24),
-            segmentedControl.widthAnchor.constraint(equalToConstant: 100),
+                segmentedControl.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10),
+                segmentedControl.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
+                segmentedControl.heightAnchor.constraint(equalToConstant: 24),
+                segmentedControl.widthAnchor.constraint(equalToConstant: 100),
             ])
             
             selectedBackgroundView.backgroundColor = .clear
@@ -221,19 +341,20 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             selectedBackgroundView.backgroundColor = selectedCellColor
         }
         
-        if setting.segueName != nil {
+        if setting.segueName != nil  && setting.segueName != "rateUs"  && setting.segueName != "goToContactUs" {
             let rightArrowImage = UIImage(named: "right-arrow.png")?.withRenderingMode(.alwaysTemplate) ?? UIImage(named: "right-arrow.png")
             let rightArrowImageView = UIImageView(image: rightArrowImage)
             rightArrowImageView.tintColor = .white
+//            rightArrowImageView.tintColor = UIColor(red: 1, green: 215.0/255.0, blue: 0, alpha: 1)
 
             rightArrowImageView.translatesAutoresizingMaskIntoConstraints = false
 
             cell.addSubview(rightArrowImageView)
             NSLayoutConstraint.activate([
-            rightArrowImageView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10),
-            rightArrowImageView.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-            rightArrowImageView.heightAnchor.constraint(equalToConstant: 15),
-            rightArrowImageView.widthAnchor.constraint(equalToConstant: 15),
+                rightArrowImageView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10),
+                rightArrowImageView.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
+                rightArrowImageView.heightAnchor.constraint(equalToConstant: 15),
+                rightArrowImageView.widthAnchor.constraint(equalToConstant: 15),
             ])
         }
         
@@ -254,14 +375,84 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+        
+        // To deselect rows with segue
+        for section in 0..<tableView.numberOfSections {
+            for row in 0..<tableView.numberOfRows(inSection: section) {
+                let indexPath = IndexPath(row: row, section: section)
+                tableView.deselectRow(at: indexPath, animated: true)
+            }
+        }
     }
 }
+
+class CustomSegmentedControl : UISegmentedControl {
+    
+    var name : String?
+    var settingKey : SettingKey?
+    var alertText : String?
+    
+    override init(items: [Any]?) {
+        super.init(items: items)
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    init(setting: Setting) {
+        let items = setting.segmentedControlSegments
+        super.init(items: items)
+        self.settingKey = setting.segmentedControlSettingKey
+        self.alertText = setting.segmentedControlAlertText
+        self.name = setting.label
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+}
+
+extension NewSettingsVC: MFMailComposeViewControllerDelegate {
+    func sendEmail() {
+        if MFMailComposeViewController.canSendMail() {
+            let mail = MFMailComposeViewController()
+            mail.mailComposeDelegate = self
+            mail.setToRecipients(["saarbotzer@gmail.com"])
+//            mail.setMessageBody("<p>You're so awesome!</p>", isHTML: true)
+//            mail.title = "Feedback"
+            mail.setSubject("Feedback")
+
+            present(mail, animated: true)
+        } else {
+            // show failure alert
+            print("mail failure")
+        }
+    }
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true)
+    }
+}
+
+
 
 // MARK: - Setting Object
 struct Setting {
     var label: String
     var segmentedControlSegments: [String]?
-    var segmentedControlPropertyName: String?
+    var segmentedControlSettingKey: SettingKey?
     var segmentedControlAlertText: String?
     var segueName: String?
+}
+
+enum SettingKey: String {
+    case sumMode = "SumMode"
+    case showHints = "ShowHints"
+    case removeWhenFull = "RemoveWhenFull"
+    case soundsOn = "SoundsOn"
+    
+    func getRawValue() -> String {
+        return self.rawValue
+    }
 }

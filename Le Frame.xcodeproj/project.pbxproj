@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC13EFF92392CBA600DF4F1C /* HowToVC.swift */; };
 		BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BC368419236B502500DCC703 /* Data Model.xcdatamodeld */; };
-		BC7A9B09238F132B002CC9B3 /* StatisticsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7A9B08238F132B002CC9B3 /* StatisticsVC.swift */; };
-		BC7A9B0F238F2148002CC9B3 /* InfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7A9B0E238F2148002CC9B3 /* InfoVC.swift */; };
 		BC7A9B1323914FF4002CC9B3 /* card-flip-2.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1123914FF4002CC9B3 /* card-flip-2.wav */; };
 		BC7A9B1423914FF4002CC9B3 /* card-flip-1.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */; };
 		BC7A9B1623918799002CC9B3 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1523918798002CC9B3 /* win.wav */; };
@@ -18,6 +16,9 @@
 		BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */; };
 		BC8197FF23A5941300DC3257 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */; };
 		BC81982123AD893700DC3257 /* NewSettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC81982023AD893700DC3257 /* NewSettingsVC.swift */; };
+		BCB7463023AE8B2300C7C841 /* AboutUsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7462F23AE8B2300C7C841 /* AboutUsVC.swift */; };
+		BCB7463623AE94BC00C7C841 /* StatsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7463523AE94BC00C7C841 /* StatsVC.swift */; };
+		BCB7463823AEC02100C7C841 /* faqVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7463723AEC02100C7C841 /* faqVC.swift */; };
 		BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CEE234DEDE400CD951D /* AppDelegate.swift */; };
 		BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40CF2234DEDE400CD951D /* GameVC.swift */; };
 		BCC40CF6234DEDE400CD951D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF4234DEDE400CD951D /* Main.storyboard */; };
@@ -38,8 +39,6 @@
 		2B1A4FD84B0357CE21C4F165 /* Pods_Le_Frame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Le_Frame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC13EFF92392CBA600DF4F1C /* HowToVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToVC.swift; sourceTree = "<group>"; };
 		BC36841A236B502500DCC703 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
-		BC7A9B08238F132B002CC9B3 /* StatisticsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsVC.swift; sourceTree = "<group>"; };
-		BC7A9B0E238F2148002CC9B3 /* InfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoVC.swift; sourceTree = "<group>"; };
 		BC7A9B1123914FF4002CC9B3 /* card-flip-2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "card-flip-2.wav"; sourceTree = "<group>"; };
 		BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "card-flip-1.wav"; sourceTree = "<group>"; };
 		BC7A9B1523918798002CC9B3 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = win.wav; sourceTree = "<group>"; };
@@ -47,6 +46,9 @@
 		BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestartAlertController.swift; sourceTree = "<group>"; };
 		BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BC81982023AD893700DC3257 /* NewSettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSettingsVC.swift; sourceTree = "<group>"; };
+		BCB7462F23AE8B2300C7C841 /* AboutUsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsVC.swift; sourceTree = "<group>"; };
+		BCB7463523AE94BC00C7C841 /* StatsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsVC.swift; sourceTree = "<group>"; };
+		BCB7463723AEC02100C7C841 /* faqVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = faqVC.swift; sourceTree = "<group>"; };
 		BCC40CEB234DEDE400CD951D /* Royal Frame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Royal Frame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCC40CEE234DEDE400CD951D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BCC40CF2234DEDE400CD951D /* GameVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameVC.swift; sourceTree = "<group>"; };
@@ -104,6 +106,16 @@
 			path = Sounds;
 			sourceTree = "<group>";
 		};
+		BCB7463423AE937A00C7C841 /* Settings Screens */ = {
+			isa = PBXGroup;
+			children = (
+				BCB7463523AE94BC00C7C841 /* StatsVC.swift */,
+				BCB7462F23AE8B2300C7C841 /* AboutUsVC.swift */,
+				BCB7463723AEC02100C7C841 /* faqVC.swift */,
+			);
+			name = "Settings Screens";
+			sourceTree = "<group>";
+		};
 		BCC40CE2234DEDE400CD951D = {
 			isa = PBXGroup;
 			children = (
@@ -155,8 +167,7 @@
 				BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */,
 				BCE12CEE234E35E400962F00 /* Utilities.swift */,
 				BCD60749238B3F9D000AFA6F /* SettingsVC.swift */,
-				BC7A9B08238F132B002CC9B3 /* StatisticsVC.swift */,
-				BC7A9B0E238F2148002CC9B3 /* InfoVC.swift */,
+				BCB7463423AE937A00C7C841 /* Settings Screens */,
 				BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */,
 				BC81982023AD893700DC3257 /* NewSettingsVC.swift */,
 			);
@@ -308,14 +319,15 @@
 				BC81982123AD893700DC3257 /* NewSettingsVC.swift in Sources */,
 				BCD6074A238B3F9D000AFA6F /* SettingsVC.swift in Sources */,
 				BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */,
+				BCB7463023AE8B2300C7C841 /* AboutUsVC.swift in Sources */,
 				BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */,
+				BCB7463823AEC02100C7C841 /* faqVC.swift in Sources */,
 				BCD6074C238C6483000AFA6F /* roundButton.swift in Sources */,
-				BC7A9B0F238F2148002CC9B3 /* InfoVC.swift in Sources */,
 				BCE12CE9234E340400962F00 /* Card.swift in Sources */,
 				BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */,
+				BCB7463623AE94BC00C7C841 /* StatsVC.swift in Sources */,
 				BCC40CF3234DEDE400CD951D /* GameVC.swift in Sources */,
 				BCC40CEF234DEDE400CD951D /* AppDelegate.swift in Sources */,
-				BC7A9B09238F132B002CC9B3 /* StatisticsVC.swift in Sources */,
 				BCC40D0B234DF4A000CD951D /* CardModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

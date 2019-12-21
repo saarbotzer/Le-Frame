@@ -221,7 +221,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Returns: The setted SumMode
      */
     func getSumSetting() -> SumMode {
-        let savedValue = defaults.integer(forKey: "SumMode")
+        let settingKey = SettingKey.sumMode
+        let savedValue = defaults.integer(forKey: settingKey.getRawValue())
         if savedValue == 11 {
             return .eleven
         } else {
@@ -235,7 +236,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Returns: True if show hints, false otherwise
      */
     func getHintsSetting() -> Bool {
-        let savedValue = defaults.bool(forKey: "ShowHintsOn")
+        let settingKey = SettingKey.showHints
+        let savedValue = defaults.bool(forKey: settingKey.getRawValue())
         return savedValue
     }
     
@@ -245,7 +247,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Returns: True if play sounds, false otherwise
      */
     func getSoundSetting() -> Bool {
-        let savedValue = defaults.bool(forKey: "SoundsOn")
+        let settingKey = SettingKey.soundsOn
+        let savedValue = defaults.bool(forKey: settingKey.getRawValue())
         return savedValue
     }
     
@@ -872,7 +875,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func addStats() {
         
         let gameSavedStats = getStats(for: gameID)
-        var firebaseGameObj = gameSavedStats
         
         if let gameStatsToAdd = gameSavedStats {
             gameStatsToAdd.restartAfter = restartAfter
