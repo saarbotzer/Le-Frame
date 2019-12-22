@@ -31,7 +31,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             ],
             "HELP": [
                 Setting(label: "Tutorial", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToTutorial"),
-//                Setting(label: "FAQ", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToFAQ")
+                Setting(label: "FAQ", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToFAQ")
             ],
             "ABOUT": [
                 Setting(label: "About us", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToAboutUs"),
