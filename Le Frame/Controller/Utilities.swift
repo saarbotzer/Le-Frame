@@ -143,6 +143,8 @@ struct Utilities {
  */
     
     static func formatSeconds(seconds: Int) -> String {
+        // TODO: Add days, weeks, months
+        
         let hours = seconds / 3600
         let minutes = seconds / 60 % 60
         let seconds = seconds % 60

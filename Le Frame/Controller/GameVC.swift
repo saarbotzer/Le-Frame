@@ -662,7 +662,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let tappedSpot = getSpot(at: indexPath)
         
         // In case of pressing an empty spot in removal mode
-        if tappedSpot.isEmpty {
+        if tappedSpot.isEmpty  || [CardRank.jack, CardRank.queen, CardRank.king].contains(tappedSpot.card?.rank){
             return
         }
         

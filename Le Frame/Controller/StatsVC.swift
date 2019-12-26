@@ -14,7 +14,12 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var tableView: UITableView!
 
-    var stats : [Game] = [Game]()
+    var gamesData : [Game] = [Game]()
+    
+    var stats : [StatDimension : [StatMeasure : Any]] = [:]
+    
+    let sortedMeasures : [StatMeasure] = [.gamesPlayed, .gamesWon, .gamesWithoutHints, .averageGameLength, .fastestWin, .totalGamesLength]
+    
     
     var cellsData : [Stat] = []
     
@@ -40,22 +45,29 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return cellsData.count
+        return sortedMeasures.count
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
         
-        let stat = cellsData[indexPath.section]
+//        let stat = cellsData[indexPath.section]
+        
+        let measure = sortedMeasures[indexPath.section]
+        let value = stats[.all]![measure]!
         
         let titleLabel = UILabel()
-        titleLabel.text = stat.title
+//        titleLabel.text = stat.title
+        let titleText = formatStatLabel(measure: measure)
+        titleLabel.text = titleText
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         cell.addSubview(titleLabel)
         
         let valueLabel = UILabel()
-        valueLabel.text = stat.dataString
+//        valueLabel.text = stat.dataString
+        let valueText = formatValueLabel(measure: measure, value: value)
+        valueLabel.text = valueText
         valueLabel.translatesAutoresizingMaskIntoConstraints = false
         cell.addSubview(valueLabel)
         
@@ -97,6 +109,62 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         headerView.backgroundColor = UIColor.clear
         return headerView
     }
+    
+    func formatStatLabel(measure: StatMeasure) -> String {
+        switch measure {
+        case .gamesPlayed:
+            return "Games played"
+        case .gamesWon:
+            return "Games won"
+        case .averageGameLength:
+            return "Average game length"
+        case .fastestWin:
+            return "Fastest win"
+        case .totalGamesLength:
+            return "Total time played"
+        default:
+            return measure.getRawValue()
+        }
+    }
+    
+    func formatValueLabel(measure: StatMeasure, value: Any) -> String {
+        
+        switch measure {
+        case .gamesPlayed, .gamesWon, .gamesWithoutHints:
+            if let valueAsInt = value as? Int {
+                return "\(valueAsInt)"
+            }
+        case .averageGameLength, .totalGamesLength:
+            if let valueAsDouble = value as? Double {
+                let valueAsInt = Int(valueAsDouble)
+                return valueAsInt == 0 ? "No games played" : Utilities.formatSeconds(seconds: valueAsInt)
+            }
+        case .fastestWin:
+            if let valueAsInt = value as? Int {
+                return valueAsInt == 0 ? "No games won" : Utilities.formatSeconds(seconds: valueAsInt)
+            }
+        default:
+            return "\(value)"
+        }
+        
+        return "\(value)"
+    }
+    
+    // TODO: Delete
+    func getAverageGameLength() -> Int {
+        var totalSeconds : Double = 0
+        var nofGames : Double = 0
+        for game in gamesData {
+            nofGames += 1
+            totalSeconds += Double(game.duration)
+        }
+        if nofGames == 0 {
+            return 0
+        }
+        
+        let average = totalSeconds/nofGames
+        return Int(average.rounded())
+    }
 
     
     
@@ -123,9 +191,11 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
     func setup() {
+        
+        createMeasures()
         cellsData = []
 
-        if stats.count == 0 {
+        if gamesData.count == 0 {
             cellsData.append(Stat(title: "Play a game to see statistics!", dataString: ""))
             tableView.reloadData()
             return
@@ -143,6 +213,8 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         cellsData.append(Stat(title: "Fastest win", dataString: fastestWinText))
 
         tableView.reloadData()
+        
+//        print(stats)
     }
     
 
@@ -152,30 +224,78 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     func loadStats() {
         let request : NSFetchRequest<Game> = Game.fetchRequest()
         do {
-            stats = try context.fetch(request)
+            gamesData = try context.fetch(request)
         } catch {
             print("Error fetching data from context: \(error)")
         }
     }
     
-    func getAverageGameLength() -> Int {
-        var totalSeconds : Double = 0
-        var nofGames : Double = 0
-        for game in stats {
-            nofGames += 1
-            totalSeconds += Double(game.duration)
-        }
-        if nofGames == 0 {
-            return 0
+    
+    func createMeasures() {
+        let dimensionsAvailable : [StatDimension] = [.all, .tenSumMode, .elevenSumMode]
+
+        var numberOfGames : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
+        var numberOfGamesWithoutHints : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
+        var numberOfWins : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
+        var totalSeconds : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
+        var fastestWin : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
+
+        var dimensionToAdd : [StatDimension] = [.all]
+        
+        for game in gamesData {
+            
+            let gameDuration = Int(game.duration)
+            
+            if Int(game.sumMode) == 10 {
+                dimensionToAdd.append(.tenSumMode)
+            } else if Int(game.sumMode) == 11 {
+                dimensionToAdd.append(.elevenSumMode)
+            }
+            for dimension in dimensionToAdd {
+                numberOfGames[dimension]! += 1
+                if game.didWin {
+                    if fastestWin[dimension]! == 0 {
+                        fastestWin[dimension] = gameDuration
+                    } else if gameDuration < fastestWin[dimension]! {
+                        fastestWin[dimension] = gameDuration
+                    }
+                    numberOfWins[dimension]! += 1
+                }
+                
+                if game.nofHintsUsed == 0 {
+                    numberOfGamesWithoutHints[dimension]! += 1
+                }
+                
+                totalSeconds[dimension]! += gameDuration
+
+            }
         }
         
-        let average = totalSeconds/nofGames
-        return Int(average.rounded())
+        for dimension in dimensionsAvailable {
+            stats[dimension] = [:]
+            
+            stats[dimension]![.gamesPlayed] = numberOfGames[dimension]
+            stats[dimension]![.gamesWon] = numberOfWins[dimension]
+            stats[dimension]![.averageGameLength] = Double(totalSeconds[dimension]!) / Double(numberOfGames[dimension]!)
+            stats[dimension]![.totalGamesLength] = totalSeconds[dimension]
+            stats[dimension]![.fastestWin] = fastestWin[dimension]
+            stats[dimension]![.gamesWithoutHints] = numberOfGamesWithoutHints[dimension]
+        }
     }
+    
+    func createStats(with dimension: StatDimension, and measures: [StatMeasure]) {
+        stats[dimension] = [:]
+
+        for measure in measures {
+            stats[dimension]?[measure] = ""
+        }
+    }
+    
+    
     
     func getNumberOfWins() -> Int {
         var nofWins = 0
-        for game in stats {
+        for game in gamesData {
             if game.didWin {
                 nofWins += 1
             }
@@ -184,12 +304,12 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func getNumberOfGames() -> Int {
-        return stats.count
+        return gamesData.count
     }
     
     func getFastestWin() -> Int {
         var minLength = 0
-        for game in stats {
+        for game in gamesData {
             if game.didWin {
                 if minLength == 0 {
                     minLength = Int(game.duration)
@@ -205,7 +325,7 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func deleteAllData() {
         
-        for game in stats {
+        for game in gamesData {
             context.delete(game)
         }
         
@@ -226,4 +346,30 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 struct Stat {
     let title: String
     let dataString: String
+}
+
+struct StatTwo {
+    let type: StatMeasure?
+    let title: String?
+    let data: Any?
+    let dataString: String?
+}
+
+
+enum StatDimension {
+    case all, tenSumMode, elevenSumMode, withHints, withoutHints
+}
+
+enum StatMeasure: String {
+    case gamesPlayed = "Games played"
+        , gamesWon = "Games won"
+        , averageGameLength = "Average game length"
+        , totalGamesLength = "Total time played"
+        , fastestWin = "Fastest win"
+        , commonLosingReason = "Mainly lose because of"
+        , gamesWithoutHints = "Games without hints"
+    
+    func getRawValue() -> String {
+        return self.rawValue
+    }
 }

@@ -418,7 +418,7 @@ extension NewSettingsVC: MFMailComposeViewControllerDelegate {
         if MFMailComposeViewController.canSendMail() {
             let mail = MFMailComposeViewController()
             mail.mailComposeDelegate = self
-            mail.setToRecipients(["saarbotzer@gmail.com"])
+            mail.setToRecipients(["royalframegame@gmail.com"])
 //            mail.setMessageBody("<p>You're so awesome!</p>", isHTML: true)
 //            mail.title = "Feedback"
             mail.setSubject("Feedback")
