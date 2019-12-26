@@ -14,8 +14,12 @@ class faqVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     let questions : [Question] = [
         Question(question: "Where can I place cards on the board?", answer: "Numbered cards (Ace to 10) can be placed anywhere on the board. Kings can only be placed in the corners, queens can only be place in the middle-top and middle-bottom, and jacks can only be placed in the middle-right and middle-left spots."),
+        Question(question: "How to place cards?", answer: "Just tap the wanted spot. If the spot is empty and the card is allowed in the spot, it will move to the spot."),
         Question(question: "How to remove cards?", answer: "Select the cards you want to remove. Selected cards are marked with a light-blue frame. Then press Remove and the cards will be removed if they sum up to the current sum mode."),
-        Question(question: "What's next?", answer: "We plan to add challenges, custom background anc card styles, fun winning animations and more :)"),
+        Question(question: "What sets the cards order?", answer: "The cards are dealt randomly. There are 80,658,175,170,943,878,571,660,636,856,403,766,975,289,505,440,883,277,824,000,000,000,000 different combinations for each deck, so chances are that each game has a never before dealt order!"),
+        Question(question: "Do you collect personal data?", answer: "No, we do not collect any personal data."),
+        Question(question: "How can I contact you?", answer: "You can contact us at royalframegame@gmail.com")
+//        Question(question: "What's next?", answer: "We plan to add challenges, custom background anc card styles, fun winning animations and more :)"),
 
     ]
     
@@ -89,7 +93,7 @@ class faqVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         var cellColor = #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 0.5)
         var roundedCorners : UIRectCorner = []
         var font: UIFont = UIFont()
-        var textAlignment : NSTextAlignment = .justified
+        var textAlignment : NSTextAlignment = .left
         
         let question = questions[indexPath.section]
         let questionText = question.question
@@ -114,7 +118,7 @@ class faqVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             roundedCorners = [.bottomLeft, .bottomRight]
             font = UIFont(name: answerFontName, size: answerFontSize)!
             cell.contentView.alpha = 0
-            textAlignment = .justified
+//            textAlignment = .justified
         }
         
         cellColor = #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 0.5)

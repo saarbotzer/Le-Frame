@@ -11,7 +11,7 @@ import CoreData
 
 class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-    
+    @IBOutlet weak var sumModeSwitch: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
 
     var gamesData : [Game] = [Game]()
@@ -19,6 +19,8 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var stats : [StatDimension : [StatMeasure : Any]] = [:]
     
     let sortedMeasures : [StatMeasure] = [.gamesPlayed, .gamesWon, .gamesWithoutHints, .averageGameLength, .fastestWin, .totalGamesLength]
+    
+    var chosenSumMode : StatDimension = .all
     
     
     var cellsData : [Stat] = []
@@ -34,8 +36,34 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         tableView.separatorStyle = .none
         
         loadStats()
-
+        
+        formatSumModeSwitch()
+        
         setup()
+    }
+    
+    
+    func formatSumModeSwitch() {
+        let goldColor = UIColor(red: 1, green: 215.0/255.0, blue: 0, alpha: 1)
+        let backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        let selectedColor = goldColor
+        let textColor = UIColor.white
+        let selectedTextColor = UIColor.black
+        let borderColor = UIColor.white
+        let borderWidth: CGFloat = 0
+        let font = UIFont(name: "Kefa", size: 14)
+        
+        sumModeSwitch.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: font!], for: .normal)
+        sumModeSwitch.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: selectedTextColor, NSAttributedString.Key.font: font!], for: .selected)
+
+        if #available(iOS 13.0, *) {
+            sumModeSwitch.layer.borderColor = borderColor.cgColor
+            sumModeSwitch.layer.borderWidth = borderWidth
+            sumModeSwitch.layer.backgroundColor = backgroundColor.cgColor
+            sumModeSwitch.selectedSegmentTintColor = selectedColor
+        } else {
+            sumModeSwitch.tintColor = selectedColor
+        }
     }
     
     // MARK: - TableView Functions
@@ -53,15 +81,17 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let cell = UITableViewCell()
         
 //        let stat = cellsData[indexPath.section]
+        let font = UIFont(name: "Kefa", size: 15)
         
         let measure = sortedMeasures[indexPath.section]
-        let value = stats[.all]![measure]!
+        let value = stats[chosenSumMode]![measure]!
         
         let titleLabel = UILabel()
 //        titleLabel.text = stat.title
         let titleText = formatStatLabel(measure: measure)
         titleLabel.text = titleText
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.font = font
         cell.addSubview(titleLabel)
         
         let valueLabel = UILabel()
@@ -69,6 +99,7 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let valueText = formatValueLabel(measure: measure, value: value)
         valueLabel.text = valueText
         valueLabel.translatesAutoresizingMaskIntoConstraints = false
+        valueLabel.font = font
         cell.addSubview(valueLabel)
         
         NSLayoutConstraint.activate([
@@ -134,9 +165,13 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             if let valueAsInt = value as? Int {
                 return "\(valueAsInt)"
             }
-        case .averageGameLength, .totalGamesLength:
+        case .averageGameLength:
             if let valueAsDouble = value as? Double {
                 let valueAsInt = Int(valueAsDouble)
+                return valueAsInt == 0 ? "No games played" : Utilities.formatSeconds(seconds: valueAsInt)
+            }
+        case .totalGamesLength:
+            if let valueAsInt = value as? Int {
                 return valueAsInt == 0 ? "No games played" : Utilities.formatSeconds(seconds: valueAsInt)
             }
         case .fastestWin:
@@ -218,7 +253,20 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
 
-
+    @IBAction func sumModeSwitched(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            chosenSumMode = .all
+        case 1:
+            chosenSumMode = .tenSumMode
+        case 2:
+            chosenSumMode = .elevenSumMode
+        default:
+            return
+        }
+        self.tableView.reloadData()
+    }
+    
 
     // MARK: - Statistics Functions
     func loadStats() {
@@ -240,18 +288,22 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         var totalSeconds : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
         var fastestWin : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
 
-        var dimensionToAdd : [StatDimension] = [.all]
+        var dimensionToAdd : Set<StatDimension> = [.all]
         
         for game in gamesData {
+            
+            dimensionToAdd = [.all]
             
             let gameDuration = Int(game.duration)
             
             if Int(game.sumMode) == 10 {
-                dimensionToAdd.append(.tenSumMode)
+                dimensionToAdd.insert(.tenSumMode)
             } else if Int(game.sumMode) == 11 {
-                dimensionToAdd.append(.elevenSumMode)
+                dimensionToAdd.insert(.elevenSumMode)
             }
+            
             for dimension in dimensionToAdd {
+                
                 numberOfGames[dimension]! += 1
                 if game.didWin {
                     if fastestWin[dimension]! == 0 {

@@ -658,9 +658,20 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                             </imageView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ScX-sM-JPj">
-                                <rect key="frame" x="20" y="56" width="374" height="752"/>
+                                <rect key="frame" x="20" y="107" width="374" height="701"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Znv-qf-An5">
+                                <rect key="frame" x="103.5" y="66" width="207" height="32"/>
+                                <segments>
+                                    <segment title="All"/>
+                                    <segment title="10"/>
+                                    <segment title="11"/>
+                                </segments>
+                                <connections>
+                                    <action selector="sumModeSwitched:" destination="tcQ-LT-96m" eventType="valueChanged" id="2gl-5R-ZUE"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
@@ -670,7 +681,10 @@
                             <constraint firstItem="ScX-sM-JPj" firstAttribute="leading" secondItem="HDn-jL-LzQ" secondAttribute="leading" constant="20" id="EDd-ba-rGh"/>
                             <constraint firstItem="HDn-jL-LzQ" firstAttribute="trailing" secondItem="ScX-sM-JPj" secondAttribute="trailing" constant="20" id="IPB-Jt-ixR"/>
                             <constraint firstAttribute="bottom" secondItem="wgl-6D-7lz" secondAttribute="bottom" id="ItW-y9-VL8"/>
-                            <constraint firstItem="ScX-sM-JPj" firstAttribute="top" secondItem="HDn-jL-LzQ" secondAttribute="top" id="aJU-dy-gCd"/>
+                            <constraint firstItem="Znv-qf-An5" firstAttribute="top" secondItem="HDn-jL-LzQ" secondAttribute="top" constant="10" id="ZnS-F3-GpY"/>
+                            <constraint firstItem="ScX-sM-JPj" firstAttribute="top" secondItem="Znv-qf-An5" secondAttribute="bottom" constant="10" id="aJU-dy-gCd"/>
+                            <constraint firstItem="Znv-qf-An5" firstAttribute="centerX" secondItem="bh8-JL-EnW" secondAttribute="centerX" id="e1c-Hs-yq5"/>
+                            <constraint firstItem="Znv-qf-An5" firstAttribute="width" secondItem="HDn-jL-LzQ" secondAttribute="width" multiplier="0.5" id="jq8-Ma-ogr"/>
                             <constraint firstItem="wgl-6D-7lz" firstAttribute="leading" secondItem="HDn-jL-LzQ" secondAttribute="leading" id="wCF-xH-cvA"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="HDn-jL-LzQ"/>
@@ -684,6 +698,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="sumModeSwitch" destination="Znv-qf-An5" id="bNN-DZ-rGq"/>
                         <outlet property="tableView" destination="ScX-sM-JPj" id="ZrJ-mh-4yX"/>
                     </connections>
                 </viewController>
