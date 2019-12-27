@@ -584,7 +584,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         if let cardsLeft = cardsLeft {
             if cardsLeft == 0 && cardsToRemove.count == 0 && cardsAtCenter.count != 4 {
                 setGameStatus(status: .gameOver)
-                nextCardImageView.image = UIImage(named: "green_card.jpg")
+                nextCardImageView.image = UIImage(named: spotImageName)
             } else {
 //                updateNextCardImage()
             }
@@ -702,7 +702,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             nextCard = deck.remove(at: 0)
             updateNextCardImage()
         } else {
-            nextCardImageView.image = UIImage(named: "green_card.jpg")
+            nextCardImageView.image = UIImage(named: spotImageName)
 //            setGameStatus(status: .won)
         }
     }
@@ -1097,7 +1097,7 @@ extension GameVC {
         
         // Get deck
         deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
-//        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
+        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .fromString, random: false, from: "h10c10c05h13c13d13s13h12c12d12s12h11c11d11s11", fullDeck: false)
         
@@ -1506,11 +1506,11 @@ extension GameVC {
     func generateEmitterCells() -> [CAEmitterCell] {
         
         let confettiImages:[UIImage] = [
-            UIImage(named: "Diamond.png")!,
-            UIImage(named: "Club.png")!,
-            UIImage(named: "Heart.png")!,
-            UIImage(named: "Spade.png")!,
-            UIImage(named: "Crown-small.png")!
+            UIImage(named: "confetti-diamond.png")!,
+            UIImage(named: "confetti-club.png")!,
+            UIImage(named: "confetti-heart.png")!,
+            UIImage(named: "confetti-spade.png")!,
+            UIImage(named: "confetti-crown.png")!
         ]
         
         let velocities:[Int] = [

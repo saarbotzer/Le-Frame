@@ -129,6 +129,7 @@ class faqVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         label.numberOfLines = 10
         label.font = font
         label.textAlignment = textAlignment
+        label.textColor = .white
 //        label.sizeToFit()
         cell.addSubview(label)
         

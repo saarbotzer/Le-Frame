@@ -49,6 +49,8 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     let sectionFontSize: CGFloat = 30.0
     let settingFontSize: CGFloat = 14.0
     
+    let gotoIcon = "settings-goto-icon.png"
+    
     let defaults = UserDefaults.standard
 
     
@@ -342,19 +344,19 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         }
         
         if setting.segueName != nil  && setting.segueName != "rateUs"  && setting.segueName != "goToContactUs" {
-            let rightArrowImage = UIImage(named: "right-arrow.png")?.withRenderingMode(.alwaysTemplate) ?? UIImage(named: "right-arrow.png")
-            let rightArrowImageView = UIImageView(image: rightArrowImage)
-            rightArrowImageView.tintColor = .white
+            let gotoImage = UIImage(named: gotoIcon)?.withRenderingMode(.alwaysTemplate) ?? UIImage(named: gotoIcon)
+            let gotoImageView = UIImageView(image: gotoImage)
+            gotoImageView.tintColor = .white
 //            rightArrowImageView.tintColor = UIColor(red: 1, green: 215.0/255.0, blue: 0, alpha: 1)
 
-            rightArrowImageView.translatesAutoresizingMaskIntoConstraints = false
+            gotoImageView.translatesAutoresizingMaskIntoConstraints = false
 
-            cell.addSubview(rightArrowImageView)
+            cell.addSubview(gotoImageView)
             NSLayoutConstraint.activate([
-                rightArrowImageView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10),
-                rightArrowImageView.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-                rightArrowImageView.heightAnchor.constraint(equalToConstant: 15),
-                rightArrowImageView.widthAnchor.constraint(equalToConstant: 15),
+                gotoImageView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10),
+                gotoImageView.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
+                gotoImageView.heightAnchor.constraint(equalToConstant: 15),
+                gotoImageView.widthAnchor.constraint(equalToConstant: 15),
             ])
         }
         

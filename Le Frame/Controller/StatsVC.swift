@@ -92,6 +92,7 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         titleLabel.text = titleText
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.font = font
+        titleLabel.textColor = .white
         cell.addSubview(titleLabel)
         
         let valueLabel = UILabel()
@@ -100,6 +101,7 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         valueLabel.text = valueText
         valueLabel.translatesAutoresizingMaskIntoConstraints = false
         valueLabel.font = font
+        valueLabel.textColor = .white
         cell.addSubview(valueLabel)
         
         NSLayoutConstraint.activate([
