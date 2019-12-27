@@ -1144,27 +1144,40 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="settings-background" translatesAutoresizingMaskIntoConstraints="NO" id="Gt3-PR-nJ5">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                             </imageView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zQ8-Ne-v1q">
-                                <rect key="frame" x="87" y="324" width="240" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="14"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="We are independent developers from Israel that wanted to make Royal Frame available to more people." translatesAutoresizingMaskIntoConstraints="NO" id="zQ8-Ne-v1q">
+                                <rect key="frame" x="15" y="56" width="384" height="451"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="18"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 <dataDetectorType key="dataDetectorTypes" link="YES"/>
                             </textView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="ZJS-z1-vBu">
+                                <rect key="frame" x="0.0" y="507" width="414" height="335"/>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="cSF-Q4-XLg" firstAttribute="trailing" secondItem="zQ8-Ne-v1q" secondAttribute="trailing" constant="15" id="6OZ-Is-tAG"/>
+                            <constraint firstItem="zQ8-Ne-v1q" firstAttribute="leading" secondItem="cSF-Q4-XLg" secondAttribute="leading" constant="15" id="ACI-Aq-3cb"/>
                             <constraint firstAttribute="bottom" secondItem="Gt3-PR-nJ5" secondAttribute="bottom" id="CAl-iO-aGC"/>
+                            <constraint firstItem="ZJS-z1-vBu" firstAttribute="top" secondItem="zQ8-Ne-v1q" secondAttribute="bottom" id="CE6-YJ-SS0"/>
+                            <constraint firstItem="zQ8-Ne-v1q" firstAttribute="top" secondItem="cSF-Q4-XLg" secondAttribute="top" id="EzW-zc-9Pp"/>
+                            <constraint firstItem="zQ8-Ne-v1q" firstAttribute="height" secondItem="cSF-Q4-XLg" secondAttribute="height" multiplier="0.6" id="HNw-0Y-7r8"/>
+                            <constraint firstItem="ZJS-z1-vBu" firstAttribute="leading" secondItem="cSF-Q4-XLg" secondAttribute="leading" id="Mgf-2S-VSl"/>
                             <constraint firstItem="Gt3-PR-nJ5" firstAttribute="leading" secondItem="cSF-Q4-XLg" secondAttribute="leading" id="TYz-nK-VxE"/>
                             <constraint firstItem="Gt3-PR-nJ5" firstAttribute="top" secondItem="4bM-sn-v6i" secondAttribute="top" id="fkw-R8-sLy"/>
                             <constraint firstItem="Gt3-PR-nJ5" firstAttribute="trailing" secondItem="cSF-Q4-XLg" secondAttribute="trailing" id="kUE-6j-eaJ"/>
+                            <constraint firstItem="cSF-Q4-XLg" firstAttribute="trailing" secondItem="ZJS-z1-vBu" secondAttribute="trailing" id="lUH-Rx-VU3"/>
+                            <constraint firstAttribute="bottom" secondItem="ZJS-z1-vBu" secondAttribute="bottom" id="xK1-fc-Ydp"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="cSF-Q4-XLg"/>
                     </view>
                     <navigationItem key="navigationItem" title="About Us" largeTitleDisplayMode="always" id="RDR-Aw-6MA"/>
+                    <connections>
+                        <outlet property="creditsTableView" destination="ZJS-z1-vBu" id="Hgz-Ep-g0U"/>
+                        <outlet property="textView" destination="zQ8-Ne-v1q" id="X5B-t3-9CX"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aaX-eI-QWr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1184,6 +1197,6 @@
         <image name="transparent_background" width="1" height="1"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Tlo-Vj-1Yy"/>
+        <segue reference="sav-9F-UkC"/>
     </inferredMetricsTieBreakers>
 </document>
