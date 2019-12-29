@@ -27,17 +27,18 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
                 Setting(label: "Hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No", segueName: nil),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No", segueName: nil),
-                Setting(label: "Statistics", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToStatistics")
+                Setting(label: "Statistics", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToStatistics)
             ],
             "HELP": [
-                Setting(label: "Tutorial", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToTutorial"),
-                Setting(label: "FAQ", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToFAQ")
+                Setting(label: "Tutorial", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToTutorial),
+                Setting(label: "FAQ", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToFaq)
             ],
             "ABOUT": [
-                Setting(label: "About us", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToAboutUs"),
-                Setting(label: "Privacy Policy", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "PrivacyPolicy"),
-                Setting(label: "Rate us!", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "rateUs"),
-                Setting(label: "Contact us", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: "goToContactUs")
+                Setting(label: "Credits", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToAboutUs),
+                Setting(label: "Privacy Policy", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .privacyPolicy),
+                Setting(label: "Rate us!", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .rateUs),
+                Setting(label: "Contact us", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToContactUs),
+                Setting(label: "Share", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .share)
             ]
     ]
     
@@ -129,24 +130,60 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         return sectionNames[section]
     }
     
+//    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+//        if section == settingsSections.count - 1 {
+//            return 30
+//        }
+//        return 0
+//    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if section == settingsSections.count - 1 {
+            let versionLabel = UILabel()
+            if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                versionLabel.text = "Royal Frame version \(appVersion)"
+                versionLabel.font = UIFont(name: versionLabel.font.familyName, size: 10)
+                versionLabel.textColor = .white
+                versionLabel.translatesAutoresizingMaskIntoConstraints = false
+                
+                let footerView = UIView()
+                footerView.backgroundColor = .clear
+                footerView.addSubview(versionLabel)
+                
+                versionLabel.centerXAnchor.constraint(equalTo: footerView.centerXAnchor).isActive = true
+                versionLabel.topAnchor.constraint(equalTo: footerView.topAnchor, constant: 15).isActive = true
+                
+                return footerView
+            }
+        }
+        
+        return nil
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let sectionName = sectionNames[indexPath.section]
         
         if let segueName = settingsSections[sectionName]?[indexPath.row].segueName {
-            if segueName == "rateUs" {
+            if segueName == .rateUs {
                 if #available(iOS 10.3,*){
                     SKStoreReviewController.requestReview()
                     tableView.deselectRow(at: indexPath, animated: true)
                 }
-            } else if segueName == "PrivacyPolicy" {
+            } else if segueName == .privacyPolicy {
                 guard let url = URL(string: "http://www.freeprivacypolicy.com/privacy/view/2a29fd7a265d51d96bf75c8f422b751c") else { return }
                 UIApplication.shared.open(url)
                 tableView.deselectRow(at: indexPath, animated: true)
-            } else if segueName == "goToContactUs" {
+            } else if segueName == .share {
+                // TODO: Update sharing link
+                let url = URL(string: "https://itunes.apple.com/us/app/myapp/idxxxxxxxx?ls=1&mt=8")
+                let activityViewController = UIActivityViewController(activityItems: [url!], applicationActivities: nil)
+                present(activityViewController, animated: true, completion: nil)
+                tableView.deselectRow(at: indexPath, animated: true)
+            } else if segueName == .goToContactUs {
                 sendEmail()
                 tableView.deselectRow(at: indexPath, animated: true)
             } else {
-                performSegue(withIdentifier: segueName, sender: nil)
+                performSegue(withIdentifier: segueName.getRawValue(), sender: nil)
             }
         }
     }
@@ -342,22 +379,23 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             // If there is a segmented control, the cell can't be selected
             selectedBackgroundView.backgroundColor = selectedCellColor
         }
-        
-        if setting.segueName != nil  && setting.segueName != "rateUs"  && setting.segueName != "goToContactUs" {
-            let gotoImage = UIImage(named: gotoIcon)?.withRenderingMode(.alwaysTemplate) ?? UIImage(named: gotoIcon)
-            let gotoImageView = UIImageView(image: gotoImage)
-            gotoImageView.tintColor = .white
-//            rightArrowImageView.tintColor = UIColor(red: 1, green: 215.0/255.0, blue: 0, alpha: 1)
+                
+        if let segue = setting.segueName {
+            if segue.hasSegue() {
+                let gotoImage = UIImage(named: gotoIcon)?.withRenderingMode(.alwaysTemplate) ?? UIImage(named: gotoIcon)
+                let gotoImageView = UIImageView(image: gotoImage)
+                gotoImageView.tintColor = .white
 
-            gotoImageView.translatesAutoresizingMaskIntoConstraints = false
+                gotoImageView.translatesAutoresizingMaskIntoConstraints = false
 
-            cell.addSubview(gotoImageView)
-            NSLayoutConstraint.activate([
-                gotoImageView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10),
-                gotoImageView.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-                gotoImageView.heightAnchor.constraint(equalToConstant: 15),
-                gotoImageView.widthAnchor.constraint(equalToConstant: 15),
-            ])
+                cell.addSubview(gotoImageView)
+                NSLayoutConstraint.activate([
+                    gotoImageView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10),
+                    gotoImageView.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
+                    gotoImageView.heightAnchor.constraint(equalToConstant: 15),
+                    gotoImageView.widthAnchor.constraint(equalToConstant: 15),
+                ])
+            }
         }
         
         cell.selectedBackgroundView = selectedBackgroundView
@@ -445,7 +483,7 @@ struct Setting {
     var segmentedControlSegments: [String]?
     var segmentedControlSettingKey: SettingKey?
     var segmentedControlAlertText: String?
-    var segueName: String?
+    var segueName: SettingSegue?
 }
 
 enum SettingKey: String {
@@ -456,5 +494,32 @@ enum SettingKey: String {
     
     func getRawValue() -> String {
         return self.rawValue
+    }
+}
+
+enum SettingSegue: String {
+    case goToStatistics = "goToStatistics"
+    case goToAboutUs = "goToAboutUs"
+    case goToTutorial = "goToTutorial"
+    case goToFaq = "goToFAQ"
+    case privacyPolicy = "PrivacyPolicy"
+    
+    // With no segue
+    case share = "share"
+    case goToContactUs = "goToContactUs"
+    case rateUs = "rateUs"
+    
+    func getRawValue() -> String {
+        return self.rawValue
+    }
+    
+    func hasSegue() -> Bool {
+        let withoutSegue = [
+            SettingSegue.share,
+            SettingSegue.goToContactUs,
+            SettingSegue.rateUs
+        ]
+        
+        return !withoutSegue.contains(self)
     }
 }
