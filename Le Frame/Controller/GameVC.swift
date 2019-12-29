@@ -41,6 +41,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var secondSelectedCardIndexPath: IndexPath?
     var cardsLeft : Int?
     var removedCards : [[Card]] = [[Card]]()
+    var moves : [GameMove] = [GameMove]()
     
     var gameStatus: GameStatus = .placing
     
@@ -270,7 +271,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             if isGameWon() {
                 gameWon(toAddStats: false)
             } else if isGameOver() {
-                gameOver(toAddStats: false)
+                gameOverFeedback()
             }
             showHints(hintType: .tappedHintButton)
         case 3:
@@ -293,6 +294,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // TODO: maybe change ifs to if lets
         
         var newlyRemovedCards = [Card]()
+        var cardsLocations = [IndexPath]()
         
         // Option 1 - Only one card is selected
         if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath == nil {
@@ -303,6 +305,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 playSound(named: "card-flip-2.wav")
                 haptic(of: .removeSuccess)
                 newlyRemovedCards.append(firstCard)
+                cardsLocations.append(firstSelectedCardIndexPath!)
                 firstCardCell.removeCard()
                 enableDoneRemoving()
                 removeBtn.isEnabled = false
@@ -323,6 +326,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 haptic(of: .removeSuccess)
                 newlyRemovedCards.append(firstCard)
                 newlyRemovedCards.append(secondCard)
+                cardsLocations.append(firstSelectedCardIndexPath!)
+                cardsLocations.append(secondSelectedCardIndexPath!)
                 firstCardCell.removeCard()
                 secondCardCell.removeCard()
                 enableDoneRemoving()
@@ -333,6 +338,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
         
         removedCards.append(newlyRemovedCards)
+        let move = GameMove(cards: newlyRemovedCards, indexPaths: cardsLocations, moveType: .remove)
+        moves.append(move)
+        
         resetCardIndexes()
         markAllCardAsNotSelected()
         finishedRemovingCard()
@@ -383,8 +391,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         
 //        let totalCardWidth: CGFloat = cardWidth * 4
-        let gridWidth = collectionView.frame.width
-        let spacing: CGFloat = (gridWidth - (4 * cardWidth)) / 4
+//        let gridWidth = collectionView.frame.width
+//        let spacing: CGFloat = (gridWidth - (4 * cardWidth)) / 4
 //        let totalSpacingWidth: CGFloat = spacing * (4 - 1)
         
         let edgeInsets = (self.view.frame.size.width - (4 * cardWidth)) / (4 + 1)
@@ -395,7 +403,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let gridWidth = collectionView.frame.width
+//        let gridWidth = collectionView.frame.width
 //        let spacing = (gridWidth - (4 * cardWidth)) / 4
         
         cardHeight = collectionView.frame.height / 4 - 10
@@ -639,6 +647,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             animateCard(card: nextCard, to: indexPath)
             blockedCardTaps = 0
             cell.setCard(nextCard)
+            let move = GameMove(cards: [nextCard], indexPaths: [indexPath], moveType: .place)
+            moves.append(move)
             haptic(of: .placeSuccess)
             
             getNextCard()
@@ -755,15 +765,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func gameOver(toAddStats: Bool) {
         
         stopTimer()
-        playSound(named: "lose.wav")
-        haptic(of: .gameOver)
         didWin = false
-        gameLoseReason = getLoseReason()
-        let loseReasonText = getLoseReasonText(loseReason: gameLoseReason)
-        
-        let statsText = getGameStatsText()
-        let messageText = "\(loseReasonText)\n\n\(statsText)"
-        showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game")
+        gameOverFeedback()
         
         if let cardsLeft = cardsLeft {
             if cardsLeft > 0 {
@@ -774,6 +777,18 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         if toAddStats {
             addStats()
         }
+    }
+    
+    func gameOverFeedback() {
+        gameLoseReason = getLoseReason()
+        let loseReasonText = getLoseReasonText(loseReason: gameLoseReason)
+        let statsText = getGameStatsText()
+        let messageText = "\(loseReasonText)\n\n\(statsText)"
+
+        playSound(named: "lose.wav")
+        haptic(of: .gameOver)
+        showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game")
+
     }
     
     func getGameStatsText() -> String {
@@ -952,17 +967,17 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             
             let dataToAdd : [String: Any] = [
 //                "userID": defaults.string(forKey: "uuid"),
-                "deck": game.deck,
+                "deck": game.deck as Any,
                 "didWin": game.didWin,
                 "duration": game.duration,
-                "loseReason": game.loseReason,
+                "loseReason": game.loseReason as Any,
                 "numberOfCardsLeft": game.nofCardsLeft,
                 "numberOfJacksPlaced": game.nofJacksPlaced,
                 "numberOfKingsPlaced": game.nofKingsPlaced,
                 "numberOfQueensPlaced": game.nofQueensPlaced,
                 "numberOfHintsUsed": game.nofHintsUsed,
                 "didRestartAfter": game.restartAfter,
-                "startTime": game.startTime,
+                "startTime": game.startTime as Any,
                 "sumMode": game.sumMode,
                 "synced": true
             ]
@@ -984,7 +999,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func up(referenceString: String, dataToAdd: [String: Any]) -> Bool {
         var statsUploaded = false
-        var ref = Firestore.firestore().document(referenceString)
+        let ref = Firestore.firestore().document(referenceString)
         
         ref.setData(dataToAdd) { (err) in
             if let err = err {
@@ -1088,6 +1103,7 @@ extension GameVC {
         startTime = Date()
         statsAdded = false
         secondsPassed = 0
+        moves = []
         
         // UI
         removalSumLabel.text = "\(gameSumMode.getRawValue())"
@@ -1203,6 +1219,12 @@ extension GameVC {
         }
         
         return false
+    }
+    
+    func undo() {
+//        print(moves.popLast())
+        
+        
     }
 }
 
@@ -1549,6 +1571,32 @@ extension GameVC {
         return Int(arc4random_uniform(UInt32(limit)))
     }
 
+}
+
+
+struct GameMove: CustomStringConvertible {
+    var cards: [Card]
+    var indexPaths: [IndexPath]
+    var moveType: MoveType
+    
+    public var description: String {
+        var locationStr = ""
+        var actionStr = ""
+        var cardsStrings: [String] = [String]()
+        
+        if self.moveType == .place {
+            actionStr = "Placed"
+            locationStr = "at"
+        } else if self.moveType == .remove {
+            actionStr = "Removed"
+            locationStr = "from"
+        }
+        for (card, indexPath) in zip(cards, indexPaths) {
+            cardsStrings.append("\(card) \(locationStr) \(indexPath)")
+        }
+        
+        return "\(actionStr) \(cardsStrings.joined(separator: ", "))"
+    }
 }
 
 

@@ -409,21 +409,3 @@ struct StatTwo {
     let dataString: String?
 }
 
-
-enum StatDimension {
-    case all, tenSumMode, elevenSumMode, withHints, withoutHints
-}
-
-enum StatMeasure: String {
-    case gamesPlayed = "Games played"
-        , gamesWon = "Games won"
-        , averageGameLength = "Average game length"
-        , totalGamesLength = "Total time played"
-        , fastestWin = "Fastest win"
-        , commonLosingReason = "Mainly lose because of"
-        , gamesWithoutHints = "Games without hints"
-    
-    func getRawValue() -> String {
-        return self.rawValue
-    }
-}

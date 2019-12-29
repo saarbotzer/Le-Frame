@@ -30,6 +30,7 @@
 		BCD6074C238C6483000AFA6F /* roundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD6074B238C6482000AFA6F /* roundButton.swift */; };
 		BCE12CE9234E340400962F00 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CE8234E340400962F00 /* Card.swift */; };
 		BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CEE234E35E400962F00 /* Utilities.swift */; };
+		BCF0F9FE23B9403300EB266C /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF0F9FD23B9403300EB266C /* Enums.swift */; };
 		BCF57EAE239ED8F200F762FA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF57EAD239ED8F200F762FA /* SceneDelegate.swift */; };
 		CA16A858B73314A99CA99614 /* Pods_Le_Frame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B1A4FD84B0357CE21C4F165 /* Pods_Le_Frame.framework */; };
 /* End PBXBuildFile section */
@@ -62,6 +63,7 @@
 		BCD6074B238C6482000AFA6F /* roundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = roundButton.swift; sourceTree = "<group>"; };
 		BCE12CE8234E340400962F00 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = "Le Frame/Model/Card.swift"; sourceTree = SOURCE_ROOT; };
 		BCE12CEE234E35E400962F00 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		BCF0F9FD23B9403300EB266C /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		BCF57EAD239ED8F200F762FA /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		F376892DEEA52434674AAC1F /* Pods-Le Frame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Le Frame.release.xcconfig"; path = "Target Support Files/Pods-Le Frame/Pods-Le Frame.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -170,6 +172,7 @@
 				BCB7463423AE937A00C7C841 /* Settings Screens */,
 				BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */,
 				BC81982023AD893700DC3257 /* NewSettingsVC.swift */,
+				BCF0F9FD23B9403300EB266C /* Enums.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -318,6 +321,7 @@
 				BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */,
 				BC81982123AD893700DC3257 /* NewSettingsVC.swift in Sources */,
 				BCD6074A238B3F9D000AFA6F /* SettingsVC.swift in Sources */,
+				BCF0F9FE23B9403300EB266C /* Enums.swift in Sources */,
 				BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */,
 				BCB7463023AE8B2300C7C841 /* AboutUsVC.swift in Sources */,
 				BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */,

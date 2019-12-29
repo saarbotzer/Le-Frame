@@ -207,7 +207,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         let borderWidth: CGFloat = 0
         let font = UIFont(name: settingFontName, size: settingFontSize)
         
-        if let items = setting.segmentedControlSegments {
+        if setting.segmentedControlSegments != nil {
             let segmentedControl = CustomSegmentedControl(setting: setting)
             segmentedControl.translatesAutoresizingMaskIntoConstraints = false
             segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: font!], for: .normal)
@@ -486,40 +486,4 @@ struct Setting {
     var segueName: SettingSegue?
 }
 
-enum SettingKey: String {
-    case sumMode = "SumMode"
-    case showHints = "ShowHints"
-    case removeWhenFull = "RemoveWhenFull"
-    case soundsOn = "SoundsOn"
-    
-    func getRawValue() -> String {
-        return self.rawValue
-    }
-}
 
-enum SettingSegue: String {
-    case goToStatistics = "goToStatistics"
-    case goToAboutUs = "goToAboutUs"
-    case goToTutorial = "goToTutorial"
-    case goToFaq = "goToFAQ"
-    case privacyPolicy = "PrivacyPolicy"
-    
-    // With no segue
-    case share = "share"
-    case goToContactUs = "goToContactUs"
-    case rateUs = "rateUs"
-    
-    func getRawValue() -> String {
-        return self.rawValue
-    }
-    
-    func hasSegue() -> Bool {
-        let withoutSegue = [
-            SettingSegue.share,
-            SettingSegue.goToContactUs,
-            SettingSegue.rateUs
-        ]
-        
-        return !withoutSegue.contains(self)
-    }
-}

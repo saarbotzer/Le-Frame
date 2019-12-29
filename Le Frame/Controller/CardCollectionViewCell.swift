@@ -168,9 +168,4 @@ class CardCollectionViewCell: UICollectionViewCell {
 }
 
 
-enum DesignatedRanks {
-    case kings
-    case jacks
-    case queens
-    case notRoyal
-}
+

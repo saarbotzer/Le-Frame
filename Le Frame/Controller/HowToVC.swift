@@ -599,7 +599,5 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
 }
 
 
-enum OnboardingViewingMode {
-    case onboarding, howTo
-}
+
 
