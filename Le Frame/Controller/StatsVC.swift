@@ -289,8 +289,17 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         var numberOfWins : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
         var totalSeconds : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
         var fastestWin : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
+        
 
         var dimensionToAdd : Set<StatDimension> = [.all]
+        
+        gamesData.sort { (firstGame, secondGame) -> Bool in
+            if let firstGameStartTime = firstGame.startTime, let secondGameStartTime = secondGame.startTime {
+                return firstGameStartTime < secondGameStartTime
+            }
+            return false
+        }
+        
         
         for game in gamesData {
             
@@ -298,10 +307,17 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             
             let gameDuration = Int(game.duration)
             
+            
             if Int(game.sumMode) == 10 {
                 dimensionToAdd.insert(.tenSumMode)
             } else if Int(game.sumMode) == 11 {
                 dimensionToAdd.insert(.elevenSumMode)
+            }
+            
+            if let deck = game.deck {
+                if deck.count != 156 {
+                    dimensionToAdd = []
+                }
             }
             
             for dimension in dimensionToAdd {
@@ -314,6 +330,7 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                         fastestWin[dimension] = gameDuration
                     }
                     numberOfWins[dimension]! += 1
+                    
                 }
                 
                 if game.nofHintsUsed == 0 {

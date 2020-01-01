@@ -171,6 +171,8 @@ enum StatMeasure: String {
         , fastestWin = "Fastest win"
         , commonLosingReason = "Mainly lose because of"
         , gamesWithoutHints = "Games without hints"
+        , longestWinningStreak = "Longest winning streak"
+        , currentWinningStreak = "Current winning streak"
     
     func getRawValue() -> String {
         return self.rawValue
