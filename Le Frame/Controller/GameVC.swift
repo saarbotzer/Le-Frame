@@ -818,7 +818,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func getLoseReason() -> LoseReason {
-        if !checkForPairs() {
+        if !checkForPairs() && gameStatus == .removing {
             return .noCardsToRemove
         }
         
