@@ -784,7 +784,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func getLoseReason() -> LoseReason {
-        if !checkForPairs() && gameStatus == .removing {
+        if !checkForPairs() && isBoardFull() {
             return .noCardsToRemove
         }
         
@@ -868,7 +868,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             gameStatsToAdd.deck = deckString
             gameStatsToAdd.didWin = didWin
             gameStatsToAdd.duration = Int16(secondsPassed)
-            gameStatsToAdd.loseReason = gameLoseReason.getRawValue()
+            gameStatsToAdd.loseReason = didWin ? gameLoseReason.getRawValue() : ""
             gameStatsToAdd.nofCardsLeft = Int16(cardsLeft!)
             gameStatsToAdd.nofJacksPlaced = Int16(getNumberOfCardsPlaced(withRank: .jack))
             gameStatsToAdd.nofKingsPlaced = Int16(getNumberOfCardsPlaced(withRank: .king))
