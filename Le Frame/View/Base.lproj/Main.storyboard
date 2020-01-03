@@ -76,10 +76,10 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="vKi-CV-dW4" userLabel="Removal Buttons Stack View">
-                                                <rect key="frame" x="15" y="5" width="119" height="133"/>
+                                                <rect key="frame" x="15" y="5" width="96" height="133"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SXM-Ax-1UO">
-                                                        <rect key="frame" x="0.0" y="0.0" width="119" height="62.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="96" height="62.5"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <state key="normal" title="  Remove" image="removal-remove-icon">
@@ -91,7 +91,7 @@
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dL5-EI-FeT">
-                                                        <rect key="frame" x="0.0" y="70.5" width="119" height="62.5"/>
+                                                        <rect key="frame" x="0.0" y="70.5" width="96" height="62.5"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <state key="normal" title="  Done" image="removal-done-icon">
@@ -602,6 +602,7 @@
                         <segue destination="tcQ-LT-96m" kind="show" identifier="goToStatistics" id="e8y-TJ-c7a"/>
                         <segue destination="iXa-Gp-RfY" kind="show" identifier="goToFAQ" id="dBf-Ag-sPF"/>
                         <segue destination="Zd8-cd-B4O" kind="show" identifier="goToAboutUs" id="hLQ-8W-nIt"/>
+                        <segue destination="5J2-Sk-VXN" kind="show" identifier="goToContactUs" id="3Qb-yc-VRm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lf2-kC-ae1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1170,6 +1171,73 @@
             </objects>
             <point key="canvasLocation" x="3967" y="-699"/>
         </scene>
+        <!--Contact Us-->
+        <scene sceneID="WWL-NP-d7l">
+            <objects>
+                <viewController storyboardIdentifier="ContactUsVC" title="Contact Us" id="5J2-Sk-VXN" customClass="ContactUsVC" customModule="Royal_Frame" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ekz-ee-q1a">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="settings-background" translatesAutoresizingMaskIntoConstraints="NO" id="pNj-rI-cnu">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Help us imporve by sending us feedback about the app. If you want us to contact you back, please add your email." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A7Y-ie-6qf">
+                                <rect key="frame" x="30" y="76" width="354" height="61"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="vQN-CZ-McK">
+                                <rect key="frame" x="30" y="157" width="354" height="491"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <mutableString key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</mutableString>
+                                <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="send"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="poT-XI-s1m">
+                                <rect key="frame" x="30" y="718" width="354" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="Lhy-MR-Goq"/>
+                                </constraints>
+                                <state key="normal" title="Send">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendPressed:" destination="5J2-Sk-VXN" eventType="touchUpInside" id="GDF-rt-hVn"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="vQN-CZ-McK" firstAttribute="top" secondItem="A7Y-ie-6qf" secondAttribute="bottom" constant="20" id="0Zp-aG-Duh"/>
+                            <constraint firstAttribute="bottom" secondItem="pNj-rI-cnu" secondAttribute="bottom" id="7a4-k5-qNS"/>
+                            <constraint firstItem="pNj-rI-cnu" firstAttribute="trailing" secondItem="KEp-LF-jeh" secondAttribute="trailing" id="7ag-lp-wGP"/>
+                            <constraint firstItem="pNj-rI-cnu" firstAttribute="leading" secondItem="KEp-LF-jeh" secondAttribute="leading" id="Cr6-0H-AFi"/>
+                            <constraint firstItem="KEp-LF-jeh" firstAttribute="trailing" secondItem="A7Y-ie-6qf" secondAttribute="trailing" constant="30" id="FGC-nh-HSd"/>
+                            <constraint firstItem="KEp-LF-jeh" firstAttribute="trailing" secondItem="vQN-CZ-McK" secondAttribute="trailing" constant="30" id="N4S-ZI-UET"/>
+                            <constraint firstItem="poT-XI-s1m" firstAttribute="top" secondItem="vQN-CZ-McK" secondAttribute="bottom" constant="70" id="TVb-Ap-TX1"/>
+                            <constraint firstItem="vQN-CZ-McK" firstAttribute="leading" secondItem="KEp-LF-jeh" secondAttribute="leading" constant="30" id="YCr-bD-TFy"/>
+                            <constraint firstItem="KEp-LF-jeh" firstAttribute="bottom" secondItem="poT-XI-s1m" secondAttribute="bottom" constant="50" id="YEb-Ek-Q3J"/>
+                            <constraint firstItem="pNj-rI-cnu" firstAttribute="top" secondItem="ekz-ee-q1a" secondAttribute="top" id="Z6g-r9-SwE"/>
+                            <constraint firstItem="poT-XI-s1m" firstAttribute="leading" secondItem="KEp-LF-jeh" secondAttribute="leading" constant="30" id="ndm-rb-k9i"/>
+                            <constraint firstItem="A7Y-ie-6qf" firstAttribute="leading" secondItem="KEp-LF-jeh" secondAttribute="leading" constant="30" id="uOl-RD-uvG"/>
+                            <constraint firstItem="A7Y-ie-6qf" firstAttribute="top" secondItem="KEp-LF-jeh" secondAttribute="top" constant="20" id="x7m-dj-Vfn"/>
+                            <constraint firstItem="KEp-LF-jeh" firstAttribute="trailing" secondItem="poT-XI-s1m" secondAttribute="trailing" constant="30" id="xuo-ta-Maj"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="KEp-LF-jeh"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="qnx-F7-1MK"/>
+                    <connections>
+                        <outlet property="messageTextView" destination="vQN-CZ-McK" id="GKN-XC-a9p"/>
+                        <outlet property="sendButton" destination="poT-XI-s1m" id="c1M-sg-JcE"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="F4w-re-l9W" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4747.826086956522" y="-699.10714285714278"/>
+        </scene>
     </scenes>
     <resources>
         <image name="Background" width="375" height="812"/>
@@ -1184,6 +1252,6 @@
         <image name="transparent_background" width="1" height="1"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Tlo-Vj-1Yy"/>
+        <segue reference="sav-9F-UkC"/>
     </inferredMetricsTieBreakers>
 </document>

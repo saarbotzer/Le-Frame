@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="894-zN-hLa">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="kKV-po-k7v">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -271,9 +271,64 @@
             </objects>
             <point key="canvasLocation" x="792.79999999999995" y="382.75862068965517"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="U3e-yb-VMh">
+            <objects>
+                <viewController id="kKV-po-k7v" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="zJL-8N-yVw">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" translatesAutoresizingMaskIntoConstraints="NO" id="G0f-Hy-CfK">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                            </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="ube-wv-Ghd">
+                                <rect key="frame" x="124" y="94" width="127" height="108.66666666666669"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Royal" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="sMY-T6-MCr">
+                                        <rect key="frame" x="0.0" y="0.0" width="127" height="46.333333333333336"/>
+                                        <fontDescription key="fontDescription" name="Rockwell-Regular" family="Rockwell" pointSize="40"/>
+                                        <color key="textColor" red="0.99711006879999997" green="0.84953999520000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Frame" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="1HK-f5-O0w">
+                                        <rect key="frame" x="0.0" y="60.333333333333343" width="127" height="48.333333333333343"/>
+                                        <fontDescription key="fontDescription" name="Rockwell-Regular" family="Rockwell" pointSize="40"/>
+                                        <color key="textColor" red="0.99711006879999997" green="0.84953999520000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Royal Frame Icon" translatesAutoresizingMaskIntoConstraints="NO" id="hJ4-Wb-BzR">
+                                <rect key="frame" x="20" y="222.66666666666663" width="335" height="367"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="hJ4-Wb-BzR" firstAttribute="centerX" secondItem="zJL-8N-yVw" secondAttribute="centerX" id="2rP-KP-Cp1"/>
+                            <constraint firstItem="ube-wv-Ghd" firstAttribute="top" secondItem="eW3-Cp-H4P" secondAttribute="top" constant="50" id="8Ux-38-3tL"/>
+                            <constraint firstAttribute="bottom" secondItem="G0f-Hy-CfK" secondAttribute="bottom" id="I8N-uC-jWV"/>
+                            <constraint firstItem="G0f-Hy-CfK" firstAttribute="trailing" secondItem="eW3-Cp-H4P" secondAttribute="trailing" id="S6I-74-H8N"/>
+                            <constraint firstItem="hJ4-Wb-BzR" firstAttribute="centerY" secondItem="zJL-8N-yVw" secondAttribute="centerY" id="UFS-DW-6z5"/>
+                            <constraint firstAttribute="trailing" secondItem="hJ4-Wb-BzR" secondAttribute="trailing" constant="20" symbolic="YES" id="bBp-Ci-LnP"/>
+                            <constraint firstItem="hJ4-Wb-BzR" firstAttribute="top" secondItem="ube-wv-Ghd" secondAttribute="bottom" constant="20" id="jCg-CG-bue"/>
+                            <constraint firstItem="hJ4-Wb-BzR" firstAttribute="height" secondItem="eW3-Cp-H4P" secondAttribute="height" multiplier="0.5" id="jiK-5j-f2K"/>
+                            <constraint firstItem="G0f-Hy-CfK" firstAttribute="leading" secondItem="eW3-Cp-H4P" secondAttribute="leading" id="k6o-Jb-rcY"/>
+                            <constraint firstItem="ube-wv-Ghd" firstAttribute="centerX" secondItem="zJL-8N-yVw" secondAttribute="centerX" id="rbT-2W-S5K"/>
+                            <constraint firstItem="G0f-Hy-CfK" firstAttribute="top" secondItem="zJL-8N-yVw" secondAttribute="top" id="ubj-SX-DiL"/>
+                            <constraint firstItem="hJ4-Wb-BzR" firstAttribute="leading" secondItem="zJL-8N-yVw" secondAttribute="leading" constant="20" symbolic="YES" id="xCn-2G-r9A"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="eW3-Cp-H4P"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FGl-XD-KeA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1801" y="383"/>
+        </scene>
     </scenes>
     <resources>
         <image name="Background" width="375" height="812"/>
+        <image name="Royal Frame Icon" width="856" height="986"/>
         <image name="Symbol" width="448" height="549"/>
         <image name="c11" width="166.66667175292969" height="242"/>
         <image name="c12" width="166.66667175292969" height="242"/>

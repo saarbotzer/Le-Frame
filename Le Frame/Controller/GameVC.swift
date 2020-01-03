@@ -40,7 +40,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var firstSelectedCardIndexPath: IndexPath?
     var secondSelectedCardIndexPath: IndexPath?
     var cardsLeft : Int?
-    var removedCards : [[Card]] = [[Card]]()
     var moves : [GameMove] = [GameMove]()
     
     var gameStatus: GameStatus = .placing
@@ -275,7 +274,14 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
             showHints(hintType: .tappedHintButton)
         case 3:
-            showAlert(title: "New Game?", message: "Are you sure you want to start a new game?", dismissText: "Nevermind", confirmText: "Yes")
+            switch gameStatus {
+            case .gameOver:
+                showAlert(title: "Try again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure")
+            case .won:
+                showAlert(title: "Play again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure")
+            default:
+                showAlert(title: "New Game?", message: "Are you sure you want to start a new game?", dismissText: "Nevermind", confirmText: "Yes")
+            }
         default:
             return
         }
@@ -302,13 +308,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             let firstCard = firstCardCell.card!
             // If the card is 10 - remove
             if gameSumMode == .ten && firstCard.rank! == .ten {
-                playSound(named: "card-flip-2.wav")
-                haptic(of: .removeSuccess)
-                newlyRemovedCards.append(firstCard)
-                cardsLocations.append(firstSelectedCardIndexPath!)
-                firstCardCell.removeCard()
-                enableDoneRemoving()
-                removeBtn.isEnabled = false
+                removeCards(at: [firstSelectedCardIndexPath!])
             } else {
                 haptic(of: .removeError)
             }
@@ -322,28 +322,39 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             
             // If the cards match - remove
             if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == gameSumMode.getRawValue() {
-                playSound(named: "card-flip-2.wav")
-                haptic(of: .removeSuccess)
-                newlyRemovedCards.append(firstCard)
-                newlyRemovedCards.append(secondCard)
-                cardsLocations.append(firstSelectedCardIndexPath!)
-                cardsLocations.append(secondSelectedCardIndexPath!)
-                firstCardCell.removeCard()
-                secondCardCell.removeCard()
-                enableDoneRemoving()
-                removeBtn.isEnabled = false
+                removeCards(at: [firstSelectedCardIndexPath!, secondSelectedCardIndexPath!])
             } else {
                 haptic(of: .removeError)
             }
         }
         
-        removedCards.append(newlyRemovedCards)
         let move = GameMove(cards: newlyRemovedCards, indexPaths: cardsLocations, moveType: .remove)
         moves.append(move)
         
         resetCardIndexes()
         markAllCardAsNotSelected()
         finishedRemovingCard()
+    }
+    
+    func removeCards(at indexPaths: [IndexPath]) {
+        var newlyRemovedCards = [Card]()
+        var cardsLocations = [IndexPath]()
+        
+        for indexPath in indexPaths {
+            let cell = getSpot(at: indexPath)
+            let card = cell.card!
+            playSound(named: "card-flip-2.wav")
+            haptic(of: .removeSuccess)
+            newlyRemovedCards.append(card)
+            cardsLocations.append(indexPath)
+            cell.removeCard()
+        }
+        
+        enableDoneRemoving()
+        removeBtn.isEnabled = false
+        
+        let move = GameMove(cards: newlyRemovedCards, indexPaths: cardsLocations, moveType: .remove)
+        moves.append(move)
     }
     
     
@@ -480,16 +491,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         alert.addAction(restartAction)
 
         present(alert, animated: true, completion: nil)
-        
-        /*
-        let confirmButton = AlertButton(title: "Yes", action: newGame, titleColor: .white, backgroundColor: .lightGray)
-        let dismissButton = AlertButton(title: "Nevermind", action: nil, titleColor: .white, backgroundColor: .lightGray)
-        
-        let alertPayload = AlertPayload(title: title, titleColor: .white, message: message, messageColor: .white, buttons: [confirmButton, dismissButton], backgroundColor: .green)
-
-        Utilities.showAlert(payload: alertPayload, parentViewController: self)
-         */
-        
     }
     
     func newGame() {
@@ -669,6 +670,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Parameter indexPath: The tapped spot's IndexPath
      */
     func selectCardForRemoval(at indexPath: IndexPath) {
+        
+        //TODO: Improve syntax, too many repeating lines
+        
+        
         let tappedSpot = getSpot(at: indexPath)
         
         // In case of pressing an empty spot in removal mode
@@ -678,6 +683,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         removeBtn.isEnabled = true
         
+        let rank = tappedSpot.card!.rank!
+        
         // If this is the first selected card, select the tapped card
         if firstSelectedCardIndexPath == nil {
             firstSelectedCardIndexPath = indexPath
@@ -686,6 +693,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         } else {
             // If the tapped card is already selected, deselect it
             if firstSelectedCardIndexPath == indexPath {
+                
+                // TODO: Add removal when 10 pressed twice
+                if gameSumMode == .ten && rank == .ten {
+                    removeCards(at: [firstSelectedCardIndexPath!])
+                }
+                
                 firstSelectedCardIndexPath = nil
                 secondSelectedCardIndexPath = nil
                 markAllCardAsNotSelected()
@@ -948,7 +961,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 gameRow = results[0] as? Game
             } else if results.count > 1 {
                 gameRow = results[0] as? Game
-                // TODO: Delete other results if there is more than one
             }
         }
         catch {

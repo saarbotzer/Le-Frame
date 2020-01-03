@@ -25,7 +25,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             "GAME": [
                 Setting(label: "Removal sum", segmentedControlSegments: ["10", "11"], segmentedControlSettingKey: .sumMode, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
-                Setting(label: "Hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No", segueName: nil),
+                Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No", segueName: nil),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No", segueName: nil),
                 Setting(label: "Statistics", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToStatistics)
             ],
@@ -179,9 +179,9 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 let activityViewController = UIActivityViewController(activityItems: [url!], applicationActivities: nil)
                 present(activityViewController, animated: true, completion: nil)
                 tableView.deselectRow(at: indexPath, animated: true)
-            } else if segueName == .goToContactUs {
-                sendEmail()
-                tableView.deselectRow(at: indexPath, animated: true)
+//            } else if segueName == .goToContactUs {
+//                sendEmail()
+//                tableView.deselectRow(at: indexPath, animated: true)
             } else {
                 performSegue(withIdentifier: segueName.getRawValue(), sender: nil)
             }
@@ -453,19 +453,18 @@ class CustomSegmentedControl : UISegmentedControl {
     }
 }
 
+
 extension NewSettingsVC: MFMailComposeViewControllerDelegate {
     func sendEmail() {
         if MFMailComposeViewController.canSendMail() {
             let mail = MFMailComposeViewController()
             mail.mailComposeDelegate = self
             mail.setToRecipients(["royalframegame@gmail.com"])
-//            mail.setMessageBody("<p>You're so awesome!</p>", isHTML: true)
-//            mail.title = "Feedback"
             mail.setSubject("Feedback")
 
             present(mail, animated: true)
         } else {
-            // show failure alert
+            // TODO: show failure alert
             print("mail failure")
         }
     }
