@@ -258,9 +258,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // Validity checks (no index paths, same index path)
         // TODO: maybe change ifs to if lets
         
-        var newlyRemovedCards = [Card]()
-        var cardsLocations = [IndexPath]()
-        
         // Option 1 - Only one card is selected
         if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath == nil {
             let firstCardCell = getSpot(at: firstSelectedCardIndexPath!)
@@ -286,10 +283,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 haptic(of: .removeError)
             }
         }
-        
-        let move = GameMove(cards: newlyRemovedCards, indexPaths: cardsLocations, moveType: .remove)
-        moves.append(move)
-        
+                
         resetCardIndexes()
         markAllCardAsNotSelected()
         finishedRemovingCard()

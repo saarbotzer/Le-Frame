@@ -55,9 +55,8 @@ class CardCollectionViewCell: UICollectionViewCell {
         self.originalTransform = self.transform
         
         setUI()
+        
     }
-    
-    
     
     /**
      Sets the initial UI of the spot
