@@ -112,15 +112,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    func getViewingMode() -> OnboardingViewingMode {
-        let firstGame = !defaults.bool(forKey: "firstGamePlayed")
-        
-        if firstGame {
-            return .onboarding
-        } else {
-            return .howTo
-        }
-    }
+    
     
     func setDelegates() {
         spotsCollectionView.delegate = self
@@ -211,45 +203,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         if !checkForPairs(){
             doneRemovingBtn.isEnabled = true
         }
-    }
-    
-    // MARK: - Settings Getters
-    
-    /**
-     Gets the setted SumMode (10/11) for the current game from the user defaults.
-     
-     - Returns: The setted SumMode
-     */
-    func getSumSetting() -> SumMode {
-        let settingKey = SettingKey.sumMode
-        let savedValue = defaults.integer(forKey: settingKey.getRawValue())
-        if savedValue == 11 {
-            return .eleven
-        } else {
-            return .ten
-        }
-    }
-    
-    /**
-     Gets the setted hints settings (whether to show hints or not)
-     
-     - Returns: True if show hints, false otherwise
-     */
-    func getHintsSetting() -> Bool {
-        let settingKey = SettingKey.showHints
-        let savedValue = defaults.bool(forKey: settingKey.getRawValue())
-        return savedValue
-    }
-    
-    /**
-     Gets the setted sounds settings
-     
-     - Returns: True if play sounds, false otherwise
-     */
-    func getSoundSetting() -> Bool {
-        let settingKey = SettingKey.soundsOn
-        let savedValue = defaults.bool(forKey: settingKey.getRawValue())
-        return savedValue
     }
     
     // MARK: - Game Flow
@@ -1246,7 +1199,7 @@ extension GameVC {
 extension GameVC {
     
     func showHints(hintType : HintType) {
-        let isShowHints = getHintsSetting()
+        let isShowHints = getSettingValue(for: .showHints)
         if hintType != .tappedHintButton && !isShowHints {
             return
         }
@@ -1463,32 +1416,37 @@ extension GameVC {
     
     func haptic(of feedbackType: HapticFeedbackType) {
         
-        let notificationFeedbackGenerator = UINotificationFeedbackGenerator()
-        notificationFeedbackGenerator.prepare()
+        let hapticOn = getSettingValue(for: .hapticOn)
+        if !hapticOn {
+            return
+        }
+        
+        let hapticGenerator = UINotificationFeedbackGenerator()
+        hapticGenerator.prepare()
         
         
         switch feedbackType {
         case .placeError:
-            notificationFeedbackGenerator.notificationOccurred(.error)
+            hapticGenerator.notificationOccurred(.error)
         case .removeError:
-            notificationFeedbackGenerator.notificationOccurred(.error)
+            hapticGenerator.notificationOccurred(.error)
         case .placeSuccess:
-            notificationFeedbackGenerator.notificationOccurred(.success)
+            hapticGenerator.notificationOccurred(.success)
         case .removeSuccess:
-            notificationFeedbackGenerator.notificationOccurred(.success)
+            hapticGenerator.notificationOccurred(.success)
         case .gameOver:
-            notificationFeedbackGenerator.notificationOccurred(.error)
-            notificationFeedbackGenerator.notificationOccurred(.error)
+            hapticGenerator.notificationOccurred(.error)
+            hapticGenerator.notificationOccurred(.error)
         case .win:
-            notificationFeedbackGenerator.notificationOccurred(.success)
-            notificationFeedbackGenerator.notificationOccurred(.success)
-            notificationFeedbackGenerator.notificationOccurred(.success)
+            hapticGenerator.notificationOccurred(.success)
+            hapticGenerator.notificationOccurred(.success)
+            hapticGenerator.notificationOccurred(.success)
         }
     }
     
     func playSound(named soundFileFullName: String) {
              
-        let soundsOn = getSoundSetting()
+        let soundsOn = getSettingValue(for: .soundsOn)
         if !soundsOn {
             return
         }
@@ -1583,6 +1541,52 @@ extension GameVC {
         return Int(arc4random_uniform(UInt32(limit)))
     }
 
+}
+
+
+// MARK: - Settings and Defaults
+extension GameVC {
+    
+    func isSettingExists(settingKey: SettingKey) -> Bool {
+        let currentlySavedKeys = defaults.dictionaryRepresentation().keys
+        return currentlySavedKeys.contains(settingKey.getRawValue())
+    }
+    
+    func getViewingMode() -> OnboardingViewingMode {
+        let firstGame = !defaults.bool(forKey: "firstGamePlayed")
+        
+        if firstGame {
+            return .onboarding
+        } else {
+            return .howTo
+        }
+    }
+    
+    /**
+     Gets the setted SumMode (10/11) for the current game from the user defaults.
+     
+     - Returns: The setted SumMode
+     */
+    func getSumSetting() -> SumMode {
+        let settingKey = SettingKey.sumMode
+        let savedValue = defaults.integer(forKey: settingKey.getRawValue())
+        if savedValue == 11 {
+            return .eleven
+        } else {
+            return .ten
+        }
+    }
+    
+    func getSettingValue(for settingKey: SettingKey) -> Bool {
+        let keyExists = isSettingExists(settingKey: settingKey)
+        if keyExists {
+            return defaults.bool(forKey: settingKey.getRawValue())
+        } else {
+            defaults.set(true, forKey: settingKey.getRawValue())
+            return true
+        }
+    }
+    
 }
 
 

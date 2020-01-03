@@ -27,6 +27,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No", segueName: nil),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No", segueName: nil),
+                Setting(label: "Haptic feedback", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No", segueName: nil),
                 Setting(label: "Statistics", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToStatistics)
             ],
             "HELP": [
@@ -260,6 +261,9 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             case .soundsOn:
                 let newSoundsOn = sender.selectedSegmentIndex == 0
                 defaults.set(newSoundsOn, forKey: keyRawValue)
+            case .hapticOn:
+                let newHapticOn = sender.selectedSegmentIndex == 0
+                defaults.set(newHapticOn, forKey: keyRawValue)
             }
         }
     }
@@ -306,7 +310,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 } else {
                     defaults.set(true, forKey: keyRawValue)
                 }
-            case .soundsOn:
+            case .soundsOn, .hapticOn:
                 if keyExists {
                     let soundsOn = defaults.bool(forKey: keyRawValue)
                     selectedSegmentIndex = soundsOn ? 0 : 1

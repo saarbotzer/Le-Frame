@@ -125,6 +125,7 @@ enum SettingKey: String {
     case showHints = "ShowHints"
     case removeWhenFull = "RemoveWhenFull"
     case soundsOn = "SoundsOn"
+    case hapticOn = "HapticOn"
     
     func getRawValue() -> String {
         return self.rawValue
