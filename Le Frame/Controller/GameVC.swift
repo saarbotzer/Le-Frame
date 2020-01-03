@@ -200,7 +200,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      Enables the Done Removing button
      */
     func enableDoneRemoving() {
-        if !checkForPairs(){
+        let doneRemovingAnytime = getSettingValue(for: .doneRemovingAnytime)
+        
+        if doneRemovingAnytime {
+            if !isBoardFull() {
+                doneRemovingBtn.isEnabled = true
+            }
+        } else if !checkForPairs(){
             doneRemovingBtn.isEnabled = true
         }
     }
@@ -1582,9 +1588,23 @@ extension GameVC {
         if keyExists {
             return defaults.bool(forKey: settingKey.getRawValue())
         } else {
-            defaults.set(true, forKey: settingKey.getRawValue())
-            return true
+            return setDefaultSetting(for: settingKey)
         }
+    }
+    
+    func setDefaultSetting(for settingKey: SettingKey) -> Bool {
+        var defaultValue = true
+        switch settingKey {
+        case .hapticOn, .soundsOn, .showHints:
+            defaultValue = true
+        case .doneRemovingAnytime:
+            defaultValue = false
+        default:
+            defaultValue = false
+        }
+        
+        defaults.set(defaultValue, forKey: settingKey.getRawValue())
+        return defaultValue
     }
     
 }

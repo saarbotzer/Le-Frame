@@ -24,6 +24,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         [
             "GAME": [
                 Setting(label: "Removal sum", segmentedControlSegments: ["10", "11"], segmentedControlSettingKey: .sumMode, segmentedControlAlertText: "Yes", segueName: nil),
+                Setting(label: "Done removing anytime", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .doneRemovingAnytime, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No", segueName: nil),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No", segueName: nil),
@@ -251,19 +252,13 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 if gameSumMode.getRawValue() != newSumMode {
                     alertChange(for: sender.name!, currentValue: gameSumMode)
                 }
-            case .removeWhenFull:
-                let newRemoveWhenFull = sender.selectedSegmentIndex == 0
-                defaults.set(newRemoveWhenFull, forKey: keyRawValue)
-                // TODO: Show alert
-            case .showHints:
-                let newShowHints = sender.selectedSegmentIndex == 0
-                defaults.set(newShowHints, forKey: keyRawValue)
-            case .soundsOn:
-                let newSoundsOn = sender.selectedSegmentIndex == 0
-                defaults.set(newSoundsOn, forKey: keyRawValue)
-            case .hapticOn:
-                let newHapticOn = sender.selectedSegmentIndex == 0
-                defaults.set(newHapticOn, forKey: keyRawValue)
+//            case .removeWhenFull:
+//                let newRemoveWhenFull = sender.selectedSegmentIndex == 0
+//                defaults.set(newRemoveWhenFull, forKey: keyRawValue)
+//                // TODO: Show alert
+            case .showHints, .soundsOn, .hapticOn, .doneRemovingAnytime:
+                let newValue = sender.selectedSegmentIndex == 0
+                defaults.set(newValue, forKey: keyRawValue)
             }
         }
     }
@@ -303,7 +298,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                     defaults.set(10, forKey: keyRawValue)
                     selectedSegmentIndex = 0
                 }
-            case .showHints, .removeWhenFull:
+            case .showHints:
                 if keyExists {
                     let showHints = defaults.bool(forKey: keyRawValue)
                     selectedSegmentIndex = showHints ? 0 : 1
@@ -316,6 +311,14 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                     selectedSegmentIndex = soundsOn ? 0 : 1
                 } else {
                     defaults.set(true, forKey: keyRawValue)
+                }
+            case .doneRemovingAnytime:
+                if keyExists {
+                    let doneRemovingAnytime = defaults.bool(forKey: keyRawValue)
+                    selectedSegmentIndex = doneRemovingAnytime ? 0 : 1
+                } else {
+                    defaults.set(false, forKey: keyRawValue)
+                    selectedSegmentIndex = 1
                 }
             }
         }

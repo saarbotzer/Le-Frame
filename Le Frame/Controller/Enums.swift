@@ -123,7 +123,8 @@ enum OnboardingViewingMode {
 enum SettingKey: String {
     case sumMode = "SumMode"
     case showHints = "ShowHints"
-    case removeWhenFull = "RemoveWhenFull"
+//    case removeWhenFull = "RemoveWhenFull"
+    case doneRemovingAnytime = "DoneRemovingAnytime"
     case soundsOn = "SoundsOn"
     case hapticOn = "HapticOn"
     
