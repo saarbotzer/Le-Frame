@@ -180,9 +180,9 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 let activityViewController = UIActivityViewController(activityItems: [url!], applicationActivities: nil)
                 present(activityViewController, animated: true, completion: nil)
                 tableView.deselectRow(at: indexPath, animated: true)
-//            } else if segueName == .goToContactUs {
-//                sendEmail()
-//                tableView.deselectRow(at: indexPath, animated: true)
+            } else if segueName == .goToContactUs {
+                sendEmail()
+                tableView.deselectRow(at: indexPath, animated: true)
             } else {
                 performSegue(withIdentifier: segueName.getRawValue(), sender: nil)
             }
@@ -460,16 +460,37 @@ class CustomSegmentedControl : UISegmentedControl {
 
 extension NewSettingsVC: MFMailComposeViewControllerDelegate {
     func sendEmail() {
-        if MFMailComposeViewController.canSendMail() {
+        
+        let mailTo = "royalframegame@gmail.com"
+        let mailSubject = "Feedback"
+        let mailBody = ""
+        
+        
+        let googleUrlString = "googlegmail:///co?subject=\(mailSubject)&to=\(mailTo)&body=\(mailBody)"
+        var canSendUsingGmail = false
+        if let googleUrl = URL(string: googleUrlString) {
+            canSendUsingGmail = UIApplication.shared.canOpenURL(googleUrl)
+        }
+        
+        let canSendUsingMailApp = MFMailComposeViewController.canSendMail()
+        
+        if canSendUsingMailApp && false {
+            // Send using Mail app
             let mail = MFMailComposeViewController()
             mail.mailComposeDelegate = self
-            mail.setToRecipients(["royalframegame@gmail.com"])
-            mail.setSubject("Feedback")
+            mail.setToRecipients([mailTo])
+            mail.setSubject(mailSubject)
+            mail.setMessageBody(mailBody, isHTML: false)
 
             present(mail, animated: true)
+        } else if canSendUsingGmail && false {
+            // Send using gmail
+            UIApplication.shared.open(URL(string: googleUrlString)!, options: [:], completionHandler: nil)
         } else {
-            // TODO: show failure alert
-            print("mail failure")
+            let alert = UIAlertController(title: "Send us a mail", message: "Send a mail to \(mailTo) and help us improve!" , preferredStyle: .alert)
+            let dismissAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+            alert.addAction(dismissAction)
+            self.present(alert, animated: true, completion: nil)
         }
     }
 
