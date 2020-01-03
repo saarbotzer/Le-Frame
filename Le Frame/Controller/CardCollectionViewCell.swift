@@ -23,7 +23,7 @@ class CardCollectionViewCell: UICollectionViewCell {
     // Lift animation
     let borderWidth: CGFloat = 4.0
     let transformBy: CGFloat = 1.06
-    let liftAnimationDuration: TimeInterval = 0.3
+    let liftAnimationDuration: TimeInterval = 0.1
     let cornerRadius: CGFloat = 4
     
     // Shadow
@@ -56,6 +56,8 @@ class CardCollectionViewCell: UICollectionViewCell {
         
         setUI()
     }
+    
+    
     
     /**
      Sets the initial UI of the spot
