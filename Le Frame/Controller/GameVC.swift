@@ -233,6 +233,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
             showHints(hintType: .tappedHintButton)
         case 3:
+            getFastestWinDuration()
             switch gameStatus {
             case .gameOver:
                 showAlert(title: "Try again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure")
@@ -811,9 +812,28 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         didWin = true
         
         let statsText = getGameStatsText()
-        let messageText = "Good job! You filled the frame with royal cards\n\n\(statsText)"
         
-        showAlert(title: "You Won!", message: messageText, dismissText: "Great", confirmText: "Start a new game")
+        var messageText = ""
+        var title = ""
+        
+        if let fastestWinDuration = getFastestWinDuration() {
+            if secondsPassed < fastestWinDuration {
+                // This win is the fastest
+                title = "Fastest Win!"
+                messageText = "This is your fastest win yet! Amazing! \(statsText)"
+            } else {
+                // A regular win
+                title = "You Won!"
+                messageText = "Good job! You filled the frame with royal cards\n\n\(statsText)"
+            }
+        } else {
+            // This is the first win
+            title = "First Win!"
+            messageText = "Excellent! This is your first win! \(statsText)"
+        }
+        
+                
+        showAlert(title: title, message: messageText, dismissText: "Great", confirmText: "Start a new game")
         
         nextCardImageView.image = UIImage(named: spotImageName)
         
@@ -976,6 +996,28 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
         }
         return statsUploaded
+    }
+    
+    func getFastestWinDuration() -> Int? {
+        var fastestWin: Int?
+        let request : NSFetchRequest<Game> = Game.fetchRequest()
+        request.predicate = NSPredicate(format: "gameID != %@", gameID.uuidString)
+        do {
+            let results = try context.fetch(request)
+            for res in results {
+                let gameDuration = Int(res.duration)
+                if res.didWin {
+                    if fastestWin != nil {
+                        fastestWin = gameDuration < fastestWin! ? gameDuration : fastestWin!
+                    } else {
+                        fastestWin = gameDuration
+                    }
+                }
+            }
+        } catch {
+            print("Error fetching data from context: \(error)")
+        }
+        return fastestWin
     }
     
     
