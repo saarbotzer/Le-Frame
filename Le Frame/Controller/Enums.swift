@@ -181,7 +181,16 @@ enum StatMeasure: String {
     }
 }
 
-
+enum Sound: String {
+    case win = "win.wav"
+    case placeCard = "card-flip-1.wav"
+    case removeCard = "card-flip-2.wav"
+    case lose = "lose.wav"
+    
+    func getRawValue() -> String {
+        return self.rawValue
+    }
+}
 
 
 

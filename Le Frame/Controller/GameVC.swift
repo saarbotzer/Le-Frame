@@ -297,7 +297,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         for indexPath in indexPaths {
             let cell = getSpot(at: indexPath)
             let card = cell.card!
-            playSound(named: "card-flip-2.wav")
+            playSound(.removeCard)
             haptic(of: .removeSuccess)
             newlyRemovedCards.append(card)
             cardsLocations.append(indexPath)
@@ -597,7 +597,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         if canPutCard(nextCard, at: indexPath) {
             // Put the card in the spot and go to the next card
-            playSound(named: "card-flip-1.wav")
+            playSound(.placeCard)
 
             animateCard(card: nextCard, to: indexPath)
             blockedCardTaps = 0
@@ -752,7 +752,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let statsText = getGameStatsText()
         let messageText = "\(loseReasonText)\n\n\(statsText)"
 
-        playSound(named: "lose.wav")
+        playSound(.lose)
         haptic(of: .gameOver)
         showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game")
 
@@ -806,7 +806,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func gameWon(toAddStats: Bool) {
         stopTimer()
         
-        playSound(named: "win.wav")
+        playSound(.win)
         confetti()
         haptic(of: .win)
         didWin = true
@@ -1486,8 +1486,10 @@ extension GameVC {
         }
     }
     
-    func playSound(named soundFileFullName: String) {
+    func playSound(_ sound: Sound) {
              
+        let soundFileFullName = sound.getRawValue()
+        
         let soundsOn = getSettingValue(for: .soundsOn)
         if !soundsOn {
             return
