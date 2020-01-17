@@ -233,7 +233,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
             showHints(hintType: .tappedHintButton)
         case 3:
-            getFastestWinDuration()
             switch gameStatus {
             case .gameOver:
                 showAlert(title: "Try again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure")
@@ -1120,7 +1119,7 @@ extension GameVC {
         
         // Get deck
         deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
-//        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
+        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .fromString, random: false, from: "h10c10c05h13c13d13s13h12c12d12s12h11c11d11s11", fullDeck: false)
         
