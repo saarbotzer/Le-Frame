@@ -114,6 +114,21 @@ public enum HintType {
      case win
  }
 
+
+enum CardAnimationLocation {
+    case nextCard, spot, removedStack
+    
+    static func getLocationType(at indexPath: IndexPath) -> CardAnimationLocation {
+        if indexPath.row == 10 && indexPath.section == 10 {
+            return CardAnimationLocation.removedStack
+        } else if indexPath.row == -5 && indexPath.section == -5 {
+            return CardAnimationLocation.nextCard
+        }
+        return CardAnimationLocation.spot
+    }
+}
+
+
 // MARK: - Settings related
 
 enum OnboardingViewingMode {

@@ -41,6 +41,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var secondSelectedCardIndexPath: IndexPath?
     var cardsLeft : Int?
     var moves : [GameMove] = [GameMove]()
+    var undosUsed : Int = 0
     
     var gameStatus: GameStatus = .placing
     
@@ -386,40 +387,50 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Parameter indexPath: The destination IndexPath in the cards grid
      
      */
-    func animateCard(card: Card, to indexPath: IndexPath) {
-        
-        // Get destination cell
-        let cell = getSpot(at: indexPath)
+    func animateCard(card: Card, from originIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+
+        let originFrame = getFrame(for: originIndexPath)
+        let destinationFrame = getFrame(for: destinationIndexPath)
         
         // Create moving imageView
         let tempImageView = UIImageView(image: UIImage(named: "\(card.imageName).jpg"))
-        
-        // Get origin point and size
-        let originPoint = nextCardImageView.superview?.convert(nextCardImageView.frame.origin, to: nil)
-        let originSize = nextCardImageView.frame.size
-        let originFrame = CGRect(origin: originPoint!, size: originSize)
-        
-        // Get destination point and size
-        let destinationPoint = cell.superview?.convert(cell.frame.origin, to: nil)
-        let destinationSize = cell.frame.size
-        let destinationFrame = CGRect(origin: destinationPoint!, size: destinationSize)
-        
+
         // Apply origin properties to imageView
         tempImageView.frame = originFrame
-        
+       
         // Add the imageView to the main view
         view.addSubview(tempImageView)
- 
+
         // Animate
         UIView.animate(withDuration: cardAnimationDuration) {
             tempImageView.frame = destinationFrame
         }
-        
+       
         // Remove imageView after when arriving to destination
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
             tempImageView.removeFromSuperview()
         }
-
+    }
+    
+    func getFrame(for indexPath: IndexPath) -> CGRect {
+        let location = CardAnimationLocation.getLocationType(at: indexPath)
+        
+        var point : CGPoint = CGPoint()
+        var size : CGSize = CGSize()
+        
+        if location == .nextCard {
+            point = nextCardImageView.superview?.convert(nextCardImageView.frame.origin, to: nil) ?? point
+            size = nextCardImageView.frame.size
+        } else if location == .removedStack {
+            point = CGPoint(x: self.view.frame.midX, y: self.view.frame.maxY + cardHeight + 10)
+            size = CGSize(width: cardWidth, height: cardHeight)
+        } else if location == .spot {
+            let cell = getSpot(at: indexPath)
+            
+            point = cell.superview?.convert(cell.frame.origin, to: nil) ?? point
+            size = cell.frame.size
+        }
+        return CGRect(origin: point, size: size)
     }
     
     
@@ -598,7 +609,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             // Put the card in the spot and go to the next card
             playSound(.placeCard)
 
-            animateCard(card: nextCard, to: indexPath)
+            animateCard(card: nextCard, from: IndexPath(row: -5, section: -5), to: indexPath)
             blockedCardTaps = 0
             cell.setCard(nextCard)
             let move = GameMove(cards: [nextCard], indexPaths: [indexPath], moveType: .place)
@@ -1109,6 +1120,9 @@ extension GameVC {
         startTime = Date()
         statsAdded = false
         secondsPassed = 0
+        hintsUsed = 0
+        undosUsed = 0
+        
         moves = []
         
         // UI
@@ -1119,7 +1133,7 @@ extension GameVC {
         
         // Get deck
         deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
-        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
+//        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .fromString, random: false, from: "h10c10c05h13c13d13s13h12c12d12s12h11c11d11s11", fullDeck: false)
         
@@ -1228,8 +1242,46 @@ extension GameVC {
     }
     
     func undo() {
-//        print(moves.popLast())
-        
+        if let lastMove = moves.popLast() {
+            switch lastMove.moveType {
+            case .remove:
+                if gameStatus != .removing {
+                    moves.append(lastMove)
+                    return
+                }
+                
+                for (card, indexPath) in zip(lastMove.cards, lastMove.indexPaths) {
+                    
+                    let cell = getSpot(at: indexPath)
+                    
+                    animateCard(card: card, from: IndexPath(row: 10, section: 10), to: indexPath)
+                    
+                    cell.setCard(card)
+                }
+                undosUsed += 1
+            case .place:
+                if gameStatus != .placing {
+                    moves.append(lastMove)
+                    return
+                }
+                for (card, indexPath) in zip(lastMove.cards, lastMove.indexPaths) {
+                    let cell = getSpot(at: indexPath)
+                    
+                    animateCard(card: card, from: indexPath, to: IndexPath(row: -5, section: -5))
+                    
+                    cell.removeCard()
+                    deck.insert(nextCard, at: 0)
+                    nextCard = card
+                    cardsLeft! += 1
+                    updateCardsLeftLabel()
+                    
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+                        self.nextCardImageView.image = UIImage(named: card.imageName)
+                    }
+                }
+                undosUsed += 1
+            }
+        }
         
     }
 }
