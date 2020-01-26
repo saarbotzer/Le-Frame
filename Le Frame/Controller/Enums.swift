@@ -64,6 +64,13 @@ enum MoveType {
     case place, remove
 }
 
+
+enum GameLevel {
+    case easy
+    case normal
+    case hard
+}
+
 enum GameStatus {
     case placing
     case removing
@@ -191,6 +198,7 @@ enum Sound: String {
         return self.rawValue
     }
 }
+
 
 
 

@@ -17,6 +17,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // IBOutlets
     @IBOutlet weak var spotsCollectionView: UICollectionView!
     @IBOutlet weak var nextCardImageView: UIImageView!
+    @IBOutlet weak var next2CardImageView: UIImageView!
+    @IBOutlet weak var next3CardImageView: UIImageView!
     @IBOutlet weak var doneRemovingBtn: UIButton!
     @IBOutlet weak var removeBtn: UIButton!
     @IBOutlet weak var tabBar: UITabBar!
@@ -96,6 +98,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         setDelegates()
         
         updateUI()
+        
+        rotateNextCardsImages()
         
         startNewGame()
     }
@@ -1119,7 +1123,7 @@ extension GameVC {
         
         // Get deck
         deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
-        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
+//        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .fromString, random: false, from: "h10c10c05h13c13d13s13h12c12d12s12h11c11d11s11", fullDeck: false)
         
@@ -1673,3 +1677,15 @@ struct GameMove: CustomStringConvertible {
 }
 
 
+//MARK: - Levels
+extension GameVC {
+    func rotateNextCardsImages() {
+        nextCardImageView.transform = nextCardImageView.transform.rotated(by: 5)
+
+        next2CardImageView.isHidden = false
+        next3CardImageView.isHidden = false
+        
+        next3CardImageView.transform = next3CardImageView.transform.rotated(by: 0)
+
+    }
+}
