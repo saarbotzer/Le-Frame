@@ -464,6 +464,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         if let destinationAsLocation = destination as? CardAnimationLocation {
             destinationTransform = CGAffineTransform.identity.rotated(by: getRotationForLocation(location: destinationAsLocation))
+        } else {
+            tempImageView.layer.zPosition = 10
         }
         
         
@@ -1923,8 +1925,17 @@ extension GameVC {
         case (deckString?.count ?? 52 * 3) / 3:
             nextCards = [deck.remove(at: 0), deck.remove(at: 0), deck.remove(at: 0)]
             
-            let cards = [nextCards[0], nextCards[1], nextCards[2]]
-            animateNextCards(cards: cards)
+//            let cards = [nextCards[0], nextCards[1], nextCards[2]]
+//            animateNextCards(cards: cards)
+            
+            let cardsImageNames = nextCards.map { (card) -> String in
+                return "\(card.imageName).jpg"
+            }
+            
+            nextCardImageView.image = UIImage(named: cardsImageNames[0])
+            next2CardImageView.image = UIImage(named: cardsImageNames[1])
+            next3CardImageView.image = UIImage(named: cardsImageNames[2])
+
         default:
 
             nextCards.remove(at: 0)
