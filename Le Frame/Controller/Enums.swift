@@ -123,7 +123,7 @@ public enum HintType {
 
 
 enum CardAnimationLocation {
-    case nextCard, spot, removedStack
+    case nextCard, spot, removedStack, next2Card, next3Card
     
     static func getLocationType(at indexPath: IndexPath) -> CardAnimationLocation {
         if indexPath.row == 10 && indexPath.section == 10 {

@@ -453,21 +453,55 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
         // Apply origin properties to imageView
         tempImageView.frame = originFrame
-        let origTransform = tempImageView.transform
-        tempImageView.transform = origTransform.rotated(by: 0.2)
+        
+        var destinationTransform = CGAffineTransform.identity
+
+        tempImageView.addShadow(with: 1)
+        
+        if let originAsLocation = origin as? CardAnimationLocation {
+            tempImageView.transform = CGAffineTransform.identity.rotated(by: getRotationForLocation(location: originAsLocation))
+        }
+        
+        if let destinationAsLocation = destination as? CardAnimationLocation {
+            destinationTransform = CGAffineTransform.identity.rotated(by: getRotationForLocation(location: destinationAsLocation))
+        }
+        
+        
+        // TODO: Understand whether transform or frame first, find a better solution
+        var frameFirst = false
+        if let originAsLocation = origin as? CardAnimationLocation, let destinationAsLocation = destination as? CardAnimationLocation {
+            frameFirst = originAsLocation == .next2Card && destinationAsLocation == .nextCard
+        }
+        
        
         // Add the imageView to the main view
         view.addSubview(tempImageView)
 
         // Animate
         UIView.animate(withDuration: cardAnimationDuration) {
-            tempImageView.transform = CGAffineTransform.identity
-            tempImageView.frame = destinationFrame
+            if frameFirst {
+                tempImageView.frame     = destinationFrame
+                tempImageView.transform = destinationTransform
+            } else {
+                tempImageView.transform = destinationTransform
+                tempImageView.frame     = destinationFrame
+            }
         }
        
         // Remove imageView after when arriving to destination
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
             tempImageView.removeFromSuperview()
+        }
+    }
+    
+    func getRotationForLocation(location: CardAnimationLocation) -> CGFloat {
+        switch location {
+        case .nextCard:
+            return 0.2
+        case .next3Card:
+            return -0.2
+        default:
+            return 0
         }
     }
     
@@ -487,8 +521,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             switch location {
             case .nextCard:
                 point = nextCardPoint ?? point
-//                print(next2CardImageView.superview?.convert(next2CardImageView.frame.origin, to: nil), point)
                 size = nextCardImageView.bounds.size
+            case .next2Card:
+                point = next2CardPoint ?? point
+                size = next2CardImageView.bounds.size
+            case .next3Card:
+                point = next3CardPoint ?? point
+                size = next3CardImageView.bounds.size
             case .removedStack:
                 point = CGPoint(x: self.view.frame.midX, y: self.view.frame.maxY + cardHeight + 10)
                 size = CGSize(width: cardWidth, height: cardHeight)
@@ -1788,18 +1827,22 @@ extension GameVC {
         nextCardPoint = nextCardImageView.superview?.convert(nextCardImageView.frame.origin, to: nil) ?? point
         next2CardPoint = next2CardImageView.superview?.convert(next2CardImageView.frame.origin, to: nil) ?? point
         next3CardPoint = next3CardImageView.superview?.convert(next3CardImageView.frame.origin, to: nil) ?? point
-
-        print(nextCardPoint)
         
         // Rotation
         
-        nextCardImageView.transform = nextCardImageView.transform.rotated(by: 0.2)
+        nextCardImageView.transform = nextCardImageView.transform.rotated(by: getRotationForLocation(location: .nextCard))
 
         next2CardImageView.isHidden = false
         next3CardImageView.isHidden = false
         
-        next3CardImageView.transform = next3CardImageView.transform.rotated(by: -0.2)
-        
+        next2CardImageView.transform = next2CardImageView.transform.rotated(by: getRotationForLocation(location: .next2Card))
+
+        next3CardImageView.transform = next3CardImageView.transform.rotated(by: getRotationForLocation(location: .next3Card))
+
+        // Add Shadows
+        nextCardImageView.addShadow(with: 1)
+        next2CardImageView.addShadow(with: 1)
+        next3CardImageView.addShadow(with: 1)
     }
     
     
@@ -1811,16 +1854,49 @@ extension GameVC {
         }
     }
     
+    
+    func animateNextCards(cards: [Card]) {
+        nextCardImageView.isHidden = true
+
+        var cardsImages : [String] = []
+        for card in cards {
+            cardsImages.append("\(card.imageName).jpg")
+        }
+        
+        while cardsImages.count < 3 {
+            cardsImages.append(spotImageName)
+        }
+        
+        next3CardImageView.image = UIImage(named: cardsImages[2])
+
+        if cards.count > 1 {
+            animateCard(card: cards[1], from: .next3Card, to: .next2Card)
+        }
+        
+        next2CardImageView.image = UIImage(named: cardsImages[1])
+        
+        if cards.count > 0 {
+            animateCard(card: cards[0], from: .next2Card, to: .nextCard)
+        }
+        
+        nextCardImageView.image = UIImage(named: cardsImages[0])
+                
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+            self.nextCardImageView.isHidden = false
+        }
+
+        
+
+    }
+    
     func oneCardLeft() {
-        nextCardImageView.image = UIImage(named: "\(nextCards[0].imageName).jpg")
-        next2CardImageView.image = UIImage(named: spotImageName)
-        next3CardImageView.image = UIImage(named: spotImageName)
+        let cards = [nextCards[0]]
+        animateNextCards(cards: cards)
     }
     
     func twoCardsLeft() {
-        nextCardImageView.image = UIImage(named: "\(nextCards[0].imageName).jpg")
-        next2CardImageView.image = UIImage(named: "\(nextCards[1].imageName).jpg")
-        next3CardImageView.image = UIImage(named: spotImageName)
+        let cards = [nextCards[0], nextCards[1]]
+        animateNextCards(cards: cards)
     }
     
     func requestNextCard() {
@@ -1846,21 +1922,33 @@ extension GameVC {
             }
         case (deckString?.count ?? 52 * 3) / 3:
             nextCards = [deck.remove(at: 0), deck.remove(at: 0), deck.remove(at: 0)]
-            nextCardImageView.image = UIImage(named: "\(nextCards[0].imageName).jpg")
-            next2CardImageView.image = UIImage(named: "\(nextCards[1].imageName).jpg")
-            next3CardImageView.image = UIImage(named: "\(nextCards[2].imageName).jpg")
-
+            
+            let cards = [nextCards[0], nextCards[1], nextCards[2]]
+            animateNextCards(cards: cards)
         default:
 
             nextCards.remove(at: 0)
             nextCards.append(deck.remove(at: 0))
-            nextCardImageView.image = UIImage(named: "\(nextCards[0].imageName).jpg")
-            next2CardImageView.image = UIImage(named: "\(nextCards[1].imageName).jpg")
-            next3CardImageView.image = UIImage(named: "\(nextCards[2].imageName).jpg")
+            
+            let cards = [nextCards[0], nextCards[1], nextCards[2]]
+            animateNextCards(cards: cards)
         }
     }
+    
 }
 
+
+extension UIView {
+    func addShadow(with radius: CGFloat) {
+        self.layer.masksToBounds = false
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowOpacity = 0.5
+        self.layer.shadowOffset = CGSize(width: -1, height: 1)
+        self.layer.shadowRadius = radius
+
+        self.layer.shadowPath = UIBezierPath(rect: bounds).cgPath
+    }
+}
 
 extension UIImage {
     func rotate(radians: CGFloat) -> UIImage {
