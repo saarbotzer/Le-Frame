@@ -14,7 +14,11 @@ public let spotImageName = "card-spot.png"
 
 /// The time that takes for a card to move from the new card spot to it's designated spot.
 public let cardAnimationDuration : Double = 0.3
- 
+
+
+//public let nextCardSpot
+
+
 
 public var secondsPassed : Int = 0
 public var gameSumMode : SumMode = .ten

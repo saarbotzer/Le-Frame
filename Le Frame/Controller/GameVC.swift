@@ -16,11 +16,18 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // MARK: Properties & Declerations
     // IBOutlets
     @IBOutlet weak var spotsCollectionView: UICollectionView!
+    
     @IBOutlet weak var nextCardImageView: UIImageView!
     @IBOutlet weak var next2CardImageView: UIImageView!
     @IBOutlet weak var next3CardImageView: UIImageView!
+    
     @IBOutlet weak var doneRemovingBtn: UIButton!
+    @IBOutlet weak var doneRemovingIcon: UIImageView!
+    
     @IBOutlet weak var removeBtn: UIButton!
+    @IBOutlet weak var removeIcon: UIImageView!
+    
+    
     @IBOutlet weak var tabBar: UITabBar!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var cardsLeftLabel: UILabel!
@@ -44,6 +51,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var cardsLeft : Int?
     var moves : [GameMove] = [GameMove]()
     var undosUsed : Int = 0
+    
+    
+    // Next Cards Spots
+    var nextCardPoint : CGPoint?
+    var next2CardPoint : CGPoint?
+    var next3CardPoint : CGPoint?
+    var transformCardsBy: CGFloat?
     
     var gameStatus: GameStatus = .placing
     
@@ -99,8 +113,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         setDelegates()
         
         updateUI()
-        
-        rotateNextCardsImages()
+        addRemovalButtonsRecognizer()
         
         startNewGame()
     }
@@ -115,6 +128,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             // TODO: Verify that this is a good place and a way to create uuids
             defaults.set(UUID().uuidString, forKey: "uuid")
         }
+        
+        rotateNextCardsImages()
     }
     
     
@@ -135,6 +150,22 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         updateTabBarUI()
     }
     
+    func enableRemoveButton(enable: Bool) {
+        removeBtn.isEnabled = enable
+        removeIcon.alpha = enable ? 1 : 0.5
+        removeIcon.isUserInteractionEnabled = enable
+    }
+    
+    func addRemovalButtonsRecognizer() {
+        let removeGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(removePressed(_:)))
+        removeIcon.addGestureRecognizer(removeGestureRecognizer)
+
+        let doneRemovingGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(doneRemovingPressed(_:)))
+        doneRemovingIcon.addGestureRecognizer(doneRemovingGestureRecognizer)
+
+    }
+    
+    
     /**
      Updates the appearance of the spots grid and the bottom view.
      */
@@ -150,18 +181,20 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         bottomView.frame = CGRect(x: bottomView.frame.minX, y: bottomView.frame.minY, width: bottomView.frame.width, height: contentRowHeight)
     
         
-        let doneIcon = doneRemovingBtn.image(for: .normal)?.withRenderingMode(.alwaysTemplate)
-        doneRemovingBtn.setImage(doneIcon, for: .normal)
 
+        
         doneRemovingBtn.setTitleColor(UIColor.white, for: .normal)
         doneRemovingBtn.tintColor = .white
         doneRemovingBtn.setTitleColor(disabledColor, for: .disabled)
+        doneRemovingIcon.image = doneRemovingIcon.image?.withRenderingMode(.alwaysTemplate)
+        doneRemovingIcon.tintColor = .white
         
-        let removeIcon = removeBtn.image(for: .normal)?.withRenderingMode(.alwaysTemplate)
-        removeBtn.setImage(removeIcon, for: .normal)
         removeBtn.tintColor = .white
         removeBtn.setTitleColor(UIColor.white, for: .normal)
         removeBtn.setTitleColor(disabledColor, for: .disabled)
+        removeIcon.image = removeIcon.image?.withRenderingMode(.alwaysTemplate)
+        removeIcon.tintColor = .white
+
     }
     
     
@@ -188,9 +221,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      */
     func showRemovalUI(show: Bool) {
         doneRemovingBtn.isHidden = !show
+        doneRemovingIcon.isHidden = !show
+        removeIcon.isHidden = !show
         removeBtn.isHidden = !show
-        removeBtn.isEnabled = false
-        doneRemovingBtn.isEnabled = false
+        enableRemoveButton(enable: false)
+        enableDoneRemovingButton(enable: false)
         removalSumLabel.isHidden = !show
         removalSumTitleLabel.isHidden = !show
         removalSumLabel.adjustsFontSizeToFitWidth = true
@@ -204,16 +239,24 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     /**
      Enables the Done Removing button
      */
-    func enableDoneRemoving() {
+    func enableDoneRemovingButton(enable: Bool) {
+        
+        var shouldEnableBySetting = false
+        
         let doneRemovingAnytime = getSettingValue(for: .doneRemovingAnytime)
         
         if doneRemovingAnytime {
             if !isBoardFull() {
-                doneRemovingBtn.isEnabled = true
+                shouldEnableBySetting = true
             }
         } else if !checkForPairs(){
-            doneRemovingBtn.isEnabled = true
+            shouldEnableBySetting = true
         }
+        
+        let finalDecision = shouldEnableBySetting && enable
+        doneRemovingBtn.isEnabled = finalDecision
+        doneRemovingIcon.alpha = finalDecision ? 1 : 0.5
+        doneRemovingIcon.isUserInteractionEnabled = finalDecision
     }
     
     // MARK: - Game Flow
@@ -308,8 +351,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             cell.removeCard()
         }
         
-        enableDoneRemoving()
-        removeBtn.isEnabled = false
+        enableRemoveButton(enable: false)
+        enableDoneRemovingButton(enable: true)
         
         let move = GameMove(cards: newlyRemovedCards, indexPaths: cardsLocations, moveType: .remove)
         moves.append(move)
@@ -384,30 +427,43 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     // MARK: - Spots Handling and Interface Methods
 
-    /**
-     Animates a card from the next card spot to the requested spot in the grid
-     
-     - Parameter card: The card that is being moved.
-     - Parameter indexPath: The destination IndexPath in the cards grid
-     
-     */
-    func animateCard(card: Card, from originIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+    func animateCard(card: Card, from origin: IndexPath, to destination: IndexPath) {
+        animateCard(card: card, from: origin as Any, to: destination as Any)
+    }
+    
+    func animateCard(card: Card, from origin: IndexPath, to destination: CardAnimationLocation) {
+        animateCard(card: card, from: origin as Any, to: destination as Any)
+    }
+    
+    func animateCard(card: Card, from origin: CardAnimationLocation, to destination: IndexPath) {
+        animateCard(card: card, from: origin as Any, to: destination as Any)
+    }
+    
+    func animateCard(card: Card, from origin: CardAnimationLocation, to destination: CardAnimationLocation) {
+        animateCard(card: card, from: origin as Any, to: destination as Any)
+    }
+    
+    func animateCard(card: Card, from origin: Any, to destination: Any) {
 
-        let originFrame = getFrame(for: originIndexPath)
-        let destinationFrame = getFrame(for: destinationIndexPath)
+        let originFrame = getFrame(for: origin)
+        let destinationFrame = getFrame(for: destination)
         
         // Create moving imageView
         let tempImageView = UIImageView(image: UIImage(named: "\(card.imageName).jpg"))
 
         // Apply origin properties to imageView
         tempImageView.frame = originFrame
+        let origTransform = tempImageView.transform
+        tempImageView.transform = origTransform.rotated(by: 0.2)
        
         // Add the imageView to the main view
         view.addSubview(tempImageView)
 
         // Animate
         UIView.animate(withDuration: cardAnimationDuration) {
+            tempImageView.transform = CGAffineTransform.identity
             tempImageView.frame = destinationFrame
+            print("dest", destinationFrame)
         }
        
         // Remove imageView after when arriving to destination
@@ -416,25 +472,35 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    func getFrame(for indexPath: IndexPath) -> CGRect {
-        let location = CardAnimationLocation.getLocationType(at: indexPath)
         
+    func getFrame(for location: Any) -> CGRect {
+
         var point : CGPoint = CGPoint()
         var size : CGSize = CGSize()
         
-        if location == .nextCard {
-            point = nextCardImageView.superview?.convert(nextCardImageView.frame.origin, to: nil) ?? point
-            size = nextCardImageView.frame.size
-        } else if location == .removedStack {
-            point = CGPoint(x: self.view.frame.midX, y: self.view.frame.maxY + cardHeight + 10)
-            size = CGSize(width: cardWidth, height: cardHeight)
-        } else if location == .spot {
+        
+        if let indexPath = location as? IndexPath {
             let cell = getSpot(at: indexPath)
             
             point = cell.superview?.convert(cell.frame.origin, to: nil) ?? point
             size = cell.frame.size
+        } else if let location = location as? CardAnimationLocation {
+            switch location {
+            case .nextCard:
+                point = nextCardPoint ?? point
+//                print(next2CardImageView.superview?.convert(next2CardImageView.frame.origin, to: nil), point)
+                size = nextCardImageView.bounds.size
+            case .removedStack:
+                point = CGPoint(x: self.view.frame.midX, y: self.view.frame.maxY + cardHeight + 10)
+                size = CGSize(width: cardWidth, height: cardHeight)
+            default:
+                return CGRect(origin: point, size: size)
+            }
         }
-        return CGRect(origin: point, size: size)
+        
+        let rect = CGRect(origin: point, size: size)
+        return rect
+        
     }
     
     
@@ -613,7 +679,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             // Put the card in the spot and go to the next card
             playSound(.placeCard)
 
-            animateCard(card: nextCard, from: IndexPath(row: -5, section: -5), to: indexPath)
+            animateCard(card: nextCard, from: .nextCard, to: indexPath)
             blockedCardTaps = 0
             cell.setCard(nextCard)
             let move = GameMove(cards: [nextCard], indexPaths: [indexPath], moveType: .place)
@@ -649,7 +715,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             return
         }
         
-        removeBtn.isEnabled = true
+        enableRemoveButton(enable: true)
         
         let rank = tappedSpot.card!.rank!
         
@@ -670,7 +736,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 firstSelectedCardIndexPath = nil
                 secondSelectedCardIndexPath = nil
                 markAllCardAsNotSelected()
-                removeBtn.isEnabled = false
+                enableRemoveButton(enable: false)
             }
             // If no second card is selected, select the tapped card
             else if secondSelectedCardIndexPath == nil {
@@ -1258,7 +1324,7 @@ extension GameVC {
                     
                     let cell = getSpot(at: indexPath)
                     
-                    animateCard(card: card, from: IndexPath(row: 10, section: 10), to: indexPath)
+                    animateCard(card: card, from: .removedStack, to: indexPath)
                     
                     cell.setCard(card)
                 }
@@ -1271,7 +1337,7 @@ extension GameVC {
                 for (card, indexPath) in zip(lastMove.cards, lastMove.indexPaths) {
                     let cell = getSpot(at: indexPath)
                     
-                    animateCard(card: card, from: indexPath, to: IndexPath(row: -5, section: -5))
+                    animateCard(card: card, from: indexPath, to: .nextCard)
                     
                     cell.removeCard()
                     deck.insert(nextCard, at: 0)
@@ -1732,12 +1798,52 @@ struct GameMove: CustomStringConvertible {
 //MARK: - Levels
 extension GameVC {
     func rotateNextCardsImages() {
-        nextCardImageView.transform = nextCardImageView.transform.rotated(by: 5)
+        
+        // Location
+        nextCardImageView.transform = CGAffineTransform(translationX: 30, y: 0)
+        next3CardImageView.transform = CGAffineTransform(translationX: -30, y: 0)
+
+        // Set center points
+        let point = CGPoint()
+        
+        nextCardPoint = nextCardImageView.superview?.convert(nextCardImageView.frame.origin, to: nil) ?? point
+        next2CardPoint = next2CardImageView.superview?.convert(next2CardImageView.frame.origin, to: nil) ?? point
+        next3CardPoint = next3CardImageView.superview?.convert(next3CardImageView.frame.origin, to: nil) ?? point
+
+        print(nextCardPoint)
+        
+        // Rotation
+        
+        nextCardImageView.transform = nextCardImageView.transform.rotated(by: 0.2)
 
         next2CardImageView.isHidden = false
         next3CardImageView.isHidden = false
         
-        next3CardImageView.transform = next3CardImageView.transform.rotated(by: 0)
+        next3CardImageView.transform = next3CardImageView.transform.rotated(by: -0.2)
+        
+    }
+}
 
+
+extension UIImage {
+    func rotate(radians: CGFloat) -> UIImage {
+        let rotatedSize = CGRect(origin: .zero, size: size)
+            .applying(CGAffineTransform(rotationAngle: CGFloat(radians)))
+            .integral.size
+        UIGraphicsBeginImageContext(rotatedSize)
+        if let context = UIGraphicsGetCurrentContext() {
+            let origin = CGPoint(x: rotatedSize.width / 2.0,
+                                 y: rotatedSize.height / 2.0)
+            context.translateBy(x: origin.x, y: origin.y)
+            context.rotate(by: radians)
+            draw(in: CGRect(x: -origin.y, y: -origin.x,
+                            width: size.width, height: size.height))
+            let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+
+            return rotatedImage ?? self
+        }
+
+        return self
     }
 }

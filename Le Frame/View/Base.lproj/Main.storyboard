@@ -277,12 +277,14 @@
                         <outlet property="bottomView" destination="xqZ-Ke-1XW" id="hCD-ts-m07"/>
                         <outlet property="cardsLeftLabel" destination="lu5-qc-XIw" id="fro-cT-hWx"/>
                         <outlet property="doneRemovingBtn" destination="Cqj-kZ-lxJ" id="JU2-Yr-Nsu"/>
+                        <outlet property="doneRemovingIcon" destination="ceM-LH-Ql9" id="RKV-er-QML"/>
                         <outlet property="next2CardImageView" destination="KRu-H1-DBU" id="mby-MA-yrf"/>
                         <outlet property="next3CardImageView" destination="u4c-cc-kHN" id="sdo-yc-meX"/>
                         <outlet property="nextCardImageView" destination="QEw-Ye-qzf" id="jTg-u9-JDx"/>
                         <outlet property="removalSumLabel" destination="G55-yI-rCv" id="v0E-6e-20I"/>
                         <outlet property="removalSumTitleLabel" destination="jqr-nC-F10" id="aI2-OY-mbo"/>
                         <outlet property="removeBtn" destination="OyU-Ot-97c" id="Z2B-4g-GOI"/>
+                        <outlet property="removeIcon" destination="Ehg-60-XEm" id="tL3-xF-ORB"/>
                         <outlet property="spotsCollectionView" destination="xln-Id-4BC" id="bkj-Wd-Yui"/>
                         <outlet property="tabBar" destination="IIg-up-Rhk" id="9wS-RZ-kYI"/>
                         <outlet property="timeLabel" destination="MRB-3L-EFt" id="nMz-TW-mNZ"/>
