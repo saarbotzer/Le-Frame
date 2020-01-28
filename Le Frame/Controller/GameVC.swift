@@ -45,7 +45,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var model = CardModel()
     var deck = [Card]()
 
-    var nextCard = Card()
+    var nextCards : [Card] = [Card]()
     var firstSelectedCardIndexPath: IndexPath?
     var secondSelectedCardIndexPath: IndexPath?
     var cardsLeft : Int?
@@ -231,9 +231,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         removalSumLabel.adjustsFontSizeToFitWidth = true
         removalSumLabel.minimumScaleFactor = 0.2
         
-        if show {
-            nextCardImageView.image = UIImage(named: spotImageName)
-        }
+//        if show {
+//            nextCardImageView.image = UIImage(named: spotImageName)
+//        }
     }
     
     /**
@@ -463,7 +463,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         UIView.animate(withDuration: cardAnimationDuration) {
             tempImageView.transform = CGAffineTransform.identity
             tempImageView.frame = destinationFrame
-            print("dest", destinationFrame)
         }
        
         // Remove imageView after when arriving to destination
@@ -543,7 +542,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         gameStatus = status
         switch status {
         case .placing:
-            updateNextCardImage()
+//            requestNextCard()
             showRemovalUI(show: false)
         case .removing:
             showRemovalUI(show: true)
@@ -569,7 +568,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             return false
         }
         
-        if let nextCardRank = nextCard.rank {
+        if let nextCardRank = nextCards[0].rank {
             if nextCardRank == .jack && jacksAvailable == 0 {
                 return true
             } else if nextCardRank == .queen && queensAvailable == 0{
@@ -629,7 +628,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 setGameStatus(status: .gameOver)
                 nextCardImageView.image = UIImage(named: spotImageName)
             } else {
-//                updateNextCardImage()
             }
         }
     }
@@ -675,18 +673,18 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
         }
         
-        if canPutCard(nextCard, at: indexPath) {
+        if canPutCard(nextCards[0], at: indexPath) {
             // Put the card in the spot and go to the next card
             playSound(.placeCard)
 
-            animateCard(card: nextCard, from: .nextCard, to: indexPath)
+            animateCard(card: nextCards[0], from: .nextCard, to: indexPath)
             blockedCardTaps = 0
-            cell.setCard(nextCard)
-            let move = GameMove(cards: [nextCard], indexPaths: [indexPath], moveType: .place)
+            cell.setCard(nextCards[0])
+            let move = GameMove(cards: [nextCards[0]], indexPaths: [indexPath], moveType: .place)
             moves.append(move)
             haptic(of: .placeSuccess)
             
-            getNextCard()
+            requestNextCard()
             cardsLeft = cardsLeft! - 1
         } else {
             haptic(of: .placeError)
@@ -753,28 +751,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    // Game Logic
-    func getNextCard() {
-        if deck.count > 0 {
-            nextCard = deck.remove(at: 0)
-            updateNextCardImage()
-        } else {
-            nextCardImageView.image = UIImage(named: spotImageName)
-//            setGameStatus(status: .won)
-        }
-    }
-    
     func updateCardsLeftLabel() {
         cardsLeftLabel.text = "CARDS LEFT: \(cardsLeft ?? 0)"
     }
     
-    // Game Logic?
-    func updateNextCardImage() {
-        // TODO: Don't change image to the previous card when there are no cards left
-        if let image = UIImage(named: "\(nextCard.imageName).jpg") {
-            nextCardImageView.image = image
-        }
-    }
     
     // Game Logic
     func checkForPairs() -> Bool {
@@ -817,7 +797,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         if let cardsLeft = cardsLeft {
             if cardsLeft > 0 {
-                updateNextCardImage()
+                requestNextCard()
             }
         }
 
@@ -869,7 +849,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             return .noCardsToRemove
         }
         
-        if let nextCardRank = nextCard.rank {
+        if let nextCardRank = nextCards[0].rank {
             if nextCardRank == .jack && jacksAvailable == 0 {
                 return .noEmptyJackSpots
             }
@@ -1214,8 +1194,7 @@ extension GameVC {
         print("Started new game \(gameID.uuidString)")
         
         // Handle first card
-        getNextCard()
-        updateNextCardImage()
+        requestNextCard()
         updateCardsLeftLabel()
         
         // Timer
@@ -1291,7 +1270,7 @@ extension GameVC {
         
         let boardFull = isBoardFull()
         let pairsToRemove = checkForPairs()
-        let nextCardRank = nextCard.rank!
+        let nextCardRank = nextCards[0].rank!
         
         // If the board is full and there are no cards to remove
         if boardFull && !pairsToRemove {
@@ -1340,8 +1319,8 @@ extension GameVC {
                     animateCard(card: card, from: indexPath, to: .nextCard)
                     
                     cell.removeCard()
-                    deck.insert(nextCard, at: 0)
-                    nextCard = card
+                    deck.insert(nextCards[0], at: 0)
+                    nextCards[0] = card
                     cardsLeft! += 1
                     updateCardsLeftLabel()
                     
@@ -1383,7 +1362,7 @@ extension GameVC {
         var indexPathsToHint = [IndexPath]()
         
         if gameStatus == .placing {
-            if let nextCardRank = nextCard.rank {
+            if let nextCardRank = nextCards[0].rank {
                 if nextCardRank.getRawValue() <= 10 {
                     // center
                     let emptyCenterSpots = getEmptySpots(atCenter: true)
@@ -1821,6 +1800,64 @@ extension GameVC {
         
         next3CardImageView.transform = next3CardImageView.transform.rotated(by: -0.2)
         
+    }
+    
+    
+    // Game Logic?
+    func updateNextCardImage() {
+        // TODO: Don't change image to the previous card when there are no cards left
+        if let image = UIImage(named: "\(nextCards[0].imageName).jpg") {
+            nextCardImageView.image = image
+        }
+    }
+    
+    func oneCardLeft() {
+        nextCardImageView.image = UIImage(named: "\(nextCards[0].imageName).jpg")
+        next2CardImageView.image = UIImage(named: spotImageName)
+        next3CardImageView.image = UIImage(named: spotImageName)
+    }
+    
+    func twoCardsLeft() {
+        nextCardImageView.image = UIImage(named: "\(nextCards[0].imageName).jpg")
+        next2CardImageView.image = UIImage(named: "\(nextCards[1].imageName).jpg")
+        next3CardImageView.image = UIImage(named: spotImageName)
+    }
+    
+    func requestNextCard() {
+        if gameStatus != .placing {
+            return
+        }
+        switch deck.count {
+        case 0 :
+            print(nextCards)
+            switch nextCards.count {
+            case ...1:
+                nextCardImageView.image = UIImage(named: spotImageName)
+            case 2:
+                nextCards.remove(at: 0)
+                oneCardLeft()
+            case 3:
+                nextCards.remove(at: 0)
+                twoCardsLeft()
+//            case 3:
+//                nextCards.remove(at: 0)
+            default:
+                return
+            }
+        case (deckString?.count ?? 52 * 3) / 3:
+            nextCards = [deck.remove(at: 0), deck.remove(at: 0), deck.remove(at: 0)]
+            nextCardImageView.image = UIImage(named: "\(nextCards[0].imageName).jpg")
+            next2CardImageView.image = UIImage(named: "\(nextCards[1].imageName).jpg")
+            next3CardImageView.image = UIImage(named: "\(nextCards[2].imageName).jpg")
+
+        default:
+
+            nextCards.remove(at: 0)
+            nextCards.append(deck.remove(at: 0))
+            nextCardImageView.image = UIImage(named: "\(nextCards[0].imageName).jpg")
+            next2CardImageView.image = UIImage(named: "\(nextCards[1].imageName).jpg")
+            next3CardImageView.image = UIImage(named: "\(nextCards[2].imageName).jpg")
+        }
     }
 }
 
