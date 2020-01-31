@@ -19,7 +19,8 @@ class AboutUsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         Credit(owner: "TaranP", urlString: "https://freesound.org/people/TaranP/sounds/362204/", rawName: "horn_fail_wahwah_3.wav", name: "Losing sound"),
         Credit(owner: "icons8", urlString: "https://icons8.com/", rawName: "Gear, idea, refresh", name: "Tab bar icons"),
         Credit(owner: "Freepik", urlString: "https://www.flaticon.com/free-icon/rubbish-bin_64022?term=trash&page=1&position=1", rawName: "rubbish-bin.png", name: "Remove icon"),
-        Credit(owner: "Dave Gandy", urlString: "https://www.flaticon.com/free-icon/correct-symbol_25404?term=check%20mark&page=1&position=3", rawName: "correct-symbol", name: "Done removing icon"),
+        Credit(owner: "Freepik", urlString: "   https://www.flaticon.com/free-icon/information_906794?term=question%20mark&page=1&position=1", rawName: "question.png", name: "Question mark"),
+        Credit(owner: "Dave Gandy", urlString: "https://www.flaticon.com/free-icon/correct-symbol_25404?term=check%20mark&page=1&position=3", rawName: "correct-symbol", name: "Checkmark icon"),
         Credit(owner: "Roundicons", urlString: "https://www.flaticon.com/free-icon/right-arrow_271228", rawName: "right-arrow", name: "Settings right arrow"),
     ]
     

@@ -453,11 +453,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let tempImageView = UIImageView(image: UIImage(named: "\(card.imageName).jpg"))
 
         // Apply origin properties to imageView
-        tempImageView.frame = originFrame
+        tempImageView.frame = originFrame        
         
         var destinationTransform = CGAffineTransform.identity
 
-        tempImageView.addShadow(with: 1)
+        
         
         if let originAsLocation = origin as? CardAnimationLocation {
             tempImageView.transform = CGAffineTransform.identity.rotated(by: getRotationForLocation(location: originAsLocation))
@@ -469,6 +469,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             tempImageView.layer.zPosition = 10
         }
         
+        tempImageView.addShadow(with: 1)
         
         // TODO: Understand whether transform or frame first, find a better solution
         var frameFirst = false
@@ -483,7 +484,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         UIView.animate(withDuration: cardAnimationDuration) {
             if frameFirst {
                 tempImageView.frame     = destinationFrame
+                tempImageView.bounds    = destinationFrame
+
                 tempImageView.transform = destinationTransform
+
             } else {
                 tempImageView.transform = destinationTransform
                 tempImageView.frame     = destinationFrame
@@ -539,12 +543,15 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             case .nextCard:
                 point = nextCardPoint ?? point
                 size = nextCardImageView.bounds.size
+                print("Next card's size: ", size)
             case .next2Card:
                 point = next2CardPoint ?? point
                 size = next2CardImageView.bounds.size
+                print("Next 2 card's size: ", size)
             case .next3Card:
                 point = next3CardPoint ?? point
                 size = next3CardImageView.bounds.size
+                print("Next 3 card's size: ", size)
             case .removedStack:
                 point = CGPoint(x: self.view.frame.midX, y: self.view.frame.maxY + cardHeight + 10)
                 size = CGSize(width: cardWidth, height: cardHeight)
@@ -1220,7 +1227,7 @@ extension GameVC {
         gameSumMode = getSumSetting()
         setGameStatus(status: .placing)
         
-        difficulty = .easy
+        difficulty = .normal
         
         
         // Stats
@@ -1988,6 +1995,9 @@ extension GameVC {
 
 extension UIView {
     func addShadow(with radius: CGFloat) {
+        
+        return
+
         self.layer.masksToBounds = false
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOpacity = 0.5

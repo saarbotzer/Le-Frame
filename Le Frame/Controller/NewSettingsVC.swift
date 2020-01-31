@@ -23,24 +23,25 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     let settingsSections: [String : [Setting]] =
         [
             "GAME": [
-                Setting(label: "Removal sum", segmentedControlSegments: ["10", "11"], segmentedControlSettingKey: .sumMode, segmentedControlAlertText: "Yes", segueName: nil),
+//                Setting(label: "Removal sum", segmentedControlSegments: ["10", "11"], segmentedControlSettingKey: .sumMode, segmentedControlAlertText: "Yes"),
+                Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .sumMode, segmentedControlAlertText: "Yes", infoText: "Very easy - "),
 //                Setting(label: "Done removing anytime", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .doneRemovingAnytime, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
-                Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No", segueName: nil),
-                Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No", segueName: nil),
-                Setting(label: "Haptic feedback", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No", segueName: nil),
-                Setting(label: "Statistics", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToStatistics)
+                Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No"),
+                Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No"),
+                Setting(label: "Haptic feedback", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No"),
+                Setting(label: "Statistics", segueName: .goToStatistics)
             ],
             "HELP": [
-                Setting(label: "Tutorial", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToTutorial),
-                Setting(label: "FAQ", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToFaq)
+                Setting(label: "Tutorial", segueName: .goToTutorial),
+                Setting(label: "FAQ", segueName: .goToFaq)
             ],
             "ABOUT": [
-                Setting(label: "Credits", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToAboutUs),
-                Setting(label: "Privacy Policy", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .privacyPolicy),
-                Setting(label: "Rate us!", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .rateUs),
-                Setting(label: "Contact us", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .goToContactUs),
-                Setting(label: "Share", segmentedControlSegments: nil, segmentedControlSettingKey: nil, segmentedControlAlertText: nil, segueName: .share)
+                Setting(label: "Credits", segueName: .goToAboutUs),
+                Setting(label: "Privacy Policy", segueName: .privacyPolicy),
+                Setting(label: "Rate us!", segueName: .rateUs),
+                Setting(label: "Contact us", segueName: .goToContactUs),
+                Setting(label: "Share", segueName: .share)
             ]
     ]
     
@@ -232,7 +233,6 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             
             segmentedControl.addTarget(self, action: #selector(segmentControlValueChanged(sender:)), for: .valueChanged)
             
-            
             return segmentedControl
         }
         return nil
@@ -364,27 +364,81 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         label.translatesAutoresizingMaskIntoConstraints = false
         cell.addSubview(label)
 
+        var labelYAnchor = label.centerYAnchor.constraint(equalTo: cell.centerYAnchor)
+        
+        /// Two floors cell
+        var specialCell = false
+        var labelHeight : CGFloat = 20
+        var segmentedControlHeight : CGFloat = 25
+        var segmentedControlWidth : CGFloat = 100
+        
+        
+        if let numberOfSegments = setting.segmentedControlSegments?.count {
+            if numberOfSegments > 2 {
+                labelYAnchor = label.topAnchor.constraint(equalTo: cell.topAnchor, constant: 20)
+                
+                cell.heightAnchor.constraint(equalToConstant: labelHeight + segmentedControlHeight + 30).isActive = true
+                specialCell = true
+            }
+        }
         
         NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 20),
-            label.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
+            label.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: labelHeight),
+            labelYAnchor,
         ])
         
         let selectedBackgroundView = UIView(frame: cell.frame)
 
         if let segmentedControl = createSegmentedControl(for: setting) {
             cell.addSubview(segmentedControl)
+            
+            
+            var segmentedControlYAnchor = segmentedControl.centerYAnchor.constraint(equalTo: cell.centerYAnchor)
+            var segmentedControlXAnchor = segmentedControl.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10)
+
+            if specialCell {
+                segmentedControlYAnchor = segmentedControl.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 10)
+                segmentedControlXAnchor = segmentedControl.centerXAnchor.constraint(equalTo: cell.centerXAnchor)
+                segmentedControlWidth = cell.frame.width - 20
+            }
+            
             NSLayoutConstraint.activate([
-                segmentedControl.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10),
-                segmentedControl.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-                segmentedControl.heightAnchor.constraint(equalToConstant: 24),
-                segmentedControl.widthAnchor.constraint(equalToConstant: 100),
+                segmentedControlXAnchor,
+                segmentedControlYAnchor,
+                segmentedControl.heightAnchor.constraint(equalToConstant: segmentedControlHeight),
+                segmentedControl.widthAnchor.constraint(equalToConstant: segmentedControlWidth),
             ])
             
             selectedBackgroundView.backgroundColor = .clear
         } else {
             // If there is a segmented control, the cell can't be selected
             selectedBackgroundView.backgroundColor = selectedCellColor
+        }
+        
+        if let infoText = setting.infoText {
+            
+            let imageName = "question-mark-circle.jpg"
+            let infoIconImage = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate) ?? UIImage(named: imageName)
+            
+            let infoButton = InfoButton()
+            infoButton.setImage(infoIconImage, for: .normal)
+            infoButton.tintColor = .white
+            infoButton.contentMode = .scaleAspectFit
+            infoButton.infoText = infoText
+            
+            infoButton.translatesAutoresizingMaskIntoConstraints = false
+            
+            infoButton.imageView?.contentMode = .scaleAspectFit
+            
+            infoButton.addTarget(self, action: #selector(infoButtonPressed(sender:)), for: .touchUpInside)
+            
+            cell.addSubview(infoButton)
+            NSLayoutConstraint.activate([
+                infoButton.heightAnchor.constraint(equalToConstant: labelHeight - 5),
+                infoButton.widthAnchor.constraint(equalToConstant: labelHeight - 5),
+                infoButton.leadingAnchor.constraint(equalTo: label.trailingAnchor, constant: 10),
+                infoButton.centerYAnchor.constraint(equalTo: label.centerYAnchor, constant: 0)
+            ])
         }
                 
         if let segue = setting.segueName {
@@ -408,8 +462,14 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         cell.selectedBackgroundView = selectedBackgroundView
 
         cell.backgroundColor = cellColor
-        
+                
         return cell
+    }
+    
+    @objc func infoButtonPressed(sender: InfoButton) {
+        if let infoText = sender.infoText {
+            Toast.show(message: infoText, controller: self)
+        }
     }
     
     // MARK: - ViewController Functions
@@ -511,6 +571,26 @@ struct Setting {
     var segmentedControlSettingKey: SettingKey?
     var segmentedControlAlertText: String?
     var segueName: SettingSegue?
+    var infoText: String?
+    
+    init(
+        label: String
+        , segmentedControlSegments: [String]? = nil
+        , segmentedControlSettingKey: SettingKey? = nil
+        , segmentedControlAlertText: String? = nil
+        , segueName: SettingSegue? = nil
+        , infoText: String? = nil
+        ) {
+        self.label = label
+        self.segmentedControlSegments = segmentedControlSegments
+        self.segmentedControlSettingKey = segmentedControlSettingKey
+        self.segmentedControlAlertText = segmentedControlAlertText
+        self.segueName = segueName
+        self.infoText = infoText
+    }
 }
 
 
+class InfoButton: UIButton {
+    var infoText: String?
+}
