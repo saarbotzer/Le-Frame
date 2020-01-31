@@ -129,8 +129,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             // TODO: Verify that this is a good place and a way to create uuids
             defaults.set(UUID().uuidString, forKey: "uuid")
         }
-        
-        rotateNextCardsImages()
     }
     
     
@@ -543,15 +541,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             case .nextCard:
                 point = nextCardPoint ?? point
                 size = nextCardImageView.bounds.size
-                print("Next card's size: ", size)
             case .next2Card:
                 point = next2CardPoint ?? point
                 size = next2CardImageView.bounds.size
-                print("Next 2 card's size: ", size)
             case .next3Card:
                 point = next3CardPoint ?? point
                 size = next3CardImageView.bounds.size
-                print("Next 3 card's size: ", size)
             case .removedStack:
                 point = CGPoint(x: self.view.frame.midX, y: self.view.frame.maxY + cardHeight + 10)
                 size = CGSize(width: cardWidth, height: cardHeight)
@@ -1227,8 +1222,8 @@ extension GameVC {
         gameSumMode = getSumSetting()
         setGameStatus(status: .placing)
         
-        difficulty = .normal
-        
+        difficulty = getDifficulty()
+        configureNextCardsUI()
         
         // Stats
         restartAfter = false
@@ -1792,6 +1787,34 @@ extension GameVC {
         }
     }
     
+    func getDifficulty() -> Difficulty {
+        let settingKey = SettingKey.difficulty
+        let keyExists = isSettingExists(settingKey: settingKey)
+        
+        let defaultValue = "normal"
+        
+        var difficultyString = defaultValue
+        
+        if keyExists {
+            difficultyString = defaults.string(forKey: settingKey.getRawValue())!
+        } else {
+            defaults.set(defaultValue, forKey: settingKey.getRawValue())
+        }
+        
+        switch difficultyString {
+        case "veryEasy":
+            return .veryEasy
+        case "easy":
+            return .easy
+        case "normal":
+            return .normal
+        case "hard":
+            return .hard
+        default:
+            return .normal
+        }
+    }
+    
     func getSettingValue(for settingKey: SettingKey) -> Bool {
         let keyExists = isSettingExists(settingKey: settingKey)
         if keyExists {
@@ -1847,7 +1870,7 @@ struct GameMove: CustomStringConvertible {
 
 //MARK: - Levels
 extension GameVC {
-    func rotateNextCardsImages() {
+    func configureNextCardsUI() {
         
         switch difficulty.numberOfNextCards {
         case 3:
@@ -1857,6 +1880,7 @@ extension GameVC {
             
             // Location
             nextCardImageView.transform = CGAffineTransform(translationX: 30, y: 0)
+            next2CardImageView.transform = CGAffineTransform.identity
             next3CardImageView.transform = CGAffineTransform(translationX: -30, y: 0)
             
         case 2:
@@ -1870,6 +1894,8 @@ extension GameVC {
         default:
             next2CardImageView.isHidden = true
             next3CardImageView.isHidden = true
+            
+            nextCardImageView.transform = CGAffineTransform.identity
         }
         
 

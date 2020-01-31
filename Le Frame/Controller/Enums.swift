@@ -149,6 +149,7 @@ enum SettingKey: String {
     case doneRemovingAnytime = "DoneRemovingAnytime"
     case soundsOn = "SoundsOn"
     case hapticOn = "HapticOn"
+    case difficulty = "Difficulty"
     
     func getRawValue() -> String {
         return self.rawValue

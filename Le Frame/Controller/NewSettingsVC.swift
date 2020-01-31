@@ -24,7 +24,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         [
             "GAME": [
 //                Setting(label: "Removal sum", segmentedControlSegments: ["10", "11"], segmentedControlSettingKey: .sumMode, segmentedControlAlertText: "Yes"),
-                Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .sumMode, segmentedControlAlertText: "Yes", infoText: "Very easy - "),
+                Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .difficulty, segmentedControlAlertText: "Yes", infoText: "Very easy - "),
 //                Setting(label: "Done removing anytime", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .doneRemovingAnytime, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No"),
@@ -56,6 +56,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     let gotoIcon = "settings-goto-icon.png"
     
     let defaults = UserDefaults.standard
+    var gameDifficulty: Difficulty = .normal
 
     
     // MARK: - viewDidLoad
@@ -70,6 +71,8 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         }
         
         updateUI()
+        
+        print(gameDifficulty)
     }
 
     func updateUI() {
@@ -245,6 +248,27 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         if let settingKey = sender.settingKey {
             let keyRawValue = settingKey.getRawValue()
             switch settingKey {
+            case .difficulty:
+                var newDifficulty = "unknown"
+                switch sender.selectedSegmentIndex {
+                case 0:
+                    newDifficulty = "veryEasy"
+                case 1:
+                    newDifficulty = "easy"
+                case 2:
+                    newDifficulty = "normal"
+                case 3:
+                    newDifficulty = "hard"
+                default:
+                    newDifficulty = "unknown"
+                }
+                defaults.set(newDifficulty, forKey: keyRawValue)
+                
+                // TODO: If value changed, alert user
+//                if gameSumMode.getRawValue() != newSumMode {
+//                    alertChange(for: sender.name!, currentValue: gameSumMode)
+//                }
+                
             case .sumMode:
                 let newSumMode = sender.selectedSegmentIndex == 0 ? 10 : 11
                 defaults.set(newSumMode, forKey: keyRawValue)
@@ -252,10 +276,6 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 if gameSumMode.getRawValue() != newSumMode {
                     alertChange(for: sender.name!, currentValue: gameSumMode)
                 }
-//            case .removeWhenFull:
-//                let newRemoveWhenFull = sender.selectedSegmentIndex == 0
-//                defaults.set(newRemoveWhenFull, forKey: keyRawValue)
-//                // TODO: Show alert
             case .showHints, .soundsOn, .hapticOn, .doneRemovingAnytime:
                 let newValue = sender.selectedSegmentIndex == 0
                 defaults.set(newValue, forKey: keyRawValue)
@@ -319,6 +339,25 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 } else {
                     defaults.set(false, forKey: keyRawValue)
                     selectedSegmentIndex = 1
+                }
+            case .difficulty:
+                if keyExists {
+                    let difficultyString = defaults.string(forKey: keyRawValue)!
+                    switch difficultyString {
+                    case "veryEasy":
+                        selectedSegmentIndex = 0
+                    case "easy":
+                        selectedSegmentIndex = 1
+                    case "normal":
+                        selectedSegmentIndex = 2
+                    case "hard":
+                        selectedSegmentIndex = 3
+                    default:
+                        selectedSegmentIndex = 2
+                    }
+                } else {
+                    defaults.set("normal", forKey: keyRawValue)
+                    selectedSegmentIndex = 2
                 }
             }
         }
