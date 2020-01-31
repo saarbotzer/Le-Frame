@@ -56,7 +56,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     let gotoIcon = "settings-goto-icon.png"
     
     let defaults = UserDefaults.standard
-    var gameDifficulty: Difficulty = .normal
+//    var gameDifficulty: Difficulty = .normal
 
     
     // MARK: - viewDidLoad
@@ -71,8 +71,6 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         }
         
         updateUI()
-        
-        print(gameDifficulty)
     }
 
     func updateUI() {

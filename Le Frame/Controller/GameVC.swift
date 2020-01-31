@@ -110,7 +110,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // Un-comment to view onboarding screen every time
 //        defaults.set(false, forKey: "firstGamePlayed")
         
-        
         setDelegates()
         
         updateUI()
@@ -120,6 +119,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        
+        configureNextCardsUI()
         
         let viewingMode = getViewingMode()
         if viewingMode == .onboarding {
@@ -271,6 +272,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         switch item.tag {
         case 1:
+            
+//            let settingsVC = NewSettingsVC()
+//            settingsVC.gameDifficulty = difficulty
+            
             performSegue(withIdentifier: "goToSettings", sender: nil)
         case 2:
             if isGameWon() {
@@ -1223,7 +1228,7 @@ extension GameVC {
         setGameStatus(status: .placing)
         
         difficulty = getDifficulty()
-        configureNextCardsUI()
+        
         
         // Stats
         restartAfter = false
@@ -1238,6 +1243,7 @@ extension GameVC {
         moves = []
         
         // UI
+        configureNextCardsUI()
         removalSumLabel.text = "\(difficulty.sumMode.getRawValue())"
         markAllCardAsNotSelected()
         removeAllCards()
