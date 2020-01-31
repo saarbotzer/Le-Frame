@@ -52,6 +52,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var moves : [GameMove] = [GameMove]()
     var undosUsed : Int = 0
     
+    var difficulty : Difficulty = .normal
     
     // Next Cards Spots
     var nextCardPoint : CGPoint?
@@ -243,9 +244,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         var shouldEnableBySetting = false
         
-        let doneRemovingAnytime = getSettingValue(for: .doneRemovingAnytime)
+//        let doneRemovingAnytime = getSettingValue(for: .doneRemovingAnytime)
         
-        if doneRemovingAnytime {
+        if difficulty.doneRemovingAnytime {
             if !isBoardFull() {
                 shouldEnableBySetting = true
             }
@@ -311,7 +312,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             let firstCardCell = getSpot(at: firstSelectedCardIndexPath!)
             let firstCard = firstCardCell.card!
             // If the card is 10 - remove
-            if gameSumMode == .ten && firstCard.rank! == .ten {
+            if difficulty.sumMode == .ten && firstCard.rank! == .ten {
                 removeCards(at: [firstSelectedCardIndexPath!])
             } else {
                 haptic(of: .removeError)
@@ -325,7 +326,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             let secondCard = secondCardCell.card!
             
             // If the cards match - remove
-            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == gameSumMode.getRawValue() {
+            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == difficulty.sumMode.getRawValue() {
                 removeCards(at: [firstSelectedCardIndexPath!, secondSelectedCardIndexPath!])
             } else {
                 haptic(of: .removeError)
@@ -474,7 +475,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         if let originAsLocation = origin as? CardAnimationLocation, let destinationAsLocation = destination as? CardAnimationLocation {
             frameFirst = originAsLocation == .next2Card && destinationAsLocation == .nextCard
         }
-        
        
         // Add the imageView to the main view
         view.addSubview(tempImageView)
@@ -497,11 +497,26 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func getRotationForLocation(location: CardAnimationLocation) -> CGFloat {
-        switch location {
-        case .nextCard:
-            return 0.2
-        case .next3Card:
-            return -0.2
+        
+        switch difficulty.numberOfNextCards {
+        case 3:
+            switch location {
+            case .nextCard:
+                return 0.2
+            case .next3Card:
+                return -0.2
+            default:
+                return 0
+            }
+        case 2:
+            switch location {
+            case .nextCard:
+                return 0.2
+            case .next2Card:
+                return -0.2
+            default:
+                return 0
+            }
         default:
             return 0
         }
@@ -768,7 +783,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             if firstSelectedCardIndexPath == indexPath {
                 
                 // TODO: Add removal when 10 pressed twice
-                if gameSumMode == .ten && rank == .ten {
+                if difficulty.sumMode == .ten && rank == .ten {
                     removeCards(at: [firstSelectedCardIndexPath!])
                 }
                 
@@ -807,12 +822,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 }
             }
         }
-        if allNonRoyalValues.contains(10) && gameSumMode == .ten{
+        if allNonRoyalValues.contains(10) && difficulty.sumMode == .ten{
             return true
         }
         for i in 0..<allNonRoyalValues.count {
             for j in i+1..<allNonRoyalValues.count {
-                if allNonRoyalValues[i] + allNonRoyalValues[j] == gameSumMode.getRawValue() {
+                if allNonRoyalValues[i] + allNonRoyalValues[j] == difficulty.sumMode.getRawValue() {
                     return true
                 }
             }
@@ -879,7 +894,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         case .noEmptyQueenSpots:
             return "The next card is a Queen and there are no available spots in the top and bottom."
         case .noCardsToRemove:
-            return "There aren't any cards that sum up to \(gameSumMode) to remove."
+            return "There aren't any cards that sum up to \(difficulty.sumMode) to remove."
         default:
             return ""
         }
@@ -997,7 +1012,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             gameStatsToAdd.nofHintsUsed = Int16(hintsUsed)
             gameStatsToAdd.restartAfter = restartAfter
             gameStatsToAdd.startTime = startTime
-            gameStatsToAdd.sumMode = Int16(gameSumMode.getRawValue())
+            gameStatsToAdd.sumMode = Int16(difficulty.sumMode.getRawValue())
             gameStatsToAdd.synced = false
             
             let synced = uploadStats(forGame: gameStatsToAdd)
@@ -1205,6 +1220,10 @@ extension GameVC {
         gameSumMode = getSumSetting()
         setGameStatus(status: .placing)
         
+        difficulty = .easy
+        
+        
+        // Stats
         restartAfter = false
         gameFinished = false
         gameID = UUID()
@@ -1217,7 +1236,7 @@ extension GameVC {
         moves = []
         
         // UI
-        removalSumLabel.text = "\(gameSumMode.getRawValue())"
+        removalSumLabel.text = "\(difficulty.sumMode.getRawValue())"
         markAllCardAsNotSelected()
         removeAllCards()
         confettiEmitter.removeFromSuperlayer()
@@ -1332,6 +1351,10 @@ extension GameVC {
     }
     
     func undo() {
+        if !difficulty.undosAvailable {
+            return
+        }
+        
         if let lastMove = moves.popLast() {
             switch lastMove.moveType {
             case .remove:
@@ -1439,14 +1462,14 @@ extension GameVC {
             if let card1 = spot1.card {
                 let card1RankValue = card1.rank!.getRawValue()
                 if card1RankValue < 11 {
-                    if card1RankValue == gameSumMode.getRawValue() {
+                    if card1RankValue == difficulty.sumMode.getRawValue() {
                         return [spot1.indexPath!]
                     }
                     for spot2 in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
                         if let card2 = spot2.card {
                             let card2RankValue = card2.rank!.getRawValue()
                             if card2RankValue < 11 && spot1 != spot2 {
-                                if card1RankValue + card2RankValue == gameSumMode.getRawValue() {
+                                if card1RankValue + card2RankValue == difficulty.sumMode.getRawValue() {
                                     allPairs.append([spot1.indexPath!, spot2.indexPath!])
                                 }
                             }
@@ -1819,9 +1842,29 @@ struct GameMove: CustomStringConvertible {
 extension GameVC {
     func rotateNextCardsImages() {
         
-        // Location
-        nextCardImageView.transform = CGAffineTransform(translationX: 30, y: 0)
-        next3CardImageView.transform = CGAffineTransform(translationX: -30, y: 0)
+        switch difficulty.numberOfNextCards {
+        case 3:
+            // Hidden?
+            next2CardImageView.isHidden = false
+            next3CardImageView.isHidden = false
+            
+            // Location
+            nextCardImageView.transform = CGAffineTransform(translationX: 30, y: 0)
+            next3CardImageView.transform = CGAffineTransform(translationX: -30, y: 0)
+            
+        case 2:
+            next2CardImageView.isHidden = false
+            next3CardImageView.isHidden = true
+
+            // Location
+            nextCardImageView.transform = CGAffineTransform(translationX: 15, y: 0)
+            next2CardImageView.transform = CGAffineTransform(translationX: -15, y: 0)
+
+        default:
+            next2CardImageView.isHidden = true
+            next3CardImageView.isHidden = true
+        }
+        
 
         // Set center points
         let point = CGPoint()
@@ -1831,14 +1874,8 @@ extension GameVC {
         next3CardPoint = next3CardImageView.superview?.convert(next3CardImageView.frame.origin, to: nil) ?? point
         
         // Rotation
-        
         nextCardImageView.transform = nextCardImageView.transform.rotated(by: getRotationForLocation(location: .nextCard))
-
-        next2CardImageView.isHidden = false
-        next3CardImageView.isHidden = false
-        
         next2CardImageView.transform = next2CardImageView.transform.rotated(by: getRotationForLocation(location: .next2Card))
-
         next3CardImageView.transform = next3CardImageView.transform.rotated(by: getRotationForLocation(location: .next3Card))
 
         // Add Shadows
@@ -1858,7 +1895,8 @@ extension GameVC {
     
     
     func animateNextCards(cards: [Card]) {
-        nextCardImageView.isHidden = true
+        
+        nextCardImageView.isHidden = difficulty.numberOfNextCards > 1
 
         var cardsImages : [String] = []
         for card in cards {
@@ -1871,22 +1909,21 @@ extension GameVC {
         
         next3CardImageView.image = UIImage(named: cardsImages[2])
 
-        if cards.count > 1 {
+        if cards.count > 1 && difficulty.numberOfNextCards == 3 {
             animateCard(card: cards[1], from: .next3Card, to: .next2Card)
         }
         
         next2CardImageView.image = UIImage(named: cardsImages[1])
         
-        if cards.count > 0 {
+        if cards.count > 0 && difficulty.numberOfNextCards >= 2 {
             animateCard(card: cards[0], from: .next2Card, to: .nextCard)
         }
         
         nextCardImageView.image = UIImage(named: cardsImages[0])
-                
+        
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
             self.nextCardImageView.isHidden = false
         }
-
         
 
     }

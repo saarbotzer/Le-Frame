@@ -219,3 +219,40 @@ enum Sound: String {
 
 
 
+struct Difficulty {
+    let sumMode: SumMode
+    let undosAvailable: Bool
+    let doneRemovingAnytime: Bool
+    let numberOfNextCards: Int
+    let hideNextCardsWhenRemoving: Bool
+    
+    init(
+        sumMode: SumMode,
+        undosAvailable: Bool,
+        doneRemovingAnytime: Bool,
+        numberOfNextCards: Int,
+        hideNextCardsWhenRemoving: Bool = true
+        ) {
+        self.sumMode = sumMode
+        self.undosAvailable = undosAvailable
+        self.doneRemovingAnytime = doneRemovingAnytime
+        self.numberOfNextCards = numberOfNextCards
+        self.hideNextCardsWhenRemoving = hideNextCardsWhenRemoving
+    }
+    
+    static var veryEasy: Difficulty {
+        return Difficulty(sumMode: .ten, undosAvailable: true, doneRemovingAnytime: true, numberOfNextCards: 3)
+    }
+    
+    static var easy: Difficulty {
+        return Difficulty(sumMode: .ten, undosAvailable: true, doneRemovingAnytime: true, numberOfNextCards: 2)
+    }
+    
+    static var normal: Difficulty {
+        return Difficulty(sumMode: .ten, undosAvailable: false, doneRemovingAnytime: false, numberOfNextCards: 1)
+    }
+    
+    static var hard: Difficulty {
+        return Difficulty(sumMode: .eleven, undosAvailable: false, doneRemovingAnytime: false, numberOfNextCards: 1)
+    }
+}
