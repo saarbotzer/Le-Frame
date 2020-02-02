@@ -19,7 +19,7 @@ class Card: CustomStringConvertible {
     }
     
     func createCard(withSuit suit: CardSuit, withRank rank: CardRank) {
-        self.imageName = "\(suit.getRawValue())\(rank.getRawValue())"
+        self.imageName = "\(suit.getRawValue())\(rank.getRawValue()).jpg"
         self.rank = rank
         self.suit = suit
     }

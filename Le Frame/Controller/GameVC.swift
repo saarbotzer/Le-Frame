@@ -21,9 +21,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var next2CardImageView: UIImageView!
     @IBOutlet weak var next3CardImageView: UIImageView!
     
+    @IBOutlet weak var doneRemovingAreaStackView: UIStackView!
     @IBOutlet weak var doneRemovingBtn: UIButton!
     @IBOutlet weak var doneRemovingIcon: UIImageView!
     
+    @IBOutlet weak var removeAreaStackView: UIStackView!
     @IBOutlet weak var removeBtn: UIButton!
     @IBOutlet weak var removeIcon: UIImageView!
     
@@ -34,6 +36,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var removalSumLabel: UILabel!
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var removalSumTitleLabel: UILabel!
+    @IBOutlet weak var removeLabelsView: UIView!
+    @IBOutlet weak var removeLabelsBackground: UIView!
+    
     
     // Spots available by rank
     var kingsAvailable : Int = 4
@@ -148,20 +153,36 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     func updateUI() {
         updateViews()
         updateTabBarUI()
+        updateRemoveLabelsUI()
+    }
+    
+    func updateRemoveLabelsUI() {
+        let radius = removeLabelsBackground.frame.width / 2
+        removeLabelsBackground.roundCorners([.allCorners], radius: radius)
+        removeLabelsBackground.backgroundColor = .black
+        removeLabelsBackground.alpha = 0.5
+        
+        removalSumLabel.textColor = .white
+        removalSumLabel.layer.zPosition = 4
+        removalSumTitleLabel.textColor = .white
+        removalSumTitleLabel.layer.zPosition = 4//.alpha = 1
     }
     
     func enableRemoveButton(enable: Bool) {
         removeBtn.isEnabled = enable
         removeIcon.alpha = enable ? 1 : 0.5
         removeIcon.isUserInteractionEnabled = enable
+        removeAreaStackView.isUserInteractionEnabled = enable
     }
     
     func addRemovalButtonsRecognizer() {
         let removeGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(removePressed(_:)))
         removeIcon.addGestureRecognizer(removeGestureRecognizer)
+        removeAreaStackView.addGestureRecognizer(removeGestureRecognizer)
 
         let doneRemovingGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(doneRemovingPressed(_:)))
         doneRemovingIcon.addGestureRecognizer(doneRemovingGestureRecognizer)
+        doneRemovingAreaStackView.addGestureRecognizer(doneRemovingGestureRecognizer)
 
     }
     
@@ -226,10 +247,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         removeBtn.isHidden = !show
         enableRemoveButton(enable: false)
         enableDoneRemovingButton(enable: false)
-        removalSumLabel.isHidden = !show
-        removalSumTitleLabel.isHidden = !show
+//        removalSumLabel.isHidden = !show
+//        removalSumTitleLabel.isHidden = !show
+        removeLabelsView.isHidden = !show
         removalSumLabel.adjustsFontSizeToFitWidth = true
         removalSumLabel.minimumScaleFactor = 0.2
+        
+        hideNextCards(hide: show)
         
 //        if show {
 //            nextCardImageView.image = UIImage(named: spotImageName)
@@ -254,9 +278,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
         
         let finalDecision = shouldEnableBySetting && enable
+        
         doneRemovingBtn.isEnabled = finalDecision
         doneRemovingIcon.alpha = finalDecision ? 1 : 0.5
         doneRemovingIcon.isUserInteractionEnabled = finalDecision
+        doneRemovingAreaStackView.isUserInteractionEnabled = finalDecision
     }
     
     // MARK: - Game Flow
@@ -367,7 +393,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      Switches between removing and placing game modes and deselects all cards.
      */
     @IBAction func doneRemovingPressed(_ sender: Any) {
-        finishedPlacingCard()
+        finishedPlacingCard(cardPlaced: false)
         markAllCardAsNotSelected()
     }
 
@@ -392,8 +418,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 
         switch gameStatus {
         case .placing:
-            placeCard(at: indexPath)
-            finishedPlacingCard()
+            let cardPlaced = placeCard(at: indexPath)
+            finishedPlacingCard(cardPlaced: cardPlaced)
+            
         case .removing:
             selectCardForRemoval(at: indexPath)
         case .gameOver:
@@ -453,7 +480,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let destinationFrame = getFrame(for: destination)
         
         // Create moving imageView
-        let tempImageView = UIImageView(image: UIImage(named: "\(card.imageName).jpg"))
+        let tempImageView = UIImageView(image: UIImage(named: card.imageName))
 
         // Apply origin properties to imageView
         tempImageView.frame = originFrame        
@@ -477,8 +504,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // TODO: Understand whether transform or frame first, find a better solution
         var frameFirst = false
         if let originAsLocation = origin as? CardAnimationLocation, let destinationAsLocation = destination as? CardAnimationLocation {
-            frameFirst = originAsLocation == .next2Card && destinationAsLocation == .nextCard
+            frameFirst = ((originAsLocation == .next2Card) && (destinationAsLocation == .nextCard))
         }
+        
+        frameFirst = true
        
         // Add the imageView to the main view
         view.addSubview(tempImageView)
@@ -605,7 +634,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         gameStatus = status
         switch status {
         case .placing:
-//            requestNextCard()
             showRemovalUI(show: false)
         case .removing:
             showRemovalUI(show: true)
@@ -646,9 +674,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    func finishedPlacingCard() {
+    func finishedPlacingCard(cardPlaced: Bool) {
         
         checkAvailability()
+        
         
 //        print(gameStatus)
         
@@ -673,6 +702,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
         if isGameWon() {
             setGameStatus(status: .won)
+        }
+        
+        if cardPlaced {
+            animateNextCards()
         }
     }
     
@@ -721,8 +754,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     /**
      Checks if the card can be put at the spot and does it if so.
      - Parameter indexPath: The spot's IndexPath
+     
+     - Returns: True if the card was placed, false otherwise
      */
-    func placeCard(at indexPath: IndexPath) {
+    func placeCard(at indexPath: IndexPath) -> Bool {
         let cell = getSpot(at: indexPath)
 
         // Start hints procedure (show hints after some time with no taps)
@@ -747,8 +782,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             moves.append(move)
             haptic(of: .placeSuccess)
             
-            requestNextCard()
-            cardsLeft = cardsLeft! - 1
+            requestNextCard(firstCard: false)
+//            cardsLeft = cardsLeft! - 1
+            return true
         } else {
             haptic(of: .placeError)
             blockedCardTaps += 1
@@ -757,6 +793,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 self.showHints(hintType: .tappedTooManyTimes)
             }
         }
+        
+        return false
     }
     
     /**
@@ -860,7 +898,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         if let cardsLeft = cardsLeft {
             if cardsLeft > 0 {
-                requestNextCard()
+                showNextCards()
             }
         }
 
@@ -1262,7 +1300,7 @@ extension GameVC {
         print("Started new game \(gameID.uuidString)")
         
         // Handle first card
-        requestNextCard()
+        requestNextCard(firstCard: true)
         updateCardsLeftLabel()
         
         // Timer
@@ -1924,22 +1962,18 @@ extension GameVC {
     }
     
     
-    // Game Logic?
-    func updateNextCardImage() {
-        // TODO: Don't change image to the previous card when there are no cards left
-        if let image = UIImage(named: "\(nextCards[0].imageName).jpg") {
-            nextCardImageView.image = image
-        }
-    }
-    
     
     func animateNextCards(cards: [Card]) {
+        
+        if gameStatus == .removing {
+            return
+        }
         
         nextCardImageView.isHidden = difficulty.numberOfNextCards > 1
 
         var cardsImages : [String] = []
         for card in cards {
-            cardsImages.append("\(card.imageName).jpg")
+            cardsImages.append(card.imageName)
         }
         
         while cardsImages.count < 3 {
@@ -1964,7 +1998,121 @@ extension GameVC {
             self.nextCardImageView.isHidden = false
         }
         
+    }
+    
+    
+    func showNextCards() {
+        
+        var cardsImages : [String] = []
+        for card in nextCards {
+            cardsImages.append("\(card.imageName)")
+        }
+        
+        while cardsImages.count < 3 {
+            cardsImages.append(spotImageName)
+        }
 
+        nextCardImageView.image = UIImage(named: cardsImages[0])
+        next2CardImageView.image = UIImage(named: cardsImages[1])
+        next3CardImageView.image = UIImage(named: cardsImages[2])
+
+        switch difficulty.numberOfNextCards {
+        case 3:
+            nextCardImageView.isHidden = false
+            next2CardImageView.isHidden = false
+            next3CardImageView.isHidden = false
+        case 2:
+            nextCardImageView.isHidden = false
+            next2CardImageView.isHidden = false
+            next3CardImageView.isHidden = true
+
+        default:
+            nextCardImageView.isHidden = false
+            next2CardImageView.isHidden = true
+            next3CardImageView.isHidden = true
+        }
+        
+        
+    }
+    
+    func hideNextCards(hide: Bool) {
+        let placeholderCard = Card()
+        placeholderCard.imageName = spotImageName
+        
+        var nextCardsToAnimate = nextCards
+        while nextCardsToAnimate.count < 3 {
+            nextCardsToAnimate.append(placeholderCard)
+        }
+        
+        if !difficulty.hideNextCardsWhenRemoving {
+            showNextCards()
+            return
+        }
+        
+        if hide {
+            switch difficulty.numberOfNextCards {
+            case 3:
+                nextCardImageView.isHidden = true
+                next2CardImageView.isHidden = true
+                next3CardImageView.isHidden = true
+                
+//                animateCard(card: nextCardsToAnimate[0], from: .nextCard, to: .removedStack)
+                animateCard(card: nextCardsToAnimate[1], from: .next2Card, to: .removedStack)
+                animateCard(card: nextCardsToAnimate[2], from: .next3Card, to: .removedStack)
+            case 2:
+                nextCardImageView.isHidden = true
+                next2CardImageView.isHidden = true
+
+//                animateCard(card: nextCardsToAnimate[0], from: .nextCard, to: .removedStack)
+                animateCard(card: nextCardsToAnimate[1], from: .next2Card, to: .removedStack)
+            default:
+//                animateCard(card: nextCardsToAnimate[0], from: .nextCard, to: .removedStack)
+                
+                nextCardImageView.isHidden = true
+            }
+        } else {
+            if !nextCardImageView.isHidden { return }
+                        
+            var cardsImages : [String] = []
+            for card in nextCards {
+                cardsImages.append(card.imageName)
+            }
+            
+            while cardsImages.count < 3 {
+                cardsImages.append(spotImageName)
+            }
+            
+            nextCardImageView.image = UIImage(named: cardsImages[0])
+            next2CardImageView.image = UIImage(named: cardsImages[1])
+            next3CardImageView.image = UIImage(named: cardsImages[2])
+
+            switch difficulty.numberOfNextCards {
+            case 3:
+                animateCard(card: nextCardsToAnimate[2], from: .removedStack, to: .next3Card)
+                animateCard(card: nextCardsToAnimate[1], from: .removedStack, to: .next2Card)
+                animateCard(card: nextCardsToAnimate[0], from: .removedStack, to: .nextCard)
+
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+                    self.nextCardImageView.isHidden = false
+                    self.next2CardImageView.isHidden = false
+                    self.next3CardImageView.isHidden = false
+                }
+            case 2:
+                animateCard(card: nextCardsToAnimate[1], from: .removedStack, to: .next2Card)
+                animateCard(card: nextCardsToAnimate[0], from: .removedStack, to: .nextCard)
+                
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+                    self.nextCardImageView.isHidden = false
+                    self.next2CardImageView.isHidden = false
+                }
+            default:
+                animateCard(card: nextCardsToAnimate[0], from: .removedStack, to: .nextCard)
+                
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+                    self.nextCardImageView.isHidden = false
+                }
+            }
+        }
     }
     
     func oneCardLeft() {
@@ -1977,10 +2125,12 @@ extension GameVC {
         animateNextCards(cards: cards)
     }
     
-    func requestNextCard() {
+    
+    func animateNextCards() {
         if gameStatus != .placing {
             return
         }
+        
         switch deck.count {
         case 0 :
             print(nextCards)
@@ -1988,24 +2138,42 @@ extension GameVC {
             case ...1:
                 nextCardImageView.image = UIImage(named: spotImageName)
             case 2:
-                nextCards.remove(at: 0)
                 oneCardLeft()
             case 3:
-                nextCards.remove(at: 0)
                 twoCardsLeft()
-//            case 3:
-//                nextCards.remove(at: 0)
+            default:
+                return
+            }
+        case (deckString?.count ?? 52 * 3) / 3:
+            print("(deckString?.count ?? 52 * 3) / 3")
+        default:
+            animateNextCards(cards: nextCards)
+        }
+    }
+    
+    
+    func requestNextCard(firstCard: Bool) {
+        
+        if !firstCard {
+            cardsLeft = cardsLeft! - 1
+        }
+        switch deck.count {
+        case 0 :
+            switch nextCards.count {
+            case ...1:
+                nextCardImageView.image = UIImage(named: spotImageName)
+            case 2:
+                nextCards.remove(at: 0)
+            case 3:
+                nextCards.remove(at: 0)
             default:
                 return
             }
         case (deckString?.count ?? 52 * 3) / 3:
             nextCards = [deck.remove(at: 0), deck.remove(at: 0), deck.remove(at: 0)]
-            
-//            let cards = [nextCards[0], nextCards[1], nextCards[2]]
-//            animateNextCards(cards: cards)
-            
+                        
             let cardsImageNames = nextCards.map { (card) -> String in
-                return "\(card.imageName).jpg"
+                return card.imageName
             }
             
             nextCardImageView.image = UIImage(named: cardsImageNames[0])
@@ -2013,12 +2181,8 @@ extension GameVC {
             next3CardImageView.image = UIImage(named: cardsImageNames[2])
 
         default:
-
             nextCards.remove(at: 0)
             nextCards.append(deck.remove(at: 0))
-            
-            let cards = [nextCards[0], nextCards[1], nextCards[2]]
-            animateNextCards(cards: cards)
         }
     }
     
@@ -2062,3 +2226,11 @@ extension UIImage {
         return self
     }
 }
+
+
+//extension UIStackView {
+//    override open func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+//        let frame = self.bounds.insetBy(dx: -30, dy: -30);
+//        return frame.contains(point) ? self : nil;
+//    }
+//}

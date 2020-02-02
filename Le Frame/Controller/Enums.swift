@@ -252,18 +252,46 @@ struct Difficulty: CustomStringConvertible {
     }
     
     static var veryEasy: Difficulty {
-        return Difficulty(name: "veryEasy", sumMode: .ten, undosAvailable: true, doneRemovingAnytime: true, numberOfNextCards: 3)
+        return Difficulty(
+            name:                       "veryEasy",
+            sumMode:                    .ten,
+            undosAvailable:             true,
+            doneRemovingAnytime:        true,
+            numberOfNextCards:          3,
+            hideNextCardsWhenRemoving:  false
+        )
     }
     
     static var easy: Difficulty {
-        return Difficulty(name: "easy", sumMode: .ten, undosAvailable: true, doneRemovingAnytime: true, numberOfNextCards: 2)
+        return Difficulty(
+            name:                       "easy",
+            sumMode:                    .ten,
+            undosAvailable:             true,
+            doneRemovingAnytime:        true,
+            numberOfNextCards:          2,
+            hideNextCardsWhenRemoving:  true
+        )
     }
     
     static var normal: Difficulty {
-        return Difficulty(name: "normal", sumMode: .ten, undosAvailable: false, doneRemovingAnytime: false, numberOfNextCards: 1)
+        return Difficulty(
+            name:                       "normal",
+            sumMode:                    .ten,
+            undosAvailable:             false,
+            doneRemovingAnytime:        false,
+            numberOfNextCards:          1,
+            hideNextCardsWhenRemoving:  true
+        )
     }
     
     static var hard: Difficulty {
-        return Difficulty(name: "hard", sumMode: .eleven, undosAvailable: false, doneRemovingAnytime: false, numberOfNextCards: 1)
+        return Difficulty(
+            name:                       "hard",
+            sumMode:                    .eleven,
+            undosAvailable:             false,
+            doneRemovingAnytime:        false,
+            numberOfNextCards:          1,
+            hideNextCardsWhenRemoving:  true
+        )
     }
 }
