@@ -251,6 +251,10 @@ struct Difficulty: CustomStringConvertible {
         return self.name
     }
     
+    static var `default`: Difficulty {
+        return .normal
+    }
+    
     static var veryEasy: Difficulty {
         return Difficulty(
             name:                       "veryEasy",

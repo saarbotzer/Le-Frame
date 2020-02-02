@@ -57,7 +57,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var moves : [GameMove] = [GameMove]()
     var undosUsed : Int = 0
     
-    var difficulty : Difficulty = .normal
+    var difficulty : Difficulty = .default
     
     // Next Cards Spots
     var nextCardPoint : CGPoint?
@@ -137,6 +137,14 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToSettings" {
+            if let navigationController = segue.destination as? UINavigationController,
+                let settingsVC = navigationController.viewControllers.first as? NewSettingsVC {
+                settingsVC.gameDifficulty = difficulty
+            }
+        }
+    }
     
     
     func setDelegates() {
@@ -630,7 +638,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Parameter status: The game status to set
      */
     func setGameStatus(status: GameStatus) {
-                
         gameStatus = status
         switch status {
         case .placing:
@@ -1835,7 +1842,7 @@ extension GameVC {
         let settingKey = SettingKey.difficulty
         let keyExists = isSettingExists(settingKey: settingKey)
         
-        let defaultValue = "normal"
+        let defaultValue = Difficulty.default.name
         
         var difficultyString = defaultValue
         
@@ -2133,7 +2140,6 @@ extension GameVC {
         
         switch deck.count {
         case 0 :
-            print(nextCards)
             switch nextCards.count {
             case ...1:
                 nextCardImageView.image = UIImage(named: spotImageName)

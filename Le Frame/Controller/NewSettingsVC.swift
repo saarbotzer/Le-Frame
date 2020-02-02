@@ -56,7 +56,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     let gotoIcon = "settings-goto-icon.png"
     
     let defaults = UserDefaults.standard
-//    var gameDifficulty: Difficulty = .normal
+    var gameDifficulty: Difficulty = .default
 
     
     // MARK: - viewDidLoad
@@ -69,7 +69,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         if #available(iOS 13.0, *) {
             closeButton.isHidden = true
         }
-        
+
         updateUI()
     }
 
@@ -178,8 +178,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 UIApplication.shared.open(url)
                 tableView.deselectRow(at: indexPath, animated: true)
             } else if segueName == .share {
-                // TODO: Update sharing link
-                let url = URL(string: "https://itunes.apple.com/us/app/myapp/idxxxxxxxx?ls=1&mt=8")
+                let url = URL(string: "https://apps.apple.com/il/app/royal-frame/id1490916476")
                 let activityViewController = UIActivityViewController(activityItems: [url!], applicationActivities: nil)
                 present(activityViewController, animated: true, completion: nil)
                 tableView.deselectRow(at: indexPath, animated: true)
@@ -264,8 +263,9 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 
                 // TODO: If value changed, alert user
 //                if gameSumMode.getRawValue() != newSumMode {
-//                    alertChange(for: sender.name!, currentValue: gameSumMode)
-//                }
+                if gameDifficulty.name != newDifficulty {
+                    alertChange(for: sender.name!, currentValue: gameDifficulty.name)
+                }
                 
             case .sumMode:
                 let newSumMode = sender.selectedSegmentIndex == 0 ? 10 : 11
