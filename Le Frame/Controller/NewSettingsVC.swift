@@ -24,7 +24,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         [
             "GAME": [
 //                Setting(label: "Removal sum", segmentedControlSegments: ["10", "11"], segmentedControlSettingKey: .sumMode, segmentedControlAlertText: "Yes"),
-                Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .difficulty, segmentedControlAlertText: "Yes", infoText: "Very easy - "),
+                Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .difficulty, segmentedControlAlertText: "Yes", infoText: "Very easy - 3 next cards\n Easy - 2 next cards\nNormal - 1 next card\nHard - 1 next card, remove cards that sum to 11"),
 //                Setting(label: "Done removing anytime", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .doneRemovingAnytime, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No"),
@@ -274,7 +274,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 if gameSumMode.getRawValue() != newSumMode {
                     alertChange(for: sender.name!, currentValue: gameSumMode)
                 }
-            case .showHints, .soundsOn, .hapticOn, .doneRemovingAnytime:
+            case .showHints, .soundsOn, .doneRemovingAnytime, .hapticOn:
                 let newValue = sender.selectedSegmentIndex == 0
                 defaults.set(newValue, forKey: keyRawValue)
             }
@@ -288,8 +288,20 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         let okAction = UIAlertAction(title: "Got it", style: .default, handler: nil)
+        let newGameAction = UIAlertAction(title: "Start a new game", style: .default) { (action) in
+            
+            if let presenter = self.presentingViewController as? GameVC {
+                // Using a delay because of a next cards animation location bug
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
+                    presenter.startNewGame()
+                }
+            }
+            
+            self.dismiss(animated: true, completion: nil)
+        }
 
         alert.addAction(okAction)
+        alert.addAction(newGameAction)
 
         present(alert, animated: true, completion: nil)
 
@@ -410,7 +422,18 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         var segmentedControlWidth : CGFloat = 100
         
         
-        if let numberOfSegments = setting.segmentedControlSegments?.count {
+        var segments: [Any]?
+        switch setting.segmentedControlSettingKey {
+        case .difficulty:
+            segments = Difficulty.activeOptions
+        case .hapticOn, .soundsOn, .showHints, .doneRemovingAnytime:
+            segments = ["ON", "OFF"]
+        default:
+            segments = nil
+        }
+        
+        
+        if let numberOfSegments = segments?.count {
             if numberOfSegments > 2 {
                 labelYAnchor = label.topAnchor.constraint(equalTo: cell.topAnchor, constant: 20)
                 
@@ -461,6 +484,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             infoButton.setImage(infoIconImage, for: .normal)
             infoButton.tintColor = .white
             infoButton.contentMode = .scaleAspectFit
+            
             infoButton.infoText = infoText
             
             infoButton.translatesAutoresizingMaskIntoConstraints = false
@@ -505,7 +529,14 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     
     @objc func infoButtonPressed(sender: InfoButton) {
         if let infoText = sender.infoText {
-            Toast.show(message: infoText, controller: self)
+            let alert = UIAlertController(title: "Difficulty Levels", message: infoText, preferredStyle: .alert)
+            
+            let okAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+
+            alert.addAction(okAction)
+
+            present(alert, animated: true, completion: nil)
+
         }
     }
     

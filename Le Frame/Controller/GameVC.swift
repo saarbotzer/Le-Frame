@@ -110,7 +110,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // MARK: - ViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        Utilities.log(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         
         // Un-comment to view onboarding screen every time
@@ -691,8 +691,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         checkAvailability()
         
         
-//        print(gameStatus)
-        
         let boardFull = isBoardFull()
         let cardsToRemove = checkForPairs()
         let nextCardIsBlocked = isNextCardBlocked()
@@ -1086,7 +1084,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         do {
             try context.save()
         } catch {
-            print("Error saving context: \(error)")
+            Utilities.log("Error saving context: \(error)")
         }
     }
     
@@ -1110,7 +1108,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
         }
         catch {
-            print(error)
+            Utilities.log(error)
         }
         return gameRow
     }
@@ -1161,10 +1159,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         ref.setData(dataToAdd) { (err) in
             if let err = err {
-                print("Error adding document: \(err)")
+                Utilities.log("Error adding document: \(err)")
                 statsUploaded = false
             } else {
-//                print("Document added with ID: \(ref.documentID)")
                 statsUploaded = true
             }
         }
@@ -1188,7 +1185,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 }
             }
         } catch {
-            print("Error fetching data from context: \(error)")
+            Utilities.log("Error fetching data from context: \(error)")
         }
         return fastestWin
     }
@@ -1276,7 +1273,8 @@ extension GameVC {
         // Get game settings
         gameSumMode = getSumSetting()
         setGameStatus(status: .placing)
-        
+
+
         difficulty = getDifficulty()
         
         
@@ -1292,12 +1290,6 @@ extension GameVC {
         
         moves = []
         
-        // UI
-        configureNextCardsUI()
-        removalSumLabel.text = "\(difficulty.sumMode.getRawValue())"
-        markAllCardAsNotSelected()
-        removeAllCards()
-        confettiEmitter.removeFromSuperlayer()
         
         // Get deck
         deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
@@ -1309,12 +1301,24 @@ extension GameVC {
         
         cardsLeft = deck.count
         
-        print("Started new game \(gameID.uuidString)")
+        Utilities.log("Started new game \(gameID.uuidString)")
+        
+        stopTimer()
+
+        // UI
+        configureNextCardsUI()
+        removalSumLabel.text = "\(difficulty.sumMode.getRawValue())"
+        updateCardsLeftLabel()
+        markAllCardAsNotSelected()
+        removeAllCards()
+        confettiEmitter.removeFromSuperlayer()
+
         
         // Handle first card
         requestNextCard(firstCard: true)
         updateCardsLeftLabel()
         
+
         // Timer
         addTimer()
     }
@@ -1737,7 +1741,7 @@ extension GameVC {
             player.play()
 
         } catch let error {
-            print(error.localizedDescription)
+            Utilities.log(error.localizedDescription)
         }
     }
     
@@ -2164,12 +2168,11 @@ extension GameVC {
             case 3:
 //                twoCardsLeft()
                 animateNextCards(cards: nextCards)
-//                print()
             default:
                 return
             }
         case (deckString?.count ?? 52 * 3) / 3:
-            print("(deckString?.count ?? 52 * 3) / 3")
+            Utilities.log("(deckString?.count ?? 52 * 3) / 3")
         default:
             animateNextCards(cards: nextCards)
         }

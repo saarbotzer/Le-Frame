@@ -247,8 +247,49 @@ struct Difficulty: CustomStringConvertible {
         self.removeAnytime = removeAnytime
     }
     
+    init(from string: String) {
+        let defaultDifficuly : Difficulty = .default
+        var name = defaultDifficuly.name
+        var sumMode = defaultDifficuly.sumMode
+        var undosAvailable = defaultDifficuly.undosAvailable
+        var doneRemovingAnytime = defaultDifficuly.doneRemovingAnytime
+        var numberOfNextCards = defaultDifficuly.numberOfNextCards
+        var hideNextCardsWhenRemoving = defaultDifficuly.hideNextCardsWhenRemoving
+        var removeAnytime = defaultDifficuly.removeAnytime
+        
+        let allOptions = Difficulty.allOptions
+        for difficultyOption in allOptions {
+            if difficultyOption.name == string {
+                name = difficultyOption.name
+                sumMode = difficultyOption.sumMode
+                undosAvailable = difficultyOption.undosAvailable
+                doneRemovingAnytime = difficultyOption.doneRemovingAnytime
+                numberOfNextCards = difficultyOption.numberOfNextCards
+                hideNextCardsWhenRemoving = difficultyOption.hideNextCardsWhenRemoving
+                removeAnytime = difficultyOption.removeAnytime
+            }
+        }
+        
+        self.name = name
+        self.sumMode = sumMode
+        self.undosAvailable = undosAvailable
+        self.doneRemovingAnytime = doneRemovingAnytime
+        self.numberOfNextCards = numberOfNextCards
+        self.hideNextCardsWhenRemoving = hideNextCardsWhenRemoving
+        self.removeAnytime = removeAnytime
+
+    }
+    
     var description: String {
         return self.name
+    }
+    
+    static var activeOptions: [Difficulty] {
+        return [.veryEasy, .easy, .normal, .hard]
+    }
+    
+    static var allOptions: [Difficulty] {
+        return [.veryEasy, .easy, .normal, .hard]
     }
     
     static var `default`: Difficulty {

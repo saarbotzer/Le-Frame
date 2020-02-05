@@ -124,6 +124,14 @@ struct Utilities {
         
         return timeString
     }
+    
+    public static func log(_ items: Any...) {
+        let stringToPrint = items.map { (item) -> String in
+            return "\(item)"
+        }.joined(separator: " ")
+        
+        print(stringToPrint)
+    }
 }
 
 
