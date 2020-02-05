@@ -20,8 +20,8 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     let sortedMeasures : [StatMeasure] = [.gamesPlayed, .gamesWon, .gamesWithoutHints, .averageGameLength, .fastestWin, .totalGamesLength]
     
-    var chosenSumMode : StatDimension = .all
-    
+    var chosenDimension : StatDimension = .all
+    let dimensionsOption : [StatDimension] = [.all, .veryEasyDifficulty, .easyDifficulty, .normalDifficulty, .hardDifficulty]
     
     var cellsData : [Stat] = []
     
@@ -52,6 +52,14 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let borderColor = UIColor.white
         let borderWidth: CGFloat = 0
         let font = UIFont(name: "Kefa", size: 14)
+        
+        
+        sumModeSwitch.removeAllSegments()
+        for seg in dimensionsOption {
+            sumModeSwitch.insertSegment(withTitle: seg.getRawValue(), at: sumModeSwitch.numberOfSegments, animated: false)
+        }
+        
+        sumModeSwitch.selectedSegmentIndex = 0
         
         sumModeSwitch.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: font!], for: .normal)
         sumModeSwitch.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: selectedTextColor, NSAttributedString.Key.font: font!], for: .selected)
@@ -84,7 +92,7 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let font = UIFont(name: "Kefa", size: 15)
         
         let measure = sortedMeasures[indexPath.section]
-        let value = stats[chosenSumMode]![measure]!
+        let value = stats[chosenDimension]![measure]!
         
         let titleLabel = UILabel()
 //        titleLabel.text = stat.title
@@ -169,8 +177,12 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             }
         case .averageGameLength:
             if let valueAsDouble = value as? Double {
-                let valueAsInt = Int(valueAsDouble)
-                return valueAsInt == 0 ? "No games played" : Utilities.formatSeconds(seconds: valueAsInt)
+                if !valueAsDouble.isNaN {
+                    let valueAsInt = Int(valueAsDouble)
+                    return valueAsInt == 0 ? "No games played" : Utilities.formatSeconds(seconds: valueAsInt)
+                } else {
+                    return "No games played"
+                }
             }
         case .totalGamesLength:
             if let valueAsInt = value as? Int {
@@ -256,16 +268,18 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
 
     @IBAction func sumModeSwitched(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            chosenSumMode = .all
-        case 1:
-            chosenSumMode = .tenSumMode
-        case 2:
-            chosenSumMode = .elevenSumMode
-        default:
-            return
-        }
+//        switch sender.selectedSegmentIndex {
+//        case 0:
+//            chosenDimension = .all
+//        case 1:
+//            chosenDimension = .tenSumMode
+//        case 2:
+//            chosenDimension = .elevenSumMode
+//        default:
+//            return
+//        }
+        
+        chosenDimension = dimensionsOption[sender.selectedSegmentIndex]
         self.tableView.reloadData()
     }
     
@@ -281,15 +295,23 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     
-    func createMeasures() {
-        let dimensionsAvailable : [StatDimension] = [.all, .tenSumMode, .elevenSumMode]
-
-        var numberOfGames : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
-        var numberOfGamesWithoutHints : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
-        var numberOfWins : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
-        var totalSeconds : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
-        var fastestWin : [StatDimension : Int] = [.all : 0, .tenSumMode : 0, .elevenSumMode : 0]
+    func getDefaultMeasures(for dimensions: [StatDimension]) -> [StatDimension : Int] {
+        var measures = [StatDimension : Int]()
+        for dim in dimensions {
+            measures[dim] = 0
+        }
         
+        return measures
+    }
+    
+    func createMeasures() {
+        let dimensionsAvailable : [StatDimension] = [.all, .tenSumMode, .elevenSumMode, .veryEasyDifficulty, .easyDifficulty, .normalDifficulty, .hardDifficulty]
+
+        var numberOfGames : [StatDimension : Int] = getDefaultMeasures(for: dimensionsAvailable)
+        var numberOfGamesWithoutHints : [StatDimension : Int] = getDefaultMeasures(for: dimensionsAvailable)
+        var numberOfWins : [StatDimension : Int] = getDefaultMeasures(for: dimensionsAvailable)
+        var totalSeconds : [StatDimension : Int] = getDefaultMeasures(for: dimensionsAvailable)
+        var fastestWin : [StatDimension : Int] = getDefaultMeasures(for: dimensionsAvailable)
 
         var dimensionToAdd : Set<StatDimension> = [.all]
         
@@ -312,6 +334,19 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 dimensionToAdd.insert(.tenSumMode)
             } else if Int(game.sumMode) == 11 {
                 dimensionToAdd.insert(.elevenSumMode)
+            }
+            
+            switch game.difficulty {
+            case "veryEasy":
+                dimensionToAdd.insert(.veryEasyDifficulty)
+            case "easy":
+                dimensionToAdd.insert(.easyDifficulty)
+            case "normal":
+                dimensionToAdd.insert(.normalDifficulty)
+            case "hard":
+                dimensionToAdd.insert(.hardDifficulty)
+            default:
+                dimensionToAdd.insert(.normalDifficulty)
             }
             
             if let deck = game.deck {

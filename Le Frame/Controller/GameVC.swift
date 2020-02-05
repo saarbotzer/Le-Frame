@@ -1068,6 +1068,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             gameStatsToAdd.restartAfter = restartAfter
             gameStatsToAdd.startTime = startTime
             gameStatsToAdd.sumMode = Int16(difficulty.sumMode.getRawValue())
+            gameStatsToAdd.difficulty = difficulty.name
             gameStatsToAdd.synced = false
             
             let synced = uploadStats(forGame: gameStatsToAdd)
@@ -1135,6 +1136,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 "didRestartAfter": game.restartAfter,
                 "startTime": game.startTime as Any,
                 "sumMode": game.sumMode,
+                "difficulty": game.difficulty,
                 "synced": true
             ]
             

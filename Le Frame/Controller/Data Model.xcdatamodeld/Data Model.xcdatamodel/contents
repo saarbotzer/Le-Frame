@@ -3,6 +3,7 @@
     <entity name="Game" representedClassName=".Game" syncable="YES" codeGenerationType="class">
         <attribute name="deck" attributeType="String"/>
         <attribute name="didWin" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="difficulty" optional="YES" attributeType="String"/>
         <attribute name="duration" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="gameID" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="loseReason" attributeType="String"/>
@@ -18,7 +19,7 @@
     </entity>
     <entity name="TestEntity" representedClassName=".TestEntity" syncable="YES" codeGenerationType="class"/>
     <elements>
-        <element name="Game" positionX="-63" positionY="-18" width="128" height="253"/>
+        <element name="Game" positionX="-63" positionY="-18" width="128" height="268"/>
         <element name="TestEntity" positionX="-54" positionY="81" width="128" height="43"/>
     </elements>
 </model>

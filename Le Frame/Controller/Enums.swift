@@ -184,8 +184,23 @@ enum SettingSegue: String {
 }
 
 // MARK: - Stats related
-enum StatDimension {
-    case all, tenSumMode, elevenSumMode, withHints, withoutHints
+enum StatDimension: String {
+    case all = "All"
+    
+    case tenSumMode = "10"
+    case elevenSumMode = "11"
+    
+    case withHints = "With hints"
+    case withoutHints = "Without hints"
+    
+    case veryEasyDifficulty = "Very easy"
+    case easyDifficulty = "Easy"
+    case normalDifficulty = "Normal"
+    case hardDifficulty = "Hard"
+    
+    func getRawValue() -> String {
+        return self.rawValue
+    }
 }
 
 enum StatMeasure: String {

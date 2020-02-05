@@ -437,7 +437,7 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Znv-qf-An5">
-                                <rect key="frame" x="103.5" y="66" width="207" height="32"/>
+                                <rect key="frame" x="10" y="66" width="394" height="32"/>
                                 <segments>
                                     <segment title="All"/>
                                     <segment title="10"/>
@@ -454,12 +454,13 @@
                             <constraint firstItem="HDn-jL-LzQ" firstAttribute="bottom" secondItem="ScX-sM-JPj" secondAttribute="bottom" id="79Z-YI-VAY"/>
                             <constraint firstItem="wgl-6D-7lz" firstAttribute="trailing" secondItem="HDn-jL-LzQ" secondAttribute="trailing" id="9F0-jV-hlP"/>
                             <constraint firstItem="ScX-sM-JPj" firstAttribute="leading" secondItem="HDn-jL-LzQ" secondAttribute="leading" constant="20" id="EDd-ba-rGh"/>
+                            <constraint firstItem="HDn-jL-LzQ" firstAttribute="trailing" secondItem="Znv-qf-An5" secondAttribute="trailing" constant="10" id="GDh-PD-ydd"/>
                             <constraint firstItem="HDn-jL-LzQ" firstAttribute="trailing" secondItem="ScX-sM-JPj" secondAttribute="trailing" constant="20" id="IPB-Jt-ixR"/>
                             <constraint firstAttribute="bottom" secondItem="wgl-6D-7lz" secondAttribute="bottom" id="ItW-y9-VL8"/>
                             <constraint firstItem="Znv-qf-An5" firstAttribute="top" secondItem="HDn-jL-LzQ" secondAttribute="top" constant="10" id="ZnS-F3-GpY"/>
                             <constraint firstItem="ScX-sM-JPj" firstAttribute="top" secondItem="Znv-qf-An5" secondAttribute="bottom" constant="10" id="aJU-dy-gCd"/>
                             <constraint firstItem="Znv-qf-An5" firstAttribute="centerX" secondItem="bh8-JL-EnW" secondAttribute="centerX" id="e1c-Hs-yq5"/>
-                            <constraint firstItem="Znv-qf-An5" firstAttribute="width" secondItem="HDn-jL-LzQ" secondAttribute="width" multiplier="0.5" id="jq8-Ma-ogr"/>
+                            <constraint firstItem="Znv-qf-An5" firstAttribute="leading" secondItem="HDn-jL-LzQ" secondAttribute="leading" constant="10" id="wAt-Xp-d8d"/>
                             <constraint firstItem="wgl-6D-7lz" firstAttribute="leading" secondItem="HDn-jL-LzQ" secondAttribute="leading" id="wCF-xH-cvA"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="HDn-jL-LzQ"/>
@@ -617,7 +618,7 @@
                                 <rect key="frame" x="20" y="76" width="374" height="134"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Royal Frame Icon" translatesAutoresizingMaskIntoConstraints="NO" id="YUh-GA-W9V">
-                                        <rect key="frame" x="0.0" y="0.0" width="374" height="100"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="374.00000000000023" height="100"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="100" id="r1V-yS-mdd"/>
                                         </constraints>
