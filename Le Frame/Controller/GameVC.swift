@@ -66,6 +66,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var transformCardsBy: CGFloat?
     
     var gameStatus: GameStatus = .placing
+    var allowPlacing: Bool = true
     
     // Game Stats
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -426,9 +427,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 
         switch gameStatus {
         case .placing:
-            let cardPlaced = placeCard(at: indexPath)
-            finishedPlacingCard(cardPlaced: cardPlaced)
-            
+            if allowPlacing {
+                let cardPlaced = placeCard(at: indexPath)
+                finishedPlacingCard(cardPlaced: cardPlaced)
+            }
         case .removing:
             selectCardForRemoval(at: indexPath)
         case .gameOver:
@@ -484,6 +486,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func animateCard(card: Card, from origin: Any, to destination: Any) {
 
+        allowPlacing = false
+        
         let originFrame = getFrame(for: origin)
         let destinationFrame = getFrame(for: destination)
         
@@ -537,6 +541,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // Remove imageView after when arriving to destination
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
             tempImageView.removeFromSuperview()
+            self.allowPlacing = true
         }
     }
     
@@ -1926,6 +1931,7 @@ extension GameVC {
         switch difficulty.numberOfNextCards {
         case 3:
             // Hidden?
+            nextCardImageView.isHidden = false
             next2CardImageView.isHidden = false
             next3CardImageView.isHidden = false
             
@@ -1935,6 +1941,7 @@ extension GameVC {
             next3CardImageView.transform = CGAffineTransform(translationX: -30, y: 0)
             
         case 2:
+            nextCardImageView.isHidden = false
             next2CardImageView.isHidden = false
             next3CardImageView.isHidden = true
 
@@ -1943,6 +1950,7 @@ extension GameVC {
             next2CardImageView.transform = CGAffineTransform(translationX: -15, y: 0)
 
         default:
+            nextCardImageView.isHidden = false
             next2CardImageView.isHidden = true
             next3CardImageView.isHidden = true
             
@@ -1971,7 +1979,7 @@ extension GameVC {
     
     
     func animateNextCards(cards: [Card]) {
-        
+                
         if gameStatus == .removing {
             return
         }
@@ -2051,7 +2059,13 @@ extension GameVC {
             nextCardsToAnimate.append(placeholderCard)
         }
         
-        if !difficulty.hideNextCardsWhenRemoving {
+        var exitFunc = !difficulty.hideNextCardsWhenRemoving
+        
+        if let cardsLeft = cardsLeft {
+            exitFunc = exitFunc || cardsLeft == 0
+        }
+        
+        if exitFunc {
             showNextCards()
             return
         }
@@ -2141,12 +2155,16 @@ extension GameVC {
         switch deck.count {
         case 0 :
             switch nextCards.count {
-            case ...1:
+            case ...0:
                 nextCardImageView.image = UIImage(named: spotImageName)
-            case 2:
+            case 1:
                 oneCardLeft()
-            case 3:
+            case 2:
                 twoCardsLeft()
+            case 3:
+//                twoCardsLeft()
+                animateNextCards(cards: nextCards)
+//                print()
             default:
                 return
             }

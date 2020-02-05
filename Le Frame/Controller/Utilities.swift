@@ -13,7 +13,7 @@ import UIKit
 public let spotImageName = "card-spot.png"
 
 /// The time that takes for a card to move from the new card spot to it's designated spot.
-public let cardAnimationDuration : Double = 0.3
+public let cardAnimationDuration : Double = 0.2
 
 
 //public let nextCardSpot
