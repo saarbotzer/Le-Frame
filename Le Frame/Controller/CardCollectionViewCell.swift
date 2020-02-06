@@ -129,7 +129,7 @@ class CardCollectionViewCell: UICollectionViewCell {
         
         // Options Values
         /// Green-ish
-        let suggestedBorderColor: CGColor = UIColor(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 0.7).cgColor
+        let suggestedBorderColor: CGColor = UIColor(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 0.7).cgColor
         let suggestedBorderWidth: CGFloat = 4
         
         
