@@ -27,6 +27,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .difficulty, segmentedControlAlertText: "Yes", infoText: "Very easy - 3 next cards\n Easy - 2 next cards\nNormal - 1 next card\nHard - 1 next card, remove cards that sum to 11"),
 //                Setting(label: "Done removing anytime", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .doneRemovingAnytime, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
+                Setting(label: "Mark options", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .markSpots, segmentedControlAlertText: nil, segueName: nil, infoText: "Available options will be marked in green"),
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No"),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No"),
                 Setting(label: "Haptic feedback", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No"),
@@ -274,7 +275,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 if gameSumMode.getRawValue() != newSumMode {
                     alertChange(for: sender.name!, currentValue: gameSumMode)
                 }
-            case .showHints, .soundsOn, .doneRemovingAnytime, .hapticOn:
+            case .showHints, .soundsOn, .doneRemovingAnytime, .hapticOn, .markSpots:
                 let newValue = sender.selectedSegmentIndex == 0
                 defaults.set(newValue, forKey: keyRawValue)
             }
@@ -328,19 +329,13 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                     defaults.set(10, forKey: keyRawValue)
                     selectedSegmentIndex = 0
                 }
-            case .showHints:
+            case .soundsOn, .hapticOn, .showHints, .markSpots:
                 if keyExists {
-                    let showHints = defaults.bool(forKey: keyRawValue)
-                    selectedSegmentIndex = showHints ? 0 : 1
+                    let settingOn = defaults.bool(forKey: keyRawValue)
+                    selectedSegmentIndex = settingOn ? 0 : 1
                 } else {
                     defaults.set(true, forKey: keyRawValue)
-                }
-            case .soundsOn, .hapticOn:
-                if keyExists {
-                    let soundsOn = defaults.bool(forKey: keyRawValue)
-                    selectedSegmentIndex = soundsOn ? 0 : 1
-                } else {
-                    defaults.set(true, forKey: keyRawValue)
+                    selectedSegmentIndex = 0
                 }
             case .doneRemovingAnytime:
                 if keyExists {
@@ -426,7 +421,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         switch setting.segmentedControlSettingKey {
         case .difficulty:
             segments = Difficulty.activeOptions
-        case .hapticOn, .soundsOn, .showHints, .doneRemovingAnytime:
+        case .hapticOn, .soundsOn, .showHints, .doneRemovingAnytime, .markSpots:
             segments = ["ON", "OFF"]
         default:
             segments = nil

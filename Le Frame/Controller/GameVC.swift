@@ -121,7 +121,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         updateUI()
         addRemovalButtonsRecognizer()
         
-        startNewGame()
+//        startNewGame()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -136,6 +136,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             // TODO: Verify that this is a good place and a way to create uuids
             defaults.set(UUID().uuidString, forKey: "uuid")
         }
+        
+        startNewGame()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -372,7 +374,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
                 
         resetCardIndexes()
-        markAllCardAsNotSelected()
+        
+        markCardAsSelected(at: nil)
+        markOptionCards(shouldMark: false)
+        
         finishedRemovingCard()
     }
     
@@ -403,7 +408,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      */
     @IBAction func doneRemovingPressed(_ sender: Any) {
         finishedPlacingCard(cardPlaced: false)
-        markAllCardAsNotSelected()
+        
+        markCardAsSelected(at: nil)
+        markOptionCards(shouldMark: false)
     }
 
     // MARK: - CollectionView Methods
@@ -423,6 +430,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return cell
     }
     
+    // didSelectCard
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
                 
         switch gameStatus {
@@ -744,15 +752,77 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    func markAllCardAsNotSelected() {
-        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            cell.setSelected(selected: false)
+    func markCardAsSelected(at indexPath: IndexPath?) {
+        if let indexPath = indexPath {
+            if let cell = spotsCollectionView.cellForItem(at: indexPath) as? CardCollectionViewCell {
+                cell.mark(as: .selected, on: true)
+            }
+        } else {
+            for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+                cell.mark(as: .selected, on: false)
+            }
         }
     }
     
-    func markCardAsSelected(at indexPath: IndexPath) {
-        if let cell = spotsCollectionView.cellForItem(at: indexPath) as? CardCollectionViewCell {
-            cell.setSelected(selected: true)
+    func markOptionCards(forCardAt indexPath: IndexPath? = nil, shouldMark: Bool = true) {
+        var shouldMark: Bool = shouldMark
+        var optionsIndexPaths = [IndexPath]()
+        var markType: CardMarkEvent = .pairWithSelectedCard
+        
+        if let indexPath = indexPath {
+            markType = .pairWithSelectedCard
+
+            let selectedCell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+            let selectedCard = selectedCell.card!
+            
+            for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+                if let card = cell.card {
+                    if selectedCard.rank!.getRawValue() + card.rank!.getRawValue() == difficulty.sumMode.getRawValue() {
+                        let indexPathToAdd = cell.indexPath!
+                        if indexPathToAdd != indexPath {
+                            optionsIndexPaths.append(cell.indexPath!)
+                        }
+                    }
+                }
+            }
+            
+            // TODO: Make it to be only in case that the setting is on
+            shouldMark = true
+        } else {
+            if gameStatus == .placing {
+                markType = .spotSuitableForNextCard
+                
+                if nextCards.count < 1 {
+                    return
+                }
+                
+                if let nextCardRank = nextCards[0].rank {
+                    let allSpotsForRank = Utilities.getSpots(forRank: nextCardRank, overlapping: true)
+                    
+                    for spotIndexPath in allSpotsForRank {
+                        let optionCell = spotsCollectionView.cellForItem(at: spotIndexPath) as! CardCollectionViewCell
+                        if optionCell.isEmpty {
+                            optionsIndexPaths.append(spotIndexPath)
+                        }
+                    }
+                    
+                } else {
+                    return
+                }
+            } else {
+                shouldMark = false
+            }
+        }
+        
+        if shouldMark && getSettingValue(for: .markSpots) {
+            for optionIndexPath in optionsIndexPaths {
+                let optionCell = spotsCollectionView.cellForItem(at: optionIndexPath) as! CardCollectionViewCell
+                optionCell.mark(as: markType, on: true)
+            }
+        } else {
+            for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+                cell.mark(as: markType, on: false)
+            }
         }
     }
 
@@ -832,7 +902,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         if firstSelectedCardIndexPath == nil {
             firstSelectedCardIndexPath = indexPath
             secondSelectedCardIndexPath = nil
-            markCardAsSelected(at: firstSelectedCardIndexPath!)
+            
+            markCardAsSelected(at: firstSelectedCardIndexPath)
+            markOptionCards(forCardAt: firstSelectedCardIndexPath)
+            
         } else {
             // If the tapped card is already selected, deselect it
             if firstSelectedCardIndexPath == indexPath {
@@ -844,20 +917,29 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 
                 firstSelectedCardIndexPath = nil
                 secondSelectedCardIndexPath = nil
-                markAllCardAsNotSelected()
+                
+                markCardAsSelected(at: nil)
+                markOptionCards(shouldMark: false)
+                
                 enableRemoveButton(enable: false)
             }
             // If no second card is selected, select the tapped card
             else if secondSelectedCardIndexPath == nil {
                 secondSelectedCardIndexPath = indexPath
-                markCardAsSelected(at: secondSelectedCardIndexPath!)
+                
+                markCardAsSelected(at: secondSelectedCardIndexPath)
+                markOptionCards(shouldMark: false)
             }
             // If two cards are already selected, deselect them and select the tapped card
             else {
-                markAllCardAsNotSelected()
+                markCardAsSelected(at: nil)
+                markOptionCards(shouldMark: false)
+                
                 firstSelectedCardIndexPath = indexPath
                 secondSelectedCardIndexPath = nil
-                markCardAsSelected(at: firstSelectedCardIndexPath!)
+                
+                markCardAsSelected(at: firstSelectedCardIndexPath)
+                markOptionCards(forCardAt: firstSelectedCardIndexPath)
             }
         }
     }
@@ -1136,7 +1218,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 "didRestartAfter": game.restartAfter,
                 "startTime": game.startTime as Any,
                 "sumMode": game.sumMode,
-                "difficulty": game.difficulty,
+                "difficulty": game.difficulty as Any,
                 "synced": true
             ]
             
@@ -1311,7 +1393,10 @@ extension GameVC {
         configureNextCardsUI()
         removalSumLabel.text = "\(difficulty.sumMode.getRawValue())"
         updateCardsLeftLabel()
-        markAllCardAsNotSelected()
+        
+        markCardAsSelected(at: nil)
+        markOptionCards(shouldMark: false)
+        
         removeAllCards()
         confettiEmitter.removeFromSuperlayer()
 
@@ -1483,7 +1568,7 @@ extension GameVC {
     func hintCard(at indexPath: IndexPath) {
         let spot = getSpot(at: indexPath)
         
-        spot.setHinted(on: true)
+        spot.mark(as: .hint, on: true)
     }
     
     func getHints() -> [IndexPath] {
@@ -1889,7 +1974,7 @@ extension GameVC {
     func setDefaultSetting(for settingKey: SettingKey) -> Bool {
         var defaultValue = true
         switch settingKey {
-        case .hapticOn, .soundsOn, .showHints:
+        case .hapticOn, .soundsOn, .showHints, .markSpots:
             defaultValue = true
         case .doneRemovingAnytime:
             defaultValue = false
@@ -2183,6 +2268,8 @@ extension GameVC {
     
     func requestNextCard(firstCard: Bool) {
         
+        markOptionCards(shouldMark: false)
+        
         if !firstCard {
             cardsLeft = cardsLeft! - 1
         }
@@ -2213,6 +2300,8 @@ extension GameVC {
             nextCards.remove(at: 0)
             nextCards.append(deck.remove(at: 0))
         }
+        
+        markOptionCards(shouldMark: true)
     }
     
 }

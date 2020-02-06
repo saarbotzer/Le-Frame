@@ -15,25 +15,15 @@ class CardCollectionViewCell: UICollectionViewCell {
     
     var card: Card?
     var isEmpty: Bool = true
-    var isSpotSelected: Bool = false
+    var isSpotSelected: Bool = false // Can't change name to 'isSelected' or 'selected' because it's a UICollectionViewCell's property
+    var isSuggested: Bool = false
     var indexPath: IndexPath?
     var originalTransform: CGAffineTransform?
-    
-    // MARK: Design Constants
-    // Lift animation
-    let borderWidth: CGFloat = 4.0
-    let transformBy: CGFloat = 1.06
-    let liftAnimationDuration: TimeInterval = 0.1
-    let cornerRadius: CGFloat = 4
-    
+        
     // Shadow
     let defaultShadowRadius: CGFloat = 1
-    let liftedShadowRadius: CGFloat = 4
-    let shadowOffset: CGSize = CGSize(width: -1, height: 1)
-    
-    let selectedColor = UIColor(red: 0.00, green: 0.76, blue: 0.75, alpha: 0.7)
-    let hintedColor = UIColor(red: 0.9995, green: 0.9883, blue: 0.4726, alpha: 0.7)
-    
+    let defaultShadowOffset: CGSize = CGSize(width: -1, height: 1)
+        
     /**
      Initializes the spot with default values and appearance.
      
@@ -62,7 +52,7 @@ class CardCollectionViewCell: UICollectionViewCell {
      Sets the initial UI of the spot
      */
     func setUI() {
-        self.layer.cornerRadius = cornerRadius
+        self.layer.cornerRadius = 4
         addShadow()
     }
     
@@ -94,34 +84,120 @@ class CardCollectionViewCell: UICollectionViewCell {
         setCard(nil)
     }
     
-    /**
-     Changes the appearance of the card to be selected
-     */
-    func setSelected(selected: Bool) {
-        isSpotSelected = selected
-        if selected {
-            let scaledTransform = originalTransform!.scaledBy(x: transformBy, y: transformBy)
-
-            UIView.animate(withDuration: liftAnimationDuration) {
-                
-                self.layer.borderColor = self.selectedColor.cgColor
-                self.layer.borderWidth = self.borderWidth
-                
-                self.transform = scaledTransform
-                
-                self.layer.shadowRadius = self.liftedShadowRadius
+    private func getWiggleAnimation() -> CAKeyframeAnimation {
+        
+        let duration = 0.12
+        let repeatCount: Float = 3
+        
+        let wiggleAnimation  = CAKeyframeAnimation(keyPath:"transform")
+        wiggleAnimation.values  = [NSValue(caTransform3D: CATransform3DMakeRotation(0.04, 10, 0.0, 1.0)),NSValue(caTransform3D: CATransform3DMakeRotation(-0.04 , 0, 0, 1))]
+        wiggleAnimation.autoreverses = true
+        wiggleAnimation.duration  = duration
+        wiggleAnimation.repeatCount = repeatCount
+        
+        return wiggleAnimation
+    }
+    
+    
+    /// Changes the UI of the card spot according to the wanted event.
+    /// Events are selecting a card for removal, hinting a card and suggesting a card as an option for placing/pairing
+    /// - Parameters:
+    ///   - type: The wanted event to mark the card accordingly
+    ///   - on: Whether to mark the card or change it back to the original look
+    func mark(as type: CardMarkEvent, on: Bool) {
+        
+        let wiggleAnimation = getWiggleAnimation()
+        let liftedTransformBy: CGFloat = 1.06
+        let liftAnimationDuration: TimeInterval = 0.1
+        
+        // Default Values
+        let defaultBorderColor: CGColor = UIColor.clear.cgColor
+        let defaultTransform: CGAffineTransform = originalTransform!
+        let defaultBorderWidth: CGFloat = 0
+        
+        // Selected Values
+        /// Cyan
+        let selectedBorderColor: CGColor = UIColor(red: 0.00, green: 0.76, blue: 0.75, alpha: 0.7).cgColor
+        let selectedBorderWidth: CGFloat = 4
+        let selectedShadowRadius: CGFloat = 4
+        let selectedTransform: CGAffineTransform = defaultTransform.scaledBy(x: liftedTransformBy, y: liftedTransformBy)
+        
+        // Hinted Values
+        /// Yellow
+        let hintedBorderColor: CGColor = UIColor(red: 0.9995, green: 0.9883, blue: 0.4726, alpha: 0.7).cgColor
+        let hintedBorderWidth: CGFloat = 4
+        
+        // Options Values
+        /// Green-ish
+        let suggestedBorderColor: CGColor = UIColor(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 0.7).cgColor
+        let suggestedBorderWidth: CGFloat = 4
+        
+        
+        var borderColor: CGColor = defaultBorderColor
+        var borderWidth: CGFloat = defaultBorderWidth
+        var transform: CGAffineTransform = defaultTransform
+        var shadowRadius: CGFloat = defaultShadowRadius
+        var returnToNormal: Bool = false
+        
+        switch type {
+        case .selected:
+            borderColor = on ? selectedBorderColor : defaultBorderColor
+            borderWidth = on ? selectedBorderWidth : defaultBorderWidth
+            shadowRadius = on ? selectedShadowRadius : defaultShadowRadius
+            transform = on ? selectedTransform : defaultTransform
+            isSpotSelected = on
+        case .hint:
+            if isSpotSelected {
+                borderColor = selectedBorderColor
+            } else if isSuggested {
+                borderColor = suggestedBorderColor
+            } else {
+                borderColor = hintedBorderColor
             }
-        } else {
-            UIView.animate(withDuration: liftAnimationDuration) {
-                self.layer.borderColor = UIColor.clear.cgColor
-                self.layer.borderWidth = 0
-                
-                self.transform = self.originalTransform!
-                self.layer.shadowRadius = self.defaultShadowRadius
+            borderWidth = hintedBorderWidth
+            returnToNormal = true
+        case .pairWithSelectedCard, .spotSuitableForNextCard:
+            if isSpotSelected {
+                borderColor = on ? suggestedBorderColor : selectedBorderColor
+                borderWidth = on ? suggestedBorderWidth : selectedBorderWidth
+                transform = on ? defaultTransform : selectedTransform
+            } else {
+                borderColor = on ? suggestedBorderColor : defaultBorderColor
+                borderWidth = on ? suggestedBorderWidth : defaultBorderWidth
+                transform = defaultTransform
+            }
+            isSuggested = on
+        }
+        
+        
+        UIView.animate(withDuration: liftAnimationDuration) {
+            self.layer.borderColor = borderColor
+            self.layer.borderWidth = borderWidth
+            self.transform = transform
+            self.layer.shadowRadius = shadowRadius
+        }
+        
+        if type == .hint {
+            self.layer.add(wiggleAnimation, forKey: "transform")
+        }
+        
+        
+        let deadline = DispatchTime.now() + liftAnimationDuration + Double(wiggleAnimation.duration) * Double(wiggleAnimation.repeatCount)
+        
+        if returnToNormal {
+            DispatchQueue.main.asyncAfter(deadline: deadline) {
+                UIView.animate(withDuration: liftAnimationDuration) {
+                    if self.isSpotSelected {
+                        self.mark(as: .selected, on: self.isSpotSelected)
+                    } else if self.isSuggested {
+                        self.mark(as: .pairWithSelectedCard, on: self.isSuggested)
+                    } else {
+                        self.mark(as: .selected, on: false)
+                    }
+                }
             }
         }
     }
-    
     
     /**
      Adds a default shadow to the spot
@@ -130,43 +206,26 @@ class CardCollectionViewCell: UICollectionViewCell {
         self.layer.masksToBounds = false
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOpacity = 0.5
-        self.layer.shadowOffset = shadowOffset
+        self.layer.shadowOffset = defaultShadowOffset
         self.layer.shadowRadius = defaultShadowRadius
 
         self.layer.shadowPath = UIBezierPath(rect: bounds).cgPath
     }
-    
-    
-    /**
-     */
-    func setHinted(on: Bool) {
-        let wiggleDuration = 0.12
-        let repeatCount : Float = 3.0
-        if on {
-            let transformAnim  = CAKeyframeAnimation(keyPath:"transform")
-            transformAnim.values  = [NSValue(caTransform3D: CATransform3DMakeRotation(0.04, 10, 0.0, 1.0)),NSValue(caTransform3D: CATransform3DMakeRotation(-0.04 , 0, 0, 1))]
-            transformAnim.autoreverses = true
-            transformAnim.duration  = wiggleDuration
-            transformAnim.repeatCount = repeatCount
-            
-            if !isSpotSelected {
-                UIView.animate(withDuration: liftAnimationDuration) {
-                    
-                    self.layer.borderColor = self.hintedColor.cgColor
-                    self.layer.borderWidth = self.borderWidth
-                    
-                }
-            }
-            self.layer.add(transformAnim, forKey: "transform")
-            
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + liftAnimationDuration + wiggleDuration * Double(repeatCount)) {
-                UIView.animate(withDuration: self.liftAnimationDuration) {
-                    self.setSelected(selected: self.isSpotSelected)
-                }
-            }
-        }
-    }
 }
 
+
+enum CardMarkEvent {
+    /// When the spot is hinted
+    case hint
+    
+    /// When the spot is selected for removal
+    case selected
+    
+    /// When the spot is suggested as an option to pair with the selected card
+    case pairWithSelectedCard
+    
+    /// When the spot is empty and suitable to place the next card in
+    case spotSuitableForNextCard
+}
 
 
