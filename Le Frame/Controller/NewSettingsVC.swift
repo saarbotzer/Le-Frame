@@ -225,13 +225,9 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             } else {
                 segmentedControl.tintColor = selectedColor
             }
-            // TODO: Determine which item is selected by default settings
-//            let currentValue = defaults.object(forKey: setting.segmentedControlPropertyName!)
-                        
+
             segmentedControl.selectedSegmentIndex = updateDefaultSettings(for: setting.segmentedControlSettingKey)
-            
-            // TODO: Add action to change the default setting (by setting.segmentedControlPropertyName), also add alert (segmentedControlAlertText)
-            
+                        
             segmentedControl.addTarget(self, action: #selector(segmentControlValueChanged(sender:)), for: .valueChanged)
             
             return segmentedControl
@@ -271,7 +267,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             case .sumMode:
                 let newSumMode = sender.selectedSegmentIndex == 0 ? 10 : 11
                 defaults.set(newSumMode, forKey: keyRawValue)
-                // TODO: Show alert
+
                 if gameSumMode.getRawValue() != newSumMode {
                     alertChange(for: sender.name!, currentValue: gameSumMode)
                 }
