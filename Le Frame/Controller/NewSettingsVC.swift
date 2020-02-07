@@ -27,7 +27,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .difficulty, segmentedControlAlertText: "Yes", infoText: "Very easy - 3 next cards\n Easy - 2 next cards\nNormal - 1 next card\nHard - 1 next card, remove cards that sum to 11"),
 //                Setting(label: "Done removing anytime", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .doneRemovingAnytime, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
-                Setting(label: "Mark options", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .markSpots, segmentedControlAlertText: nil, segueName: nil, infoText: "Available options will be marked in purple"),
+                Setting(label: "Mark options", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .markSpots, segmentedControlAlertText: nil, segueName: nil, infoText: "Available options will highlighted"),
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No"),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No"),
                 Setting(label: "Haptic feedback", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No"),
@@ -258,8 +258,6 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 }
                 defaults.set(newDifficulty, forKey: keyRawValue)
                 
-                // TODO: If value changed, alert user
-//                if gameSumMode.getRawValue() != newSumMode {
                 if gameDifficulty.name != newDifficulty {
                     alertChange(for: sender.name!, currentValue: gameDifficulty.name)
                 }
@@ -477,6 +475,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             infoButton.contentMode = .scaleAspectFit
             
             infoButton.infoText = infoText
+            infoButton.settingKey = setting.segmentedControlSettingKey
             
             infoButton.translatesAutoresizingMaskIntoConstraints = false
             
@@ -519,8 +518,21 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     }
     
     @objc func infoButtonPressed(sender: InfoButton) {
+        
+        var alertTitle = ""
+        
+        switch sender.settingKey {
+        case .difficulty:
+            alertTitle = "Difficulty Levels"
+        case .markSpots:
+            alertTitle = "Mark options"
+        default:
+            alertTitle = "Help"
+        }
+        
         if let infoText = sender.infoText {
-            let alert = UIAlertController(title: "Difficulty Levels", message: infoText, preferredStyle: .alert)
+            
+            let alert = UIAlertController(title: alertTitle, message: infoText, preferredStyle: .alert)
             
             let okAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
 
@@ -651,5 +663,6 @@ struct Setting {
 
 
 class InfoButton: UIButton {
+    var settingKey: SettingKey?
     var infoText: String?
 }

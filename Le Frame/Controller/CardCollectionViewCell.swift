@@ -138,6 +138,7 @@ class CardCollectionViewCell: UICollectionViewCell {
         var transform: CGAffineTransform = defaultTransform
         var shadowRadius: CGFloat = defaultShadowRadius
         var returnToNormal: Bool = false
+        var opacity: Float = 1
         
         switch type {
         case .selected:
@@ -156,17 +157,26 @@ class CardCollectionViewCell: UICollectionViewCell {
             }
             borderWidth = hintedBorderWidth
             returnToNormal = true
-        case .pairWithSelectedCard, .spotSuitableForNextCard:
-            if isSpotSelected {
-                borderColor = on ? suggestedBorderColor : selectedBorderColor
-                borderWidth = on ? suggestedBorderWidth : selectedBorderWidth
-                transform = on ? defaultTransform : selectedTransform
-            } else {
-                borderColor = on ? suggestedBorderColor : defaultBorderColor
-                borderWidth = on ? suggestedBorderWidth : defaultBorderWidth
-                transform = defaultTransform
-            }
-            isSuggested = on
+//        case .disabledForRemoving, .disabledForPlacing:
+//            if isSpotSelected {
+//                borderColor = on ? suggestedBorderColor : selectedBorderColor
+//                borderWidth = on ? suggestedBorderWidth : selectedBorderWidth
+////                transform = on ? defaultTransform : selectedTransform
+//                opacity = on ? 0.5 : 1
+//            } else {
+////                borderColor = on ? suggestedBorderColor : defaultBorderColor
+////                borderWidth = on ? suggestedBorderWidth : defaultBorderWidth
+////                transform = defaultTransform
+//            }
+//
+//            opacity = on ? 0.5 : 1
+//            isSuggested = on
+            
+        case .disabledForPlacing, .disabledForRemoving:
+            opacity = on ? 0.5 : 1
+            borderColor = isSpotSelected ? selectedBorderColor : defaultBorderColor
+            borderWidth = isSpotSelected ? selectedBorderWidth : defaultBorderWidth
+            transform = isSpotSelected ? selectedTransform : defaultTransform
         }
         
         
@@ -175,6 +185,7 @@ class CardCollectionViewCell: UICollectionViewCell {
             self.layer.borderWidth = borderWidth
             self.transform = transform
             self.layer.shadowRadius = shadowRadius
+            self.layer.opacity = opacity
         }
         
         if type == .hint {
@@ -190,7 +201,7 @@ class CardCollectionViewCell: UICollectionViewCell {
                     if self.isSpotSelected {
                         self.mark(as: .selected, on: self.isSpotSelected)
                     } else if self.isSuggested {
-                        self.mark(as: .pairWithSelectedCard, on: self.isSuggested)
+                        self.mark(as: .disabledForRemoving, on: self.isSuggested)
                     } else {
                         self.mark(as: .selected, on: false)
                     }
@@ -222,10 +233,10 @@ enum CardMarkEvent {
     case selected
     
     /// When the spot is suggested as an option to pair with the selected card
-    case pairWithSelectedCard
+    case disabledForRemoving
     
     /// When the spot is empty and suitable to place the next card in
-    case spotSuitableForNextCard
+    case disabledForPlacing
 }
 
 

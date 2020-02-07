@@ -182,6 +182,7 @@ class Toast {
         toastContainer.alpha = 0.0
         toastContainer.layer.cornerRadius = 25;
         toastContainer.clipsToBounds  =  true
+        toastContainer.layer.zPosition = 15
 
         let toastLabel = UILabel(frame: CGRect())
         toastLabel.textColor = UIColor.white
@@ -218,5 +219,14 @@ class Toast {
                 toastContainer.removeFromSuperview()
             })
         })
+    }
+}
+
+
+extension Array where Element: Hashable {
+    func difference(from other: [Element]) -> [Element] {
+        let thisSet = Set(self)
+        let otherSet = Set(other)
+        return Array(thisSet.symmetricDifference(otherSet))
     }
 }

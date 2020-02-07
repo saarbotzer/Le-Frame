@@ -266,6 +266,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         hideNextCards(hide: show)
         
+        enableOptionCards(forCardAt: nil, situation: "")
+        
 //        if show {
 //            nextCardImageView.image = UIImage(named: spotImageName)
 //        }
@@ -356,6 +358,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 removeCards(at: [firstSelectedCardIndexPath!])
             } else {
                 haptic(of: .removeError)
+                Toast.show(message: "Can't remove cards that don't sum to \(difficulty.sumMode.getRawValue())", controller: self)
             }
         // Option 2 - Two cards are selected
         } else if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath != nil {
@@ -370,13 +373,14 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 removeCards(at: [firstSelectedCardIndexPath!, secondSelectedCardIndexPath!])
             } else {
                 haptic(of: .removeError)
+                Toast.show(message: "Can't remove cards that don't sum to \(difficulty.sumMode.getRawValue())", controller: self)
             }
         }
                 
         resetCardIndexes()
         
         markCardAsSelected(at: nil)
-        markOptionCards(shouldMark: false)
+        enableOptionCards(forCardAt: nil, situation: "")
         
         finishedRemovingCard()
     }
@@ -410,7 +414,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         finishedPlacingCard(cardPlaced: false)
         
         markCardAsSelected(at: nil)
-        markOptionCards(shouldMark: false)
+        enableOptionSpots()
     }
 
     // MARK: - CollectionView Methods
@@ -735,6 +739,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         let cardsToRemove = getCardsToRemove()
 
+        if cardsToRemove.count == 0 {
+            Toast.show(message: "No more cards to remove. Tap done", controller: self)
+        }
+        
         let cardsAtCenter = getEmptySpots(atCenter: true)
         
         if let cardsLeft = cardsLeft {
@@ -764,67 +772,202 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    func markOptionCards(forCardAt indexPath: IndexPath? = nil, shouldMark: Bool = true) {
-        var shouldMark: Bool = shouldMark
-        var optionsIndexPaths = [IndexPath]()
-        var markType: CardMarkEvent = .pairWithSelectedCard
+    func enableOptionSpots() {
+        let settingIsOn = getSettingValue(for: .markSpots)
         
-        if let indexPath = indexPath {
-            markType = .pairWithSelectedCard
+        let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
+        var spotsToEnable: [IndexPath] = allSpots
+        var spotsToDisable: [IndexPath] = []
 
-            let selectedCell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
-            let selectedCard = selectedCell.card!
-            
-            for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-                if let card = cell.card {
-                    if selectedCard.rank!.getRawValue() + card.rank!.getRawValue() == difficulty.sumMode.getRawValue() {
-                        let indexPathToAdd = cell.indexPath!
-                        if indexPathToAdd != indexPath {
-                            optionsIndexPaths.append(cell.indexPath!)
-                        }
-                    }
+        // Option 1 - Disable nothing
+        if !settingIsOn || nextCards.count < 1 {
+            print("Option 1")
+            spotsToEnable = allSpots
+        // Option 2 - Disable not royal-specific spots
+        } else if let nextCardRank = nextCards[0].rank {
+            print("Option 2")
+            spotsToEnable = []
+            let allSpotsForRank = Utilities.getSpots(forRank: nextCardRank, overlapping: true)
+            for spotIndexPath in allSpotsForRank {
+                let optionSpot = getSpot(at: spotIndexPath)
+                if optionSpot.isEmpty {
+                    spotsToEnable.append(spotIndexPath)
                 }
             }
             
-            // TODO: Make it to be only in case that the setting is on
-            shouldMark = true
-        } else {
-            if gameStatus == .placing {
-                markType = .spotSuitableForNextCard
-                
-                if nextCards.count < 1 {
-                    return
-                }
-                
-                if let nextCardRank = nextCards[0].rank {
-                    let allSpotsForRank = Utilities.getSpots(forRank: nextCardRank, overlapping: true)
-                    
-                    for spotIndexPath in allSpotsForRank {
-                        let optionCell = spotsCollectionView.cellForItem(at: spotIndexPath) as! CardCollectionViewCell
-                        if optionCell.isEmpty {
-                            optionsIndexPaths.append(spotIndexPath)
-                        }
-                    }
-                    
-                } else {
-                    return
-                }
-            } else {
-                shouldMark = false
-            }
+            let placedSpots = getPlacedIndexPaths(placed: true)
+            print(placedSpots)
+            spotsToEnable.append(contentsOf: placedSpots)
         }
         
-        if shouldMark && getSettingValue(for: .markSpots) {
-            for optionIndexPath in optionsIndexPaths {
-                let optionCell = spotsCollectionView.cellForItem(at: optionIndexPath) as! CardCollectionViewCell
-                optionCell.mark(as: markType, on: true)
-            }
-        } else {
-            for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-                cell.mark(as: markType, on: false)
-            }
+//        print(spotsToEnable)
+        
+        spotsToDisable = allSpots.difference(from: spotsToEnable)
+        
+        for ip in spotsToEnable {
+            let spot = getSpot(at: ip)
+            spot.mark(as: .disabledForPlacing, on: false)
+        }
+        
+        for ip in spotsToDisable {
+            let spot = getSpot(at: ip)
+            spot.mark(as: .disabledForPlacing, on: true)
         }
     }
+    
+    
+    func enableOptionCards(forCardAt indexPath: IndexPath?, situation: String) {
+        
+        let settingIsOn = getSettingValue(for: .markSpots)
+        let selectedCards = getSelectedIndexPaths(selected: true)
+        
+        let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
+        var cardsToEnable: [IndexPath] = []
+        var cardsToDisable: [IndexPath] = []
+        
+        // Option 1 - Disable nothing | When the setting is off
+        if !settingIsOn {
+            cardsToEnable = allSpots
+        }
+        
+        // Option 2 - Disable all cards that can't be paired with another card | When setting is on & no indexPath & no cards are selected
+        if settingIsOn && indexPath == nil && selectedCards.count == 0 {
+            cardsToEnable = getCardsToRemove(false)
+            
+        }
+        
+        // Option 3 - Disable all cards that are not selected | When setting is on & no indexPath & 2 cards are selected
+        if settingIsOn && indexPath == nil && selectedCards.count == 2 {
+            cardsToEnable = selectedCards
+        }
+        
+        // Option 4 - Disable all cards that can't be removed with the card at indexPath | When setting is on and there is an indexPath
+        if settingIsOn && indexPath != nil {
+            cardsToEnable = getCardsToPairWith(cardAt: indexPath!)
+            cardsToEnable.append(indexPath!)
+        }
+        
+        cardsToDisable = allSpots.difference(from: cardsToEnable)
+
+        for ip in cardsToEnable {
+            let spot = getSpot(at: ip)
+            spot.mark(as: .disabledForRemoving, on: false)
+        }
+        
+        for ip in cardsToDisable {
+            let spot = getSpot(at: ip)
+            spot.mark(as: .disabledForRemoving, on: true)
+        }
+    }
+    
+    
+    func getCardsToPairWith(cardAt indexPath: IndexPath) -> [IndexPath] {
+        let selectedSpot = getSpot(at: indexPath)
+        let selectedCard = selectedSpot.card!
+        var optionsIndexPaths: [IndexPath] = []
+        
+        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if let card = cell.card {
+                if selectedCard.rank!.getRawValue() + card.rank!.getRawValue() == difficulty.sumMode.getRawValue() {
+                    let indexPathToAdd = cell.indexPath!
+                    if indexPathToAdd != indexPath {
+                        optionsIndexPaths.append(cell.indexPath!)
+                    }
+                }
+            }
+        }
+        
+        return optionsIndexPaths
+    }
+    
+    
+    func getSelectedIndexPaths(selected: Bool) -> [IndexPath] {
+        var indexPaths: [IndexPath] = []
+        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if spot.isSpotSelected == selected {
+                indexPaths.append(spot.indexPath!)
+            }
+        }
+        return indexPaths
+    }
+    
+    func getPlacedIndexPaths(placed: Bool) -> [IndexPath] {
+        var indexPaths: [IndexPath] = []
+        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if spot.isEmpty != placed {
+                indexPaths.append(spot.indexPath!)
+            }
+        }
+        return indexPaths
+    }
+    
+
+//    func markOptionCards(forCardAt indexPath: IndexPath? = nil, shouldMark: Bool = true) {
+//        var shouldMark: Bool = shouldMark
+//        var optionsIndexPaths = [IndexPath]()
+//        var markType: CardMarkEvent = .disabledForRemoving
+//
+//        if let indexPath = indexPath {
+//            markType = .disabledForRemoving
+//
+//            let selectedCell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
+//            let selectedCard = selectedCell.card!
+//
+//
+//            // Finding spots to "disable" for a specific selected card
+//            for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+//                if let card = cell.card {
+//                    if selectedCard.rank!.getRawValue() + card.rank!.getRawValue() != difficulty.sumMode.getRawValue() {
+//                        let indexPathToAdd = cell.indexPath!
+//                        if indexPathToAdd != indexPath {
+//                            optionsIndexPaths.append(cell.indexPath!)
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // TODO: Make it to be only in case that the setting is on
+//            shouldMark = true
+//        } else {
+//            if gameStatus == .placing {
+//                markType = .disabledForPlacing
+//
+//                if nextCards.count < 1 {
+//                    return
+//                }
+//
+//                if let nextCardRank = nextCards[0].rank {
+//                    let allSpotsForRank = Utilities.getSpots(forRank: nextCardRank, overlapping: true)
+//
+//                    for spotIndexPath in allSpotsForRank {
+//                        let optionCell = spotsCollectionView.cellForItem(at: spotIndexPath) as! CardCollectionViewCell
+//                        if !optionCell.isEmpty {
+//                            optionsIndexPaths.append(spotIndexPath)
+//                        }
+//                    }
+//
+//                } else {
+//                    return
+//                }
+//            } else {
+//                markType = .disabledForRemoving
+//                shouldMark = false
+//            }
+//        }
+//
+//        if shouldMark && getSettingValue(for: .markSpots) {
+//            for optionIndexPath in optionsIndexPaths {
+//                let optionCell = spotsCollectionView.cellForItem(at: optionIndexPath) as! CardCollectionViewCell
+//                optionCell.mark(as: markType, on: true)
+//            }
+//        } else {
+//
+//            // Marking all cells as enables
+//            for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+//                cell.mark(as: markType, on: false)
+//            }
+//        }
+//    }
 
     // MARK: - Game Logic Functions
 
@@ -866,7 +1009,31 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 //            cardsLeft = cardsLeft! - 1
             return true
         } else {
+            
+            let spot = getSpot(at: indexPath)
+            var toastString = ""
+
+            if spot.isEmpty {
+                if let nextCardRank = nextCards[0].rank {
+                    switch nextCardRank {
+                    case .jack:
+                        toastString = "Jacks can only be placed at the middle-left and middle-right"
+                    case .queen:
+                        toastString = "Queens can only be placed at the middle-top and middle-bottom"
+                    case .king:
+                        toastString = "Kings can only be placed at the corners"
+                    default:
+                        toastString = ""
+                    }
+                }
+            } else {
+                toastString = "Can't place card in an occupied spot"
+            }
+            
+            Toast.show(message: toastString, controller: self)
+            
             haptic(of: .placeError)
+
             blockedCardTaps += 1
             
             if blockedCardTaps > 2 {
@@ -876,6 +1043,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         return false
     }
+    
     
     /**
      Checks what card are already selected and selects/deselects accordingly.
@@ -904,7 +1072,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             secondSelectedCardIndexPath = nil
             
             markCardAsSelected(at: firstSelectedCardIndexPath)
-            markOptionCards(forCardAt: firstSelectedCardIndexPath)
+            enableOptionCards(forCardAt: firstSelectedCardIndexPath, situation: "If this is the first selected card, select the tapped card")
             
         } else {
             // If the tapped card is already selected, deselect it
@@ -919,7 +1087,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 secondSelectedCardIndexPath = nil
                 
                 markCardAsSelected(at: nil)
-                markOptionCards(shouldMark: false)
+                enableOptionCards(forCardAt: nil, situation: "If the tapped card is already selected, deselect it")
                 
                 enableRemoveButton(enable: false)
             }
@@ -928,18 +1096,17 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 secondSelectedCardIndexPath = indexPath
                 
                 markCardAsSelected(at: secondSelectedCardIndexPath)
-                markOptionCards(shouldMark: false)
+                enableOptionCards(forCardAt: nil, situation: "If no second card is selected, select the tapped card")
             }
             // If two cards are already selected, deselect them and select the tapped card
             else {
                 markCardAsSelected(at: nil)
-                markOptionCards(shouldMark: false)
                 
                 firstSelectedCardIndexPath = indexPath
                 secondSelectedCardIndexPath = nil
                 
                 markCardAsSelected(at: firstSelectedCardIndexPath)
-                markOptionCards(forCardAt: firstSelectedCardIndexPath)
+                enableOptionCards(forCardAt: firstSelectedCardIndexPath, situation: "and select the tapped card")
             }
         }
     }
@@ -1395,7 +1562,7 @@ extension GameVC {
         updateCardsLeftLabel()
         
         markCardAsSelected(at: nil)
-        markOptionCards(shouldMark: false)
+        enableOptionSpots()
         
         removeAllCards()
         confettiEmitter.removeFromSuperlayer()
@@ -1602,7 +1769,7 @@ extension GameVC {
         return indexPathsToHint
     }
     
-    func getCardsToRemove() -> [IndexPath] {
+    func getCardsToRemove(_ randomElement: Bool = true) -> [IndexPath] {
         var cardsSpots = [IndexPath]()
         
         var allPairs = [[IndexPath]]()
@@ -1612,7 +1779,11 @@ extension GameVC {
                 let card1RankValue = card1.rank!.getRawValue()
                 if card1RankValue < 11 {
                     if card1RankValue == difficulty.sumMode.getRawValue() {
-                        return [spot1.indexPath!]
+                        if randomElement {
+                            return [spot1.indexPath!]
+                        } else {
+                            allPairs.append([spot1.indexPath!])
+                        }
                     }
                     for spot2 in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
                         if let card2 = spot2.card {
@@ -1627,8 +1798,12 @@ extension GameVC {
                 }
             }
         }
-        if let randomPair = allPairs.randomElement() {
-            cardsSpots = randomPair
+        if randomElement {
+            if let randomPair = allPairs.randomElement() {
+                cardsSpots = randomPair
+            }
+        } else {
+            cardsSpots = allPairs.flatMap { $0 }
         }
         return cardsSpots
     }
@@ -2268,10 +2443,11 @@ extension GameVC {
     
     func requestNextCard(firstCard: Bool) {
         
-        markOptionCards(shouldMark: false)
+        
         
         if !firstCard {
             cardsLeft = cardsLeft! - 1
+            enableOptionSpots()
         }
         switch deck.count {
         case 0 :
@@ -2301,7 +2477,7 @@ extension GameVC {
             nextCards.append(deck.remove(at: 0))
         }
         
-        markOptionCards(shouldMark: true)
+        enableOptionSpots()
     }
     
 }
