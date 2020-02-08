@@ -266,7 +266,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         hideNextCards(hide: show)
         
-        enableOptionCards(forCardAt: nil, situation: "")
+        enableOptionCards(forCardAt: nil)
         
 //        if show {
 //            nextCardImageView.image = UIImage(named: spotImageName)
@@ -380,7 +380,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         resetCardIndexes()
         
         markCardAsSelected(at: nil)
-        enableOptionCards(forCardAt: nil, situation: "")
+        enableOptionCards(forCardAt: nil)
         
         finishedRemovingCard()
     }
@@ -711,18 +711,25 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         if boardFull {
             if cardsToRemove {
+                print("a")
                 setGameStatus(status: .removing)
             } else {
+                print("b")
                 setGameStatus(status: .gameOver)
             }
         } else if nextCardIsBlocked {
+            print("c")
             setGameStatus(status: .gameOver)
         } else if gameStatus == .removing {
+            print("d")
             setGameStatus(status: .placing)
         } else if cardsLeft == 0 {
+            print("e")
             setGameStatus(status: .removing)
         }
+        
         if isGameWon() {
+            print("f")
             setGameStatus(status: .won)
         }
         
@@ -773,7 +780,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func enableOptionSpots() {
-        let settingIsOn = getSettingValue(for: .markSpots)
+        let settingIsOn = getSettingValue(for: .highlightAvailableMoves)
         
         let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
         var spotsToEnable: [IndexPath] = allSpots
@@ -781,11 +788,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
         // Option 1 - Disable nothing
         if !settingIsOn || nextCards.count < 1 {
-            print("Option 1")
             spotsToEnable = allSpots
         // Option 2 - Disable not royal-specific spots
         } else if let nextCardRank = nextCards[0].rank {
-            print("Option 2")
             spotsToEnable = []
             let allSpotsForRank = Utilities.getSpots(forRank: nextCardRank, overlapping: true)
             for spotIndexPath in allSpotsForRank {
@@ -796,12 +801,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
             
             let placedSpots = getPlacedIndexPaths(placed: true)
-            print(placedSpots)
             spotsToEnable.append(contentsOf: placedSpots)
         }
-        
-//        print(spotsToEnable)
-        
+            
         spotsToDisable = allSpots.difference(from: spotsToEnable)
         
         for ip in spotsToEnable {
@@ -816,9 +818,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     
-    func enableOptionCards(forCardAt indexPath: IndexPath?, situation: String) {
+    func enableOptionCards(forCardAt indexPath: IndexPath?, enableAll: Bool = false) {
         
-        let settingIsOn = getSettingValue(for: .markSpots)
+        let settingIsOn = getSettingValue(for: .highlightAvailableMoves)
         let selectedCards = getSelectedIndexPaths(selected: true)
         
         let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
@@ -826,12 +828,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         var cardsToDisable: [IndexPath] = []
         
         // Option 1 - Disable nothing | When the setting is off
-        if !settingIsOn {
+        let enableAllCards = enableAll || !settingIsOn
+        if enableAllCards {
             cardsToEnable = allSpots
         }
         
         // Option 2 - Disable all cards that can't be paired with another card | When setting is on & no indexPath & no cards are selected
-        if settingIsOn && indexPath == nil && selectedCards.count == 0 {
+        if settingIsOn && !enableAll && indexPath == nil && selectedCards.count == 0 {
             cardsToEnable = getCardsToRemove(false)
             
         }
@@ -981,6 +984,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      - Returns: True if the card was placed, false otherwise
      */
     func placeCard(at indexPath: IndexPath) -> Bool {
+        
+        if nextCards.count < 1 {
+            return false
+        }
+        
         let cell = getSpot(at: indexPath)
 
         // Start hints procedure (show hints after some time with no taps)
@@ -1072,7 +1080,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             secondSelectedCardIndexPath = nil
             
             markCardAsSelected(at: firstSelectedCardIndexPath)
-            enableOptionCards(forCardAt: firstSelectedCardIndexPath, situation: "If this is the first selected card, select the tapped card")
+            enableOptionCards(forCardAt: firstSelectedCardIndexPath)
             
         } else {
             // If the tapped card is already selected, deselect it
@@ -1087,7 +1095,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 secondSelectedCardIndexPath = nil
                 
                 markCardAsSelected(at: nil)
-                enableOptionCards(forCardAt: nil, situation: "If the tapped card is already selected, deselect it")
+                enableOptionCards(forCardAt: nil)
                 
                 enableRemoveButton(enable: false)
             }
@@ -1096,7 +1104,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 secondSelectedCardIndexPath = indexPath
                 
                 markCardAsSelected(at: secondSelectedCardIndexPath)
-                enableOptionCards(forCardAt: nil, situation: "If no second card is selected, select the tapped card")
+                enableOptionCards(forCardAt: nil)
             }
             // If two cards are already selected, deselect them and select the tapped card
             else {
@@ -1106,7 +1114,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 secondSelectedCardIndexPath = nil
                 
                 markCardAsSelected(at: firstSelectedCardIndexPath)
-                enableOptionCards(forCardAt: firstSelectedCardIndexPath, situation: "and select the tapped card")
+                enableOptionCards(forCardAt: firstSelectedCardIndexPath)
             }
         }
     }
@@ -1160,6 +1168,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 showNextCards()
             }
         }
+        enableOptionCards(forCardAt: nil, enableAll: true)
 
         if toAddStats {
             addStats()
@@ -1206,6 +1215,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     func getLoseReason() -> LoseReason {
         if !checkForPairs() && isBoardFull() {
+            return .noCardsToRemove
+        }
+        
+        if nextCards.count < 1 {
             return .noCardsToRemove
         }
         
@@ -1256,6 +1269,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         showAlert(title: title, message: messageText, dismissText: "Great", confirmText: "Start a new game")
         
         nextCardImageView.image = UIImage(named: spotImageName)
+        enableOptionCards(forCardAt: nil, enableAll: true)
         
         if toAddStats {
             addStats()
@@ -1546,7 +1560,7 @@ extension GameVC {
         deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
-//        deck = model.getDeck(ofType: .fromString, random: false, from: "h10c10c05h13c13d13s13h12c12d12s12h11c11d11s11", fullDeck: false)
+//        deck = model.getDeck(ofType: .fromString, random: false, from: "h10d05c10c05h13c13d13s13h12c12d12s12h11c11d11s11", fullDeck: false)
         
         deckString = model.getDeckString(deck: deck)
         
@@ -1618,13 +1632,15 @@ extension GameVC {
      */
     func isGameWon() -> Bool {
 
+        let canWinWithCardsInTheMiddle = true
+        
         for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
             
             let allowedRanks = getDesignatedRanksByPosition(indexPath: cell.indexPath!)
             // If the spot contains a card that does not match it's designated rank, the function returns false.
             if let card = cell.card {
                 let cardRank = card.rank!
-                if (allowedRanks == .jacks && cardRank != .jack) || (allowedRanks == .queens && cardRank != .queen) || (allowedRanks == .kings && cardRank != .king) || (allowedRanks == .notRoyal) {
+                if (allowedRanks == .jacks && cardRank != .jack) || (allowedRanks == .queens && cardRank != .queen) || (allowedRanks == .kings && cardRank != .king) || (allowedRanks == .notRoyal && !canWinWithCardsInTheMiddle) {
                     return false
                 }
             // If there is no card at the spot and it is a royal spot, the function returns false.
@@ -2149,7 +2165,7 @@ extension GameVC {
     func setDefaultSetting(for settingKey: SettingKey) -> Bool {
         var defaultValue = true
         switch settingKey {
-        case .hapticOn, .soundsOn, .showHints, .markSpots:
+        case .hapticOn, .soundsOn, .showHints, .highlightAvailableMoves:
             defaultValue = true
         case .doneRemovingAnytime:
             defaultValue = false
@@ -2443,24 +2459,34 @@ extension GameVC {
     
     func requestNextCard(firstCard: Bool) {
         
-        
-        
         if !firstCard {
             cardsLeft = cardsLeft! - 1
             enableOptionSpots()
         }
+
         switch deck.count {
         case 0 :
             switch nextCards.count {
-            case ...1:
+            case 0:
+                print("CASE 0:", deck.count, nextCards.count)
+
                 nextCardImageView.image = UIImage(named: spotImageName)
+            case 1:
+                print("CASE 1:", deck.count, nextCards.count)
+                
+//                nextCardImageView.isHidden = true
+                nextCards.remove(at: 0)
             case 2:
+                print("CASE 2:", deck.count, nextCards.count)
                 nextCards.remove(at: 0)
             case 3:
+                print("CASE 3:", deck.count, nextCards.count)
                 nextCards.remove(at: 0)
             default:
+                print("CASE default:", deck.count, nextCards.count)
                 return
             }
+        // First
         case (deckString?.count ?? 52 * 3) / 3:
             nextCards = [deck.remove(at: 0), deck.remove(at: 0), deck.remove(at: 0)]
                         
