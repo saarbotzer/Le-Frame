@@ -171,7 +171,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let radius = removeLabelsBackground.frame.width / 2
         removeLabelsBackground.roundCorners([.allCorners], radius: radius)
         removeLabelsBackground.backgroundColor = .black
-        removeLabelsBackground.alpha = 0.5
+        removeLabelsBackground.alpha = 0.7
+        
+//        removeLabelsBackground.layer.borderWidth = 4
+        removeLabelsBackground.layer.borderColor = UIColor.white.cgColor
+//        removeLabelsBackground.layer.border
         
         removalSumLabel.textColor = .white
         removalSumLabel.layer.zPosition = 4
@@ -266,7 +270,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         hideNextCards(hide: show)
         
-        enableOptionCards(forCardAt: nil)
+        if show {
+            enableOptionCards(forCardAt: nil)
+        }
         
 //        if show {
 //            nextCardImageView.image = UIImage(named: spotImageName)
@@ -711,25 +717,19 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         if boardFull {
             if cardsToRemove {
-                print("a")
                 setGameStatus(status: .removing)
             } else {
-                print("b")
                 setGameStatus(status: .gameOver)
             }
         } else if nextCardIsBlocked {
-            print("c")
             setGameStatus(status: .gameOver)
         } else if gameStatus == .removing {
-            print("d")
             setGameStatus(status: .placing)
         } else if cardsLeft == 0 {
-            print("e")
             setGameStatus(status: .removing)
         }
         
         if isGameWon() {
-            print("f")
             setGameStatus(status: .won)
         }
         
@@ -774,7 +774,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
         } else {
             for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-                cell.mark(as: .selected, on: false)
+                if cell.isSpotSelected {
+                    cell.mark(as: .selected, on: false)
+                }
             }
         }
     }
@@ -819,7 +821,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     
     func enableOptionCards(forCardAt indexPath: IndexPath?, enableAll: Bool = false) {
-        
         let settingIsOn = getSettingValue(for: .highlightAvailableMoves)
         let selectedCards = getSelectedIndexPaths(selected: true)
         
@@ -2468,22 +2469,14 @@ extension GameVC {
         case 0 :
             switch nextCards.count {
             case 0:
-                print("CASE 0:", deck.count, nextCards.count)
-
                 nextCardImageView.image = UIImage(named: spotImageName)
             case 1:
-                print("CASE 1:", deck.count, nextCards.count)
-                
-//                nextCardImageView.isHidden = true
                 nextCards.remove(at: 0)
             case 2:
-                print("CASE 2:", deck.count, nextCards.count)
                 nextCards.remove(at: 0)
             case 3:
-                print("CASE 3:", deck.count, nextCards.count)
                 nextCards.remove(at: 0)
             default:
-                print("CASE default:", deck.count, nextCards.count)
                 return
             }
         // First
