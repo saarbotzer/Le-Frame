@@ -21,11 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Auth.auth().signInAnonymously { (authResult, error) in
             guard let user = authResult?.user else { return }
-            let isAnonymous = user.isAnonymous  // true
-            let uid = user.uid
+            _ = user.isAnonymous  // let isAnonymous
+            _ = user.uid // let uid
         }
         
-        let db = Firestore.firestore()
+        _ = Firestore.firestore() // let db
         
         
         return true

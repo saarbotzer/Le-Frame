@@ -48,12 +48,12 @@ class ContactUsVC: UIViewController, UITextViewDelegate, UIAdaptivePresentationC
     }
     
     @IBAction func sendPressed(_ sender: Any) {
-        print(messageTextView.text)
+        print(messageTextView.text ?? "")
     }
     
     
     func addTapGesture() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
     }
     

@@ -2505,7 +2505,11 @@ extension GameVC {
 extension UIView {
     func addShadow(with radius: CGFloat) {
         
-        return
+        let shadowWorksProperly = false
+        
+        if !shadowWorksProperly {
+            return
+        }
 
         self.layer.masksToBounds = false
         self.layer.shadowColor = UIColor.black.cgColor

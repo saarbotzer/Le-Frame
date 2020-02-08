@@ -406,8 +406,8 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         
         /// Two floors cell
         var specialCell = false
-        var labelHeight : CGFloat = 20
-        var segmentedControlHeight : CGFloat = 25
+        let labelHeight : CGFloat = 20
+        let segmentedControlHeight : CGFloat = 25
         var segmentedControlWidth : CGFloat = 100
         
         

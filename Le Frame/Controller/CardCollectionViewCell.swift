@@ -129,8 +129,8 @@ class CardCollectionViewCell: UICollectionViewCell {
         
         // Options Values
         /// Green-ish
-        let suggestedBorderColor: CGColor = UIColor(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 0.7).cgColor
-        let suggestedBorderWidth: CGFloat = 4
+//        let suggestedBorderColor: CGColor = UIColor(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 0.7).cgColor
+//        let suggestedBorderWidth: CGFloat = 4
         
         
         var borderColor: CGColor = defaultBorderColor
@@ -151,26 +151,13 @@ class CardCollectionViewCell: UICollectionViewCell {
             if isSpotSelected {
                 borderColor = selectedBorderColor
             } else if isSuggested {
-                borderColor = suggestedBorderColor
+//                borderColor = suggestedBorderColor
             } else {
                 borderColor = hintedBorderColor
             }
             borderWidth = hintedBorderWidth
             returnToNormal = true
-//        case .disabledForRemoving, .disabledForPlacing:
-//            if isSpotSelected {
-//                borderColor = on ? suggestedBorderColor : selectedBorderColor
-//                borderWidth = on ? suggestedBorderWidth : selectedBorderWidth
-////                transform = on ? defaultTransform : selectedTransform
-//                opacity = on ? 0.5 : 1
-//            } else {
-////                borderColor = on ? suggestedBorderColor : defaultBorderColor
-////                borderWidth = on ? suggestedBorderWidth : defaultBorderWidth
-////                transform = defaultTransform
-//            }
-//
-//            opacity = on ? 0.5 : 1
-//            isSuggested = on
+            isSuggested = on
             
         case .disabledForPlacing, .disabledForRemoving:
             opacity = on ? 0.5 : 1
