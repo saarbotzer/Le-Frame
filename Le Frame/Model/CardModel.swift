@@ -129,7 +129,8 @@ class CardModel {
                 deck = self.getDeck(from: string!, fullDeck: fullDeck!)
             } else {
                 
-                print("Couldn't create deck from string \(string ?? "nil") with fullDeck property \(fullDeck ?? nil ?? "")")
+                let fullDeckString = fullDeck == nil ? "nil" : "\(fullDeck!)"
+                Utilities.log("Couldn't create deck from string \(string ?? "nil") with fullDeck property \(fullDeckString)")
                 deck = self.getDeck()
             }
         }

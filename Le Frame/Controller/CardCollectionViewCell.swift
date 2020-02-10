@@ -151,13 +151,14 @@ class CardCollectionViewCell: UICollectionViewCell {
             if isSpotSelected {
                 borderColor = selectedBorderColor
             } else if isSuggested {
+                opacity = 1
 //                borderColor = suggestedBorderColor
             } else {
                 borderColor = hintedBorderColor
             }
             borderWidth = hintedBorderWidth
             returnToNormal = true
-            isSuggested = on
+            isSuggested = !on
             
         case .disabledForPlacing, .disabledForRemoving:
             opacity = on ? 0.5 : 1
