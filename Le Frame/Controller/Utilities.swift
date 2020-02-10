@@ -21,7 +21,6 @@ public let cardAnimationDuration : Double = 0.2
 
 
 public var secondsPassed : Int = 0
-public var gameSumMode : SumMode = .ten
 public var gameFinished : Bool = false
 //public var gameRemovalWhenFull : Bool = false
 
@@ -228,5 +227,76 @@ extension Array where Element: Hashable {
         let thisSet = Set(self)
         let otherSet = Set(other)
         return Array(thisSet.symmetricDifference(otherSet))
+    }
+}
+
+
+extension UIImage {
+    func rotate(radians: CGFloat) -> UIImage {
+        let rotatedSize = CGRect(origin: .zero, size: size)
+            .applying(CGAffineTransform(rotationAngle: CGFloat(radians)))
+            .integral.size
+        UIGraphicsBeginImageContext(rotatedSize)
+        if let context = UIGraphicsGetCurrentContext() {
+            let origin = CGPoint(x: rotatedSize.width / 2.0,
+                                 y: rotatedSize.height / 2.0)
+            context.translateBy(x: origin.x, y: origin.y)
+            context.rotate(by: radians)
+            draw(in: CGRect(x: -origin.y, y: -origin.x,
+                            width: size.width, height: size.height))
+            let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+
+            return rotatedImage ?? self
+        }
+
+        return self
+    }
+}
+
+
+
+extension UIView {
+    func addShadow(with radius: CGFloat) {
+        
+        let shadowWorksProperly = false
+        
+        if !shadowWorksProperly {
+            return
+        }
+
+        self.layer.masksToBounds = false
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowOpacity = 0.5
+        self.layer.shadowOffset = CGSize(width: -1, height: 1)
+        self.layer.shadowRadius = radius
+
+        self.layer.shadowPath = UIBezierPath(rect: bounds).cgPath
+    }
+}
+
+
+struct GameMove: CustomStringConvertible {
+    var cards: [Card]
+    var indexPaths: [IndexPath]
+    var moveType: MoveType
+    
+    public var description: String {
+        var locationStr = ""
+        var actionStr = ""
+        var cardsStrings: [String] = [String]()
+        
+        if self.moveType == .place {
+            actionStr = "Placed"
+            locationStr = "at"
+        } else if self.moveType == .remove {
+            actionStr = "Removed"
+            locationStr = "from"
+        }
+        for (card, indexPath) in zip(cards, indexPaths) {
+            cardsStrings.append("\(card) \(locationStr) \(indexPath)")
+        }
+        
+        return "\(actionStr) \(cardsStrings.joined(separator: ", "))"
     }
 }

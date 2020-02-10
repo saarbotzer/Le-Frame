@@ -27,7 +27,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .difficulty, segmentedControlAlertText: "Yes", infoText: "Very easy - 3 next cards\n Easy - 2 next cards\nNormal - 1 next card\nHard - 1 next card, remove cards that sum to 11"),
 //                Setting(label: "Done removing anytime", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .doneRemovingAnytime, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
-                Setting(label: "Highlight available moves", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .highlightAvailableMoves, segmentedControlAlertText: nil, segueName: nil, infoText: "Available options will highlighted"),
+                Setting(label: "Highlight available moves", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .highlightAvailableMoves, segmentedControlAlertText: nil, segueName: nil, infoText: "Available options will be highlighted"),
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No"),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No"),
                 Setting(label: "Haptic feedback", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No"),
@@ -266,8 +266,8 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 let newSumMode = sender.selectedSegmentIndex == 0 ? 10 : 11
                 defaults.set(newSumMode, forKey: keyRawValue)
 
-                if gameSumMode.getRawValue() != newSumMode {
-                    alertChange(for: sender.name!, currentValue: gameSumMode)
+                if gameDifficulty.sumMode.getRawValue() != newSumMode {
+                    alertChange(for: sender.name!, currentValue: gameDifficulty.sumMode)
                 }
             case .showHints, .soundsOn, .doneRemovingAnytime, .hapticOn, .highlightAvailableMoves:
                 let newValue = sender.selectedSegmentIndex == 0

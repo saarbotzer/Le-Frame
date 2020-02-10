@@ -268,7 +268,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         removalSumLabel.adjustsFontSizeToFitWidth = true
         removalSumLabel.minimumScaleFactor = 0.2
         
-        hideNextCards(hide: show)
+        hideNextCardsWithAnimation(hide: show)
         
         if show {
             enableOptionCards(forCardAt: nil)
@@ -363,7 +363,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             if difficulty.sumMode == .ten && firstCard.rank! == .ten {
                 removeCards(at: [firstSelectedCardIndexPath!])
             } else {
-                haptic(of: .removeError)
+                haptic(.removeError)
                 Toast.show(message: "Can't remove cards that don't sum to \(difficulty.sumMode.getRawValue())", controller: self)
             }
         // Option 2 - Two cards are selected
@@ -378,7 +378,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == difficulty.sumMode.getRawValue() {
                 removeCards(at: [firstSelectedCardIndexPath!, secondSelectedCardIndexPath!])
             } else {
-                haptic(of: .removeError)
+                haptic(.removeError)
                 Toast.show(message: "Can't remove cards that don't sum to \(difficulty.sumMode.getRawValue())", controller: self)
             }
         }
@@ -396,13 +396,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         var cardsLocations = [IndexPath]()
         
         for indexPath in indexPaths {
-            let cell = getSpot(at: indexPath)
-            let card = cell.card!
+            let spot = getSpot(at: indexPath)
+            let card = spot.card!
             playSound(.removeCard)
-            haptic(of: .removeSuccess)
+            haptic(.removeSuccess)
             newlyRemovedCards.append(card)
             cardsLocations.append(indexPath)
-            cell.removeCard()
+            spot.removeCard()
         }
         
         enableRemoveButton(enable: false)
@@ -434,10 +434,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath) as! CardCollectionViewCell
-        cell.initializeSpot(with: nil, at: indexPath)
+        let spot = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath) as! CardCollectionViewCell
+        spot.initializeSpot(with: nil, at: indexPath)
 
-        return cell
+        return spot
     }
     
     // didSelectCard
@@ -597,10 +597,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         
         if let indexPath = location as? IndexPath {
-            let cell = getSpot(at: indexPath)
+            let spot = getSpot(at: indexPath)
             
-            point = cell.superview?.convert(cell.frame.origin, to: nil) ?? point
-            size = cell.frame.size
+            point = spot.superview?.convert(spot.frame.origin, to: nil) ?? point
+            size = spot.frame.size
         } else if let location = location as? CardAnimationLocation {
             switch location {
             case .nextCard:
@@ -755,27 +755,27 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         if let cardsLeft = cardsLeft {
             if cardsLeft == 0 && cardsToRemove.count == 0 && cardsAtCenter.count != 4 {
                 setGameStatus(status: .gameOver)
-                nextCardImageView.image = UIImage(named: spotImageName)
+                setNextCardsImages(next1ImageName: spotImageName, next2ImageName: nil, next3ImageName: nil)
             } else {
             }
         }
     }
 
     func removeAllCards() {
-        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            cell.removeCard()
+        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            spot.removeCard()
         }
     }
     
     func markCardAsSelected(at indexPath: IndexPath?) {
         if let indexPath = indexPath {
-            if let cell = spotsCollectionView.cellForItem(at: indexPath) as? CardCollectionViewCell {
-                cell.mark(as: .selected, on: true)
+            if let spot = spotsCollectionView.cellForItem(at: indexPath) as? CardCollectionViewCell {
+                spot.mark(as: .selected, on: true)
             }
         } else {
-            for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-                if cell.isSpotSelected {
-                    cell.mark(as: .selected, on: false)
+            for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+                if spot.isSpotSelected {
+                    spot.mark(as: .selected, on: false)
                 }
             }
         }
@@ -870,12 +870,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let selectedCard = selectedSpot.card!
         var optionsIndexPaths: [IndexPath] = []
         
-        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if let card = cell.card {
+        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if let card = spot.card {
                 if selectedCard.rank!.getRawValue() + card.rank!.getRawValue() == difficulty.sumMode.getRawValue() {
-                    let indexPathToAdd = cell.indexPath!
+                    let indexPathToAdd = spot.indexPath!
                     if indexPathToAdd != indexPath {
-                        optionsIndexPaths.append(cell.indexPath!)
+                        optionsIndexPaths.append(spot.indexPath!)
                     }
                 }
             }
@@ -990,7 +990,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             return false
         }
         
-        let cell = getSpot(at: indexPath)
+        let spot = getSpot(at: indexPath)
 
         // Start hints procedure (show hints after some time with no taps)
         lastTapTime = Date()
@@ -1009,10 +1009,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
 
             animateCard(card: nextCards[0], from: .nextCard, to: indexPath)
             blockedCardTaps = 0
-            cell.setCard(nextCards[0])
+            spot.setCard(nextCards[0])
             let move = GameMove(cards: [nextCards[0]], indexPaths: [indexPath], moveType: .place)
             moves.append(move)
-            haptic(of: .placeSuccess)
+            haptic(.placeSuccess)
             
             requestNextCard(firstCard: false)
 //            cardsLeft = cardsLeft! - 1
@@ -1041,7 +1041,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             
             Toast.show(message: toastString, controller: self)
             
-            haptic(of: .placeError)
+            haptic(.placeError)
 
             blockedCardTaps += 1
             
@@ -1128,8 +1128,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // Game Logic
     func checkForPairs() -> Bool {
         var allNonRoyalValues : [Int] = [Int]()
-        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if let cardRankValue = cell.card?.rank!.getRawValue() {
+        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if let cardRankValue = spot.card?.rank!.getRawValue() {
                 if cardRankValue < 11 {
                     allNonRoyalValues.append(cardRankValue)
                 }
@@ -1150,8 +1150,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     // Game Logic
     func isBoardFull() -> Bool {
-        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if cell.isEmpty {
+        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if spot.isEmpty {
                 return false
             }
         }
@@ -1183,7 +1183,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let messageText = "\(loseReasonText)\n\n\(statsText)"
 
         playSound(.lose)
-        haptic(of: .gameOver)
+        haptic(.gameOver)
         showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game")
 
     }
@@ -1242,7 +1242,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         playSound(.win)
         confetti()
-        haptic(of: .win)
+        haptic(.win)
         didWin = true
         
         let statsText = getGameStatsText()
@@ -1269,7 +1269,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
                 
         showAlert(title: title, message: messageText, dismissText: "Great", confirmText: "Start a new game")
         
-        nextCardImageView.image = UIImage(named: spotImageName)
+        setNextCardsImages(next1ImageName: spotImageName, next2ImageName: nil, next3ImageName: nil)
         enableOptionCards(forCardAt: nil, enableAll: true)
         
         if toAddStats {
@@ -1492,8 +1492,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
      */
     func getNumberOfCardsPlaced(withRank rank: CardRank) -> Int {
         var nofCards : Int = 0
-        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if let card = cell.card {
+        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if let card = spot.card {
                 if card.rank! == rank {
                     nofCards += 1
                 }
@@ -1507,6 +1507,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return spot.isEmpty
     }
     
+    /// Filters index paths and returns only the wanted (empty or not)
+    /// - Parameters:
+    ///   - indexPaths: The index paths to filter
+    ///   - empty: True if want only empty spots, false if only not empty spots
+    /// - Returns: The filtered index paths
     func filterSpots(indexPaths: [IndexPath], empty: Bool) -> [IndexPath] {
         return indexPaths.filter { (indexPath) -> Bool in
             if empty {
@@ -1537,7 +1542,6 @@ extension GameVC {
     func startNewGame() {
             
         // Get game settings
-        gameSumMode = getSumSetting()
         setGameStatus(status: .placing)
 
 
@@ -1603,8 +1607,8 @@ extension GameVC {
     func canPutCard(_ card: Card, at indexPath: IndexPath) -> Bool {
         // If the spot is empty then check whether the spot position and the card rank fit
         
-        let cell = getSpot(at: indexPath)
-        if cell.isEmpty {
+        let spot = getSpot(at: indexPath)
+        if spot.isEmpty {
             
             let cardRank = card.rank!
             
@@ -1635,11 +1639,11 @@ extension GameVC {
 
         let canWinWithCardsInTheMiddle = true
         
-        for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
             
-            let allowedRanks = getDesignatedRanksByPosition(indexPath: cell.indexPath!)
+            let allowedRanks = getDesignatedRanksByPosition(indexPath: spot.indexPath!)
             // If the spot contains a card that does not match it's designated rank, the function returns false.
-            if let card = cell.card {
+            if let card = spot.card {
                 let cardRank = card.rank!
                 if (allowedRanks == .jacks && cardRank != .jack) || (allowedRanks == .queens && cardRank != .queen) || (allowedRanks == .kings && cardRank != .king) || (allowedRanks == .notRoyal && !canWinWithCardsInTheMiddle) {
                     return false
@@ -1698,11 +1702,11 @@ extension GameVC {
                 
                 for (card, indexPath) in zip(lastMove.cards, lastMove.indexPaths) {
                     
-                    let cell = getSpot(at: indexPath)
+                    let spot = getSpot(at: indexPath)
                     
                     animateCard(card: card, from: .removedStack, to: indexPath)
                     
-                    cell.setCard(card)
+                    spot.setCard(card)
                 }
                 undosUsed += 1
             case .place:
@@ -1711,18 +1715,18 @@ extension GameVC {
                     return
                 }
                 for (card, indexPath) in zip(lastMove.cards, lastMove.indexPaths) {
-                    let cell = getSpot(at: indexPath)
+                    let spot = getSpot(at: indexPath)
                     
                     animateCard(card: card, from: indexPath, to: .nextCard)
                     
-                    cell.removeCard()
+                    spot.removeCard()
                     deck.insert(nextCards[0], at: 0)
                     nextCards[0] = card
                     cardsLeft! += 1
                     updateCardsLeftLabel()
                     
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
-                        self.nextCardImageView.image = UIImage(named: card.imageName)
+                        self.setNextCardsImages(next1ImageName: card.imageName, next2ImageName: nil, next3ImageName: nil)
                     }
                 }
                 undosUsed += 1
@@ -1733,10 +1737,16 @@ extension GameVC {
 }
 
 
-//MARK: - Hints functions
-
+// MARK: - Undo
 extension GameVC {
     
+}
+
+// MARK: - Hints
+extension GameVC {
+    
+    /// Generates hints for the current board and next card and shows them on the board
+    /// - Parameter hintType: The reason of the hint (User asked for it, waited too long, made mistakes)
     func showHints(hintType : HintType) {
         let isShowHints = getSettingValue(for: .showHints)
         if hintType != .tappedHintButton && !isShowHints {
@@ -1749,12 +1759,20 @@ extension GameVC {
         }
     }
     
+    /// Changes the spot's UI to hint
+    /// - Parameter indexPath: The card index path
     func hintCard(at indexPath: IndexPath) {
         let spot = getSpot(at: indexPath)
-        
         spot.mark(as: .hint, on: true)
     }
     
+    /// Gets the spots to hint.
+    ///     - When placing cards, it hints:
+    ///         - Designated spots for the royal cards
+    ///         - Center spots if available
+    ///         - Royal with most empty spots
+    ///     - When removing cards, it takes a random pair of cards to remove.
+    /// - Returns: The hinted spots' index paths
     func getHints() -> [IndexPath] {
         var indexPathsToHint = [IndexPath]()
         
@@ -1771,6 +1789,7 @@ extension GameVC {
                         indexPathsToHint = emptyRoyalSpots
                     }
                 } else {
+                    // If the next card is royal
                     let rankIndexPaths = Utilities.getSpots(forRank: nextCardRank)
                     let emptyRankSpots = filterSpots(indexPaths: rankIndexPaths, empty: true)
                     indexPathsToHint = emptyRankSpots
@@ -1786,45 +1805,9 @@ extension GameVC {
         return indexPathsToHint
     }
     
-    func getCardsToRemove(_ randomElement: Bool = true) -> [IndexPath] {
-        var cardsSpots = [IndexPath]()
-        
-        var allPairs = [[IndexPath]]()
-        
-        for spot1 in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if let card1 = spot1.card {
-                let card1RankValue = card1.rank!.getRawValue()
-                if card1RankValue < 11 {
-                    if card1RankValue == difficulty.sumMode.getRawValue() {
-                        if randomElement {
-                            return [spot1.indexPath!]
-                        } else {
-                            allPairs.append([spot1.indexPath!])
-                        }
-                    }
-                    for spot2 in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-                        if let card2 = spot2.card {
-                            let card2RankValue = card2.rank!.getRawValue()
-                            if card2RankValue < 11 && spot1 != spot2 {
-                                if card1RankValue + card2RankValue == difficulty.sumMode.getRawValue() {
-                                    allPairs.append([spot1.indexPath!, spot2.indexPath!])
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if randomElement {
-            if let randomPair = allPairs.randomElement() {
-                cardsSpots = randomPair
-            }
-        } else {
-            cardsSpots = allPairs.flatMap { $0 }
-        }
-        return cardsSpots
-    }
-    
+    /// Gets the empty spots to hint.
+    /// - Parameter atCenter: True if want to search empty spots in the center, false otherwise
+    /// - Returns: The list of empty index paths
     func getEmptySpots(atCenter: Bool) -> [IndexPath] {
         var emptySpots = [IndexPath]()
         
@@ -1915,26 +1898,62 @@ extension GameVC {
         return emptySpots
     }
     
-
-    
-    
-    
-    // MARK: - Timer
-    
-    /**
-
-     */
-    func addTimer() {
-        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerElapsed), userInfo: nil, repeats: true)
+    /// Gets cards that can be removed when paird.
+    /// - Parameter randomElement: True if want only one pair (or 10), false if want all cards that can be removed.
+    /// - Returns: Index paths of the cards that can be removed.
+    func getCardsToRemove(_ randomElement: Bool = true) -> [IndexPath] {
+        var cardsSpots = [IndexPath]()
+        
+        var allPairs = [[IndexPath]]()
+        
+        for spot1 in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+            if let card1 = spot1.card {
+                let card1RankValue = card1.rank!.getRawValue()
+                if card1RankValue < 11 {
+                    if card1RankValue == difficulty.sumMode.getRawValue() {
+                        if randomElement {
+                            return [spot1.indexPath!]
+                        } else {
+                            allPairs.append([spot1.indexPath!])
+                        }
+                    }
+                    for spot2 in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+                        if let card2 = spot2.card {
+                            let card2RankValue = card2.rank!.getRawValue()
+                            if card2RankValue < 11 && spot1 != spot2 {
+                                if card1RankValue + card2RankValue == difficulty.sumMode.getRawValue() {
+                                    allPairs.append([spot1.indexPath!, spot2.indexPath!])
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if randomElement {
+            if let randomPair = allPairs.randomElement() {
+                cardsSpots = randomPair
+            }
+        } else {
+            cardsSpots = allPairs.flatMap { $0 }
+        }
+        return cardsSpots
     }
-    
-    func stopTimer() {
-        if timer.isValid == true {
-            timer.invalidate()
+}
+
+// MARK: - Timer
+extension GameVC {
+    /// Called everytime the times elapses, increments the game duration by one second and updates the time label.
+    @objc func timerElapsed() {
+        // If another view controller is presented than pause the timer
+        if presentedViewController == nil {
+            secondsPassed += 1
+            updateTimeLabel()
         }
     }
     
-    @objc func updateLabel() {
+    /// Formats the time label and changes its text.
+    func updateTimeLabel() {
         let hours = secondsPassed / 3600
         let minutes = secondsPassed / 60 % 60
         let seconds = secondsPassed % 60
@@ -1950,49 +1969,24 @@ extension GameVC {
         timeLabel.text = "TIME: \(timeString)"
     }
     
-    @objc func timerElapsed() {
-        // If another view controller is presented than pause the timer
-        if presentedViewController == nil {
-            secondsPassed += 1
-            updateLabel()
-        }
+    /// Creates the timer and connects it to the timerElapsed method
+    func addTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerElapsed), userInfo: nil, repeats: true)
     }
     
-    
-    // MARK: - Feedbacks
-    
-    func haptic(of feedbackType: HapticFeedbackType) {
-        
-        let hapticOn = getSettingValue(for: .hapticOn)
-        if !hapticOn {
-            return
-        }
-        
-        let hapticGenerator = UINotificationFeedbackGenerator()
-        hapticGenerator.prepare()
-        
-        
-        switch feedbackType {
-        case .placeError:
-            hapticGenerator.notificationOccurred(.error)
-        case .removeError:
-            hapticGenerator.notificationOccurred(.error)
-        case .placeSuccess:
-            hapticGenerator.notificationOccurred(.success)
-        case .removeSuccess:
-            hapticGenerator.notificationOccurred(.success)
-        case .gameOver:
-            hapticGenerator.notificationOccurred(.error)
-            hapticGenerator.notificationOccurred(.error)
-        case .win:
-            hapticGenerator.notificationOccurred(.success)
-            hapticGenerator.notificationOccurred(.success)
-            hapticGenerator.notificationOccurred(.success)
+    /// Invalidates the time
+    func stopTimer() {
+        if timer.isValid == true {
+            timer.invalidate()
         }
     }
-    
-    func playSound(_ sound: Sound) {
-             
+}
+
+// MARK: - Feedbacks
+extension GameVC {
+    /// Plays a sound
+    /// - Parameter sound: The type of the sound to play
+    func playSound(_ sound: SoundType) {
         let soundFileFullName = sound.getRawValue()
         
         let soundsOn = getSettingValue(for: .soundsOn)
@@ -2024,29 +2018,54 @@ extension GameVC {
         }
     }
     
-    // MARK: - Confetti
-    
-    func confetti() {
-        confettiEmitter.removeFromSuperlayer()
+    /// Make a haptic feedback
+    /// - Parameter feedbackType: The type of the feedback
+    func haptic(_ feedbackType: HapticFeedbackType) {
         
-        confettiEmitter = CAEmitterLayer()
-        confettiEmitter.emitterPosition = CGPoint(x: self.view.frame.size.width / 2, y: -10)
-        confettiEmitter.emitterShape = CAEmitterLayerEmitterShape.line
-        confettiEmitter.emitterSize = CGSize(width: self.view.frame.size.width, height: 2.0)
-        confettiEmitter.emitterCells = generateEmitterCells()
-
-        confettiEmitter.beginTime = CACurrentMediaTime()
+        let hapticOn = getSettingValue(for: .hapticOn)
+        if !hapticOn {
+            return
+        }
         
-        self.view.layer.addSublayer(confettiEmitter)
+        let hapticGenerator = UINotificationFeedbackGenerator()
+        hapticGenerator.prepare()
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
-            self.confettiEmitter.lifetime = 0.0
+        
+        switch feedbackType {
+        case .placeError:
+            hapticGenerator.notificationOccurred(.error)
+        case .removeError:
+            hapticGenerator.notificationOccurred(.error)
+        case .placeSuccess:
+            hapticGenerator.notificationOccurred(.success)
+        case .removeSuccess:
+            hapticGenerator.notificationOccurred(.success)
+        case .gameOver:
+            hapticGenerator.notificationOccurred(.error)
+            hapticGenerator.notificationOccurred(.error)
+        case .win:
+            hapticGenerator.notificationOccurred(.success)
+            hapticGenerator.notificationOccurred(.success)
+            hapticGenerator.notificationOccurred(.success)
         }
     }
+}
+
+
+// MARK: - Confetti
+extension GameVC {
+    /// Gets a random number
+    /// - Parameter limit: The top limit of the random number range
+    /// - Returns: The random number
+    private func getRandomNumber(_ limit: Int) -> Int {
+        return Int(arc4random_uniform(UInt32(limit)))
+    }
     
+    /// Creates confetti cells
+    /// - Returns: An array of the confetti cells
     func generateEmitterCells() -> [CAEmitterCell] {
         
-        let confettiImages:[UIImage] = [
+        let confettiImages: [UIImage] = [
             UIImage(named: "confetti-diamond.png")!,
             UIImage(named: "confetti-club.png")!,
             UIImage(named: "confetti-heart.png")!,
@@ -2054,7 +2073,7 @@ extension GameVC {
             UIImage(named: "confetti-crown.png")!
         ]
         
-        let velocities:[Int] = [
+        let velocities: [Int] = [
             100
             , 500
             , 90
@@ -2064,8 +2083,8 @@ extension GameVC {
             , 720
         ]
         
-        var cells:[CAEmitterCell] = [CAEmitterCell]()
-        for index in 0..<confettiImages.count*2 {
+        var cells: [CAEmitterCell] = [CAEmitterCell]()
+        for index in 0..<confettiImages.count * 2 {
             let cell = CAEmitterCell()
             cell.birthRate = 4.0
             cell.lifetime = 14.0
@@ -2085,84 +2104,41 @@ extension GameVC {
         return cells
     }
     
-    
-    private func getRandomNumber(_ limit: Int) -> Int {
-        return Int(arc4random_uniform(UInt32(limit)))
-    }
+    /// Throw confetti!
+    func confetti() {
+        confettiEmitter.removeFromSuperlayer()
+        
+        confettiEmitter = CAEmitterLayer()
+        confettiEmitter.emitterPosition = CGPoint(x: self.view.frame.size.width / 2, y: -10)
+        confettiEmitter.emitterShape = CAEmitterLayerEmitterShape.line
+        confettiEmitter.emitterSize = CGSize(width: self.view.frame.size.width, height: 2.0)
+        confettiEmitter.emitterCells = generateEmitterCells()
 
+        confettiEmitter.beginTime = CACurrentMediaTime()
+        
+        self.view.layer.addSublayer(confettiEmitter)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+            self.confettiEmitter.lifetime = 0.0
+        }
+    }
 }
 
 
-// MARK: - Settings and Defaults
+// MARK: - Settings
 extension GameVC {
     
+    /// Checks if a setting exists in user defaults
+    /// - Parameter settingKey: A key that represents the setting to check the data for.
+    /// - Returns: True if the setting exists, false otherwise
     func isSettingExists(settingKey: SettingKey) -> Bool {
         let currentlySavedKeys = defaults.dictionaryRepresentation().keys
         return currentlySavedKeys.contains(settingKey.getRawValue())
     }
     
-    func getViewingMode() -> OnboardingViewingMode {
-        let firstGame = !defaults.bool(forKey: "firstGamePlayed")
-        
-        if firstGame {
-            return .onboarding
-        } else {
-            return .howTo
-        }
-    }
-    
-    /**
-     Gets the setted SumMode (10/11) for the current game from the user defaults.
-     
-     - Returns: The setted SumMode
-     */
-    func getSumSetting() -> SumMode {
-        let settingKey = SettingKey.sumMode
-        let savedValue = defaults.integer(forKey: settingKey.getRawValue())
-        if savedValue == 11 {
-            return .eleven
-        } else {
-            return .ten
-        }
-    }
-    
-    func getDifficulty() -> Difficulty {
-        let settingKey = SettingKey.difficulty
-        let keyExists = isSettingExists(settingKey: settingKey)
-        
-        let defaultValue = Difficulty.default.name
-        
-        var difficultyString = defaultValue
-        
-        if keyExists {
-            difficultyString = defaults.string(forKey: settingKey.getRawValue())!
-        } else {
-            defaults.set(defaultValue, forKey: settingKey.getRawValue())
-        }
-        
-        switch difficultyString {
-        case "veryEasy":
-            return .veryEasy
-        case "easy":
-            return .easy
-        case "normal":
-            return .normal
-        case "hard":
-            return .hard
-        default:
-            return .normal
-        }
-    }
-    
-    func getSettingValue(for settingKey: SettingKey) -> Bool {
-        let keyExists = isSettingExists(settingKey: settingKey)
-        if keyExists {
-            return defaults.bool(forKey: settingKey.getRawValue())
-        } else {
-            return setDefaultSetting(for: settingKey)
-        }
-    }
-    
+    /// Sets default setting for boolean settings.
+    /// - Parameter settingKey: A key that represents the setting to set the default for.
+    /// - Returns: The default value for the settingKey
     func setDefaultSetting(for settingKey: SettingKey) -> Bool {
         var defaultValue = true
         switch settingKey {
@@ -2178,89 +2154,262 @@ extension GameVC {
         return defaultValue
     }
     
-}
-
-
-struct GameMove: CustomStringConvertible {
-    var cards: [Card]
-    var indexPaths: [IndexPath]
-    var moveType: MoveType
+    /// Gets the setted value for boolean settings. If the key doesn't exist it sets the default value for that setting and returns it.
+    /// - Parameter settingKey: A key that represents the setting to get the value for.
+    /// - Returns: The value for the settingKey
+    func getSettingValue(for settingKey: SettingKey) -> Bool {
+        let keyExists = isSettingExists(settingKey: settingKey)
+        if keyExists {
+            return defaults.bool(forKey: settingKey.getRawValue())
+        } else {
+            return setDefaultSetting(for: settingKey)
+        }
+    }
     
-    public var description: String {
-        var locationStr = ""
-        var actionStr = ""
-        var cardsStrings: [String] = [String]()
+    /// Gets the setted difficulty
+    /// - Returns: The setted difficulty
+    func getDifficulty() -> Difficulty {
+        let settingKey = SettingKey.difficulty
+        let keyExists = isSettingExists(settingKey: settingKey)
         
-        if self.moveType == .place {
-            actionStr = "Placed"
-            locationStr = "at"
-        } else if self.moveType == .remove {
-            actionStr = "Removed"
-            locationStr = "from"
-        }
-        for (card, indexPath) in zip(cards, indexPaths) {
-            cardsStrings.append("\(card) \(locationStr) \(indexPath)")
+        let defaultValue = Difficulty.default.name
+        
+        var difficultyString = defaultValue
+        
+        if keyExists {
+            difficultyString = defaults.string(forKey: settingKey.getRawValue())!
+        } else {
+            defaults.set(defaultValue, forKey: settingKey.getRawValue())
         }
         
-        return "\(actionStr) \(cardsStrings.joined(separator: ", "))"
+        return Difficulty(from: difficultyString)
+    }
+    
+    /// Gets the viewing mode for the tutorial
+    /// - Returns: Onboarding if first game, regular tutorial otherwise
+    func getViewingMode() -> OnboardingViewingMode {
+        let firstGame = !defaults.bool(forKey: "firstGamePlayed")
+        
+        if firstGame {
+            return .onboarding
+        } else {
+            return .howTo
+        }
     }
 }
 
 
-//MARK: - Levels
+// MARK: - Next card handling
 extension GameVC {
-    func configureNextCardsUI() {
+    
+    /// Requesting the next card from the deck and handles placing it (and the other next cards) in the next cards image views.
+    /// - Parameter firstCard: Whether this is the first card of the deck
+    func requestNextCard(firstCard: Bool) {
         
-        switch difficulty.numberOfNextCards {
-        case 3:
-            // Hidden?
-            nextCardImageView.isHidden = false
-            next2CardImageView.isHidden = false
-            next3CardImageView.isHidden = false
-            
-            // Location
-            nextCardImageView.transform = CGAffineTransform(translationX: 30, y: 0)
-            next2CardImageView.transform = CGAffineTransform.identity
-            next3CardImageView.transform = CGAffineTransform(translationX: -30, y: 0)
-            
-        case 2:
-            nextCardImageView.isHidden = false
-            next2CardImageView.isHidden = false
-            next3CardImageView.isHidden = true
+        if !firstCard {
+            cardsLeft = cardsLeft! - 1
+            enableOptionSpots()
+        }
 
-            // Location
-            nextCardImageView.transform = CGAffineTransform(translationX: 15, y: 0)
-            next2CardImageView.transform = CGAffineTransform(translationX: -15, y: 0)
+        switch deck.count {
+        case 0 :
+            switch nextCards.count {
+            case 0:
+                setNextCardsImages(next1ImageName: spotImageName)
+            case 1:
+                nextCards.remove(at: 0)
+            case 2:
+                nextCards.remove(at: 0)
+            case 3:
+                nextCards.remove(at: 0)
+            default:
+                return
+            }
+        // First
+        case (deckString?.count ?? 52 * 3) / 3:
+            nextCards = [deck.remove(at: 0), deck.remove(at: 0), deck.remove(at: 0)]
+                        
+            let cardsImageNames = nextCards.map { (card) -> String in
+                return card.imageName
+            }
+            
+            setNextCardsImages(next1ImageName: cardsImageNames[0], next2ImageName: cardsImageNames[1], next3ImageName: cardsImageNames[2])
 
         default:
-            nextCardImageView.isHidden = false
-            next2CardImageView.isHidden = true
-            next3CardImageView.isHidden = true
-            
-            nextCardImageView.transform = CGAffineTransform.identity
+            nextCards.remove(at: 0)
+            nextCards.append(deck.remove(at: 0))
         }
         
-
-        // Set center points
-        let point = CGPoint()
-        
-        nextCardPoint = nextCardImageView.superview?.convert(nextCardImageView.frame.origin, to: nil) ?? point
-        next2CardPoint = next2CardImageView.superview?.convert(next2CardImageView.frame.origin, to: nil) ?? point
-        next3CardPoint = next3CardImageView.superview?.convert(next3CardImageView.frame.origin, to: nil) ?? point
-        
-        // Rotation
-        nextCardImageView.transform = nextCardImageView.transform.rotated(by: getRotationForLocation(location: .nextCard))
-        next2CardImageView.transform = next2CardImageView.transform.rotated(by: getRotationForLocation(location: .next2Card))
-        next3CardImageView.transform = next3CardImageView.transform.rotated(by: getRotationForLocation(location: .next3Card))
-
-        // Add Shadows
-        nextCardImageView.addShadow(with: 1)
-        next2CardImageView.addShadow(with: 1)
-        next3CardImageView.addShadow(with: 1)
+        enableOptionSpots()
     }
     
+    /// Handles which cards will be animated.
+    func animateNextCards() {
+        if gameStatus != .placing {
+            return
+        }
+        
+        switch deck.count {
+        case 0 :
+            switch nextCards.count {
+            case ...0:
+                setNextCardsImages(next1ImageName: spotImageName)
+            //TODO: Do something like this: animateNextCards(cards: nextCards[:nextCards])
+            case 1:
+                animateNextCards(cards: [nextCards[0]])
+            case 2:
+                animateNextCards(cards: [nextCards[0], nextCards[1]])
+            case 3:
+                animateNextCards(cards: nextCards)
+            default:
+                return
+            }
+        case (deckString?.count ?? 52 * 3) / 3:
+            Utilities.log("(deckString?.count ?? 52 * 3) / 3")
+        default:
+            animateNextCards(cards: nextCards)
+        }
+    }
     
+    /// Hides the next cards when going into removal mode
+    /// - Parameter hide: True if hide, false otherwise
+    func hideNextCardsWithAnimation(hide: Bool) {
+        let placeholderCard = Card()
+        placeholderCard.imageName = spotImageName
+            
+        var nextCardsToAnimate = nextCards
+        while nextCardsToAnimate.count < 3 {
+            nextCardsToAnimate.append(placeholderCard)
+        }
+        
+        var exitFunc = !difficulty.hideNextCardsWhenRemoving
+        
+        if let cardsLeft = cardsLeft {
+            exitFunc = exitFunc || cardsLeft == 0
+        }
+        
+        if exitFunc {
+            showNextCards()
+            return
+        }
+        
+        if hide {
+            switch difficulty.numberOfNextCards {
+            case 3:
+                setNextCardsIsHidden(next1: true, next2: true, next3: true)
+                
+                animateCard(card: nextCardsToAnimate[1], from: .next2Card, to: .removedStack)
+                animateCard(card: nextCardsToAnimate[2], from: .next3Card, to: .removedStack)
+            case 2:
+                setNextCardsIsHidden(next1: true, next2: true)
+
+                animateCard(card: nextCardsToAnimate[1], from: .next2Card, to: .removedStack)
+            default:
+                setNextCardsIsHidden(next1: true)
+            }
+        } else {
+            if !nextCardImageView.isHidden { return }
+                        
+            var cardsImages : [String] = []
+            for card in nextCards {
+                cardsImages.append(card.imageName)
+            }
+            
+            while cardsImages.count < 3 {
+                cardsImages.append(spotImageName)
+            }
+                            
+            setNextCardsImages(next1ImageName: cardsImages[0], next2ImageName: cardsImages[1], next3ImageName: cardsImages[2])
+
+            switch difficulty.numberOfNextCards {
+            case 3:
+                animateCard(card: nextCardsToAnimate[2], from: .removedStack, to: .next3Card)
+                animateCard(card: nextCardsToAnimate[1], from: .removedStack, to: .next2Card)
+                animateCard(card: nextCardsToAnimate[0], from: .removedStack, to: .nextCard)
+
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+                    self.setNextCardsIsHidden(next1: false, next2: false, next3: false)
+                }
+            case 2:
+                animateCard(card: nextCardsToAnimate[1], from: .removedStack, to: .next2Card)
+                animateCard(card: nextCardsToAnimate[0], from: .removedStack, to: .nextCard)
+                
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+                    self.setNextCardsIsHidden(next1: false, next2: false)
+                }
+            default:
+                animateCard(card: nextCardsToAnimate[0], from: .removedStack, to: .nextCard)
+                
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+                    self.setNextCardsIsHidden(next1: false)
+                }
+            }
+        }
+    }
     
+    /// Sets the isHidden value of the next cards image views.
+    /// - Parameters:
+    ///   - next1: True if hide, false if show, nil if don't touch
+    ///   - next2: True if hide, false if show, nil if don't touch
+    ///   - next3: True if hide, false if show, nil if don't touch
+    func setNextCardsIsHidden(next1: Bool? = nil, next2: Bool? = nil, next3: Bool? = nil) {
+        if next1 != nil {
+            nextCardImageView.isHidden = next1!
+        }
+        if next2 != nil {
+            next2CardImageView.isHidden = next2!
+        }
+        if next3 != nil {
+            next3CardImageView.isHidden = next3!
+        }
+    }
+    
+    /// Sets the image of the next cards image views.
+    /// - Parameters:
+    ///   - next1ImageName: The image name of the wanted image, nil if don't touch
+    ///   - next2ImageName: The image name of the wanted image, nil if don't touch
+    ///   - next3ImageName: The image name of the wanted image, nil if don't touch
+    func setNextCardsImages(next1ImageName: String? = nil, next2ImageName: String? = nil, next3ImageName: String? = nil) {
+        if next1ImageName != nil {
+            nextCardImageView.image = UIImage(named: next1ImageName!)
+        }
+        if next2ImageName != nil {
+            next2CardImageView.image = UIImage(named: next2ImageName!)
+        }
+        if next3ImageName != nil {
+            next3CardImageView.image = UIImage(named: next3ImageName!)
+        }
+    }
+    
+    /// Show next cards without animation.
+    func showNextCards() {
+        
+        var cardsImages : [String] = []
+        for card in nextCards {
+            cardsImages.append("\(card.imageName)")
+        }
+        
+        while cardsImages.count < 3 {
+            cardsImages.append(spotImageName)
+        }
+
+        setNextCardsImages(next1ImageName: cardsImages[0], next2ImageName: cardsImages[1], next3ImageName: cardsImages[2])
+
+        switch difficulty.numberOfNextCards {
+        case 3:
+            setNextCardsIsHidden(next1: false, next2: false, next3: false)
+        case 2:
+            setNextCardsIsHidden(next1: false, next2: false, next3: true)
+        default:
+            setNextCardsIsHidden(next1: false, next2: true, next3: true)
+        }
+    }
+    
+    /// Animates the next cards:
+    ///     - 3rd card to 2nd place
+    ///     - 2nd card to 1st place
+    /// If the there are no card to replace the 3rd/2nd places, the spotImage is being placed (and not animated)
+    /// - Parameter cards: The cards to animate (up to 3)
     func animateNextCards(cards: [Card]) {
                 
         if gameStatus == .removing {
@@ -2298,256 +2447,53 @@ extension GameVC {
         
     }
     
-    
-    func showNextCards() {
+    /// Sets the UI of the next cards according to the numebr of next cards:
+    /// - Rotates the cards
+    /// - Moves them horizontally
+    /// - Shows/hides them
+    /// - Adds shadows
+    /// - Saves their center points
+    func configureNextCardsUI() {
         
-        var cardsImages : [String] = []
-        for card in nextCards {
-            cardsImages.append("\(card.imageName)")
-        }
-        
-        while cardsImages.count < 3 {
-            cardsImages.append(spotImageName)
-        }
-
-        nextCardImageView.image = UIImage(named: cardsImages[0])
-        next2CardImageView.image = UIImage(named: cardsImages[1])
-        next3CardImageView.image = UIImage(named: cardsImages[2])
-
         switch difficulty.numberOfNextCards {
         case 3:
-            nextCardImageView.isHidden = false
-            next2CardImageView.isHidden = false
-            next3CardImageView.isHidden = false
+            // Show cards?
+            setNextCardsIsHidden(next1: false, next2: false, next3: false)
+            
+            // Location
+            nextCardImageView.transform = CGAffineTransform(translationX: 30, y: 0)
+            next2CardImageView.transform = CGAffineTransform.identity
+            next3CardImageView.transform = CGAffineTransform(translationX: -30, y: 0)
+            
         case 2:
-            nextCardImageView.isHidden = false
-            next2CardImageView.isHidden = false
-            next3CardImageView.isHidden = true
+            setNextCardsIsHidden(next1: false, next2: false, next3: true)
+
+            // Location
+            nextCardImageView.transform = CGAffineTransform(translationX: 15, y: 0)
+            next2CardImageView.transform = CGAffineTransform(translationX: -15, y: 0)
 
         default:
-            nextCardImageView.isHidden = false
-            next2CardImageView.isHidden = true
-            next3CardImageView.isHidden = true
-        }
-        
-        
-    }
-    
-    func hideNextCards(hide: Bool) {
-        let placeholderCard = Card()
-        placeholderCard.imageName = spotImageName
-        
-        var nextCardsToAnimate = nextCards
-        while nextCardsToAnimate.count < 3 {
-            nextCardsToAnimate.append(placeholderCard)
-        }
-        
-        var exitFunc = !difficulty.hideNextCardsWhenRemoving
-        
-        if let cardsLeft = cardsLeft {
-            exitFunc = exitFunc || cardsLeft == 0
-        }
-        
-        if exitFunc {
-            showNextCards()
-            return
-        }
-        
-        if hide {
-            switch difficulty.numberOfNextCards {
-            case 3:
-                nextCardImageView.isHidden = true
-                next2CardImageView.isHidden = true
-                next3CardImageView.isHidden = true
-                
-//                animateCard(card: nextCardsToAnimate[0], from: .nextCard, to: .removedStack)
-                animateCard(card: nextCardsToAnimate[1], from: .next2Card, to: .removedStack)
-                animateCard(card: nextCardsToAnimate[2], from: .next3Card, to: .removedStack)
-            case 2:
-                nextCardImageView.isHidden = true
-                next2CardImageView.isHidden = true
+            setNextCardsIsHidden(next1: false, next2: true, next3: true)
 
-//                animateCard(card: nextCardsToAnimate[0], from: .nextCard, to: .removedStack)
-                animateCard(card: nextCardsToAnimate[1], from: .next2Card, to: .removedStack)
-            default:
-//                animateCard(card: nextCardsToAnimate[0], from: .nextCard, to: .removedStack)
-                
-                nextCardImageView.isHidden = true
-            }
-        } else {
-            if !nextCardImageView.isHidden { return }
-                        
-            var cardsImages : [String] = []
-            for card in nextCards {
-                cardsImages.append(card.imageName)
-            }
-            
-            while cardsImages.count < 3 {
-                cardsImages.append(spotImageName)
-            }
-            
-            nextCardImageView.image = UIImage(named: cardsImages[0])
-            next2CardImageView.image = UIImage(named: cardsImages[1])
-            next3CardImageView.image = UIImage(named: cardsImages[2])
-
-            switch difficulty.numberOfNextCards {
-            case 3:
-                animateCard(card: nextCardsToAnimate[2], from: .removedStack, to: .next3Card)
-                animateCard(card: nextCardsToAnimate[1], from: .removedStack, to: .next2Card)
-                animateCard(card: nextCardsToAnimate[0], from: .removedStack, to: .nextCard)
-
-                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
-                    self.nextCardImageView.isHidden = false
-                    self.next2CardImageView.isHidden = false
-                    self.next3CardImageView.isHidden = false
-                }
-            case 2:
-                animateCard(card: nextCardsToAnimate[1], from: .removedStack, to: .next2Card)
-                animateCard(card: nextCardsToAnimate[0], from: .removedStack, to: .nextCard)
-                
-                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
-                    self.nextCardImageView.isHidden = false
-                    self.next2CardImageView.isHidden = false
-                }
-            default:
-                animateCard(card: nextCardsToAnimate[0], from: .removedStack, to: .nextCard)
-                
-                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
-                    self.nextCardImageView.isHidden = false
-                }
-            }
-        }
-    }
-    
-    func oneCardLeft() {
-        let cards = [nextCards[0]]
-        animateNextCards(cards: cards)
-    }
-    
-    func twoCardsLeft() {
-        let cards = [nextCards[0], nextCards[1]]
-        animateNextCards(cards: cards)
-    }
-    
-    
-    func animateNextCards() {
-        if gameStatus != .placing {
-            return
+            nextCardImageView.transform = CGAffineTransform.identity
         }
         
-        switch deck.count {
-        case 0 :
-            switch nextCards.count {
-            case ...0:
-                nextCardImageView.image = UIImage(named: spotImageName)
-            case 1:
-                oneCardLeft()
-            case 2:
-                twoCardsLeft()
-            case 3:
-//                twoCardsLeft()
-                animateNextCards(cards: nextCards)
-            default:
-                return
-            }
-        case (deckString?.count ?? 52 * 3) / 3:
-            Utilities.log("(deckString?.count ?? 52 * 3) / 3")
-        default:
-            animateNextCards(cards: nextCards)
-        }
-    }
-    
-    
-    func requestNextCard(firstCard: Bool) {
+
+        // Set center points
+        let point = CGPoint()
         
-        if !firstCard {
-            cardsLeft = cardsLeft! - 1
-            enableOptionSpots()
-        }
-
-        switch deck.count {
-        case 0 :
-            switch nextCards.count {
-            case 0:
-                nextCardImageView.image = UIImage(named: spotImageName)
-            case 1:
-                nextCards.remove(at: 0)
-            case 2:
-                nextCards.remove(at: 0)
-            case 3:
-                nextCards.remove(at: 0)
-            default:
-                return
-            }
-        // First
-        case (deckString?.count ?? 52 * 3) / 3:
-            nextCards = [deck.remove(at: 0), deck.remove(at: 0), deck.remove(at: 0)]
-                        
-            let cardsImageNames = nextCards.map { (card) -> String in
-                return card.imageName
-            }
-            
-            nextCardImageView.image = UIImage(named: cardsImageNames[0])
-            next2CardImageView.image = UIImage(named: cardsImageNames[1])
-            next3CardImageView.image = UIImage(named: cardsImageNames[2])
-
-        default:
-            nextCards.remove(at: 0)
-            nextCards.append(deck.remove(at: 0))
-        }
+        nextCardPoint = nextCardImageView.superview?.convert(nextCardImageView.frame.origin, to: nil) ?? point
+        next2CardPoint = next2CardImageView.superview?.convert(next2CardImageView.frame.origin, to: nil) ?? point
+        next3CardPoint = next3CardImageView.superview?.convert(next3CardImageView.frame.origin, to: nil) ?? point
         
-        enableOptionSpots()
-    }
-    
-}
+        // Rotation
+        nextCardImageView.transform = nextCardImageView.transform.rotated(by: getRotationForLocation(location: .nextCard))
+        next2CardImageView.transform = next2CardImageView.transform.rotated(by: getRotationForLocation(location: .next2Card))
+        next3CardImageView.transform = next3CardImageView.transform.rotated(by: getRotationForLocation(location: .next3Card))
 
-
-extension UIView {
-    func addShadow(with radius: CGFloat) {
-        
-        let shadowWorksProperly = false
-        
-        if !shadowWorksProperly {
-            return
-        }
-
-        self.layer.masksToBounds = false
-        self.layer.shadowColor = UIColor.black.cgColor
-        self.layer.shadowOpacity = 0.5
-        self.layer.shadowOffset = CGSize(width: -1, height: 1)
-        self.layer.shadowRadius = radius
-
-        self.layer.shadowPath = UIBezierPath(rect: bounds).cgPath
+        // Add Shadows
+        nextCardImageView.addShadow(with: 1)
+        next2CardImageView.addShadow(with: 1)
+        next3CardImageView.addShadow(with: 1)
     }
 }
-
-extension UIImage {
-    func rotate(radians: CGFloat) -> UIImage {
-        let rotatedSize = CGRect(origin: .zero, size: size)
-            .applying(CGAffineTransform(rotationAngle: CGFloat(radians)))
-            .integral.size
-        UIGraphicsBeginImageContext(rotatedSize)
-        if let context = UIGraphicsGetCurrentContext() {
-            let origin = CGPoint(x: rotatedSize.width / 2.0,
-                                 y: rotatedSize.height / 2.0)
-            context.translateBy(x: origin.x, y: origin.y)
-            context.rotate(by: radians)
-            draw(in: CGRect(x: -origin.y, y: -origin.x,
-                            width: size.width, height: size.height))
-            let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-
-            return rotatedImage ?? self
-        }
-
-        return self
-    }
-}
-
-
-//extension UIStackView {
-//    override open func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-//        let frame = self.bounds.insetBy(dx: -30, dy: -30);
-//        return frame.contains(point) ? self : nil;
-//    }
-//}
