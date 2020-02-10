@@ -244,6 +244,7 @@ struct Difficulty: CustomStringConvertible {
     let numberOfNextCards: Int
     let hideNextCardsWhenRemoving: Bool
     let removeAnytime: Bool
+    let canWinWithCardsAtTheCenter: Bool
     
     init(
         name: String,
@@ -252,7 +253,8 @@ struct Difficulty: CustomStringConvertible {
         doneRemovingAnytime: Bool,
         numberOfNextCards: Int,
         hideNextCardsWhenRemoving: Bool = true,
-        removeAnytime: Bool = false
+        removeAnytime: Bool = false,
+        canWinWithCardsAtTheCenter: Bool = true
         ) {
         self.name = name
         self.sumMode = sumMode
@@ -261,6 +263,7 @@ struct Difficulty: CustomStringConvertible {
         self.numberOfNextCards = numberOfNextCards
         self.hideNextCardsWhenRemoving = hideNextCardsWhenRemoving
         self.removeAnytime = removeAnytime
+        self.canWinWithCardsAtTheCenter = canWinWithCardsAtTheCenter
     }
     
     init(from string: String) {
@@ -272,6 +275,7 @@ struct Difficulty: CustomStringConvertible {
         var numberOfNextCards = defaultDifficuly.numberOfNextCards
         var hideNextCardsWhenRemoving = defaultDifficuly.hideNextCardsWhenRemoving
         var removeAnytime = defaultDifficuly.removeAnytime
+        var canWinWithCardsAtTheCenter = defaultDifficuly.canWinWithCardsAtTheCenter
         
         let allOptions = Difficulty.allOptions
         for difficultyOption in allOptions {
@@ -283,6 +287,7 @@ struct Difficulty: CustomStringConvertible {
                 numberOfNextCards = difficultyOption.numberOfNextCards
                 hideNextCardsWhenRemoving = difficultyOption.hideNextCardsWhenRemoving
                 removeAnytime = difficultyOption.removeAnytime
+                canWinWithCardsAtTheCenter = difficultyOption.canWinWithCardsAtTheCenter
             }
         }
         
@@ -293,7 +298,7 @@ struct Difficulty: CustomStringConvertible {
         self.numberOfNextCards = numberOfNextCards
         self.hideNextCardsWhenRemoving = hideNextCardsWhenRemoving
         self.removeAnytime = removeAnytime
-
+        self.canWinWithCardsAtTheCenter = canWinWithCardsAtTheCenter
     }
     
     var description: String {

@@ -20,7 +20,6 @@ public let cardAnimationDuration : Double = 0.2
 
 
 
-public var secondsPassed : Int = 0
 public var gameFinished : Bool = false
 //public var gameRemovalWhenFull : Bool = false
 

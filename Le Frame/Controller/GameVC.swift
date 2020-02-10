@@ -49,7 +49,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // Game Data
     var model = CardModel()
     var deck = [Card]()
-
+    
     var nextCards : [Card] = [Card]()
     var firstSelectedCardIndexPath: IndexPath?
     var secondSelectedCardIndexPath: IndexPath?
@@ -80,10 +80,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var statsAdded : Bool = false
     
     // Timer
-//    var timer: Timer?
-    
     var timer: Timer = Timer()
-//    var secondsPassed: Int = 0
+    var secondsPassed: Int = 0
     
     // Settings
     let defaults = UserDefaults.standard
@@ -121,7 +119,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         updateUI()
         addRemovalButtonsRecognizer()
         
-//        startNewGame()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -149,62 +146,26 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    
+    /// Sets the view controller as the delegate of other controllers.
     func setDelegates() {
         spotsCollectionView.delegate = self
         spotsCollectionView.dataSource = self
         tabBar.delegate = self
     }
     
-    // MARK: - UI Functions
-    
-    /**
-     Gathers all UI functions for initializing the views
-     */
+
+}
+
+// MARK: - UI
+extension GameVC {
+    /// Gathers all UI functions for initializing the views
     func updateUI() {
         updateViews()
         updateTabBarUI()
         updateRemoveLabelsUI()
     }
     
-    func updateRemoveLabelsUI() {
-        let radius = removeLabelsBackground.frame.width / 2
-        removeLabelsBackground.roundCorners([.allCorners], radius: radius)
-        removeLabelsBackground.backgroundColor = .black
-        removeLabelsBackground.alpha = 0.7
-        
-//        removeLabelsBackground.layer.borderWidth = 4
-        removeLabelsBackground.layer.borderColor = UIColor.white.cgColor
-//        removeLabelsBackground.layer.border
-        
-        removalSumLabel.textColor = .white
-        removalSumLabel.layer.zPosition = 4
-        removalSumTitleLabel.textColor = .white
-        removalSumTitleLabel.layer.zPosition = 4//.alpha = 1
-    }
-    
-    func enableRemoveButton(enable: Bool) {
-        removeBtn.isEnabled = enable
-        removeIcon.alpha = enable ? 1 : 0.5
-        removeIcon.isUserInteractionEnabled = enable
-        removeAreaStackView.isUserInteractionEnabled = enable
-    }
-    
-    func addRemovalButtonsRecognizer() {
-        let removeGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(removePressed(_:)))
-        removeIcon.addGestureRecognizer(removeGestureRecognizer)
-        removeAreaStackView.addGestureRecognizer(removeGestureRecognizer)
-
-        let doneRemovingGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(doneRemovingPressed(_:)))
-        doneRemovingIcon.addGestureRecognizer(doneRemovingGestureRecognizer)
-        doneRemovingAreaStackView.addGestureRecognizer(doneRemovingGestureRecognizer)
-
-    }
-    
-    
-    /**
-     Updates the appearance of the spots grid and the bottom view.
-     */
+    /// Updates the appearance of the spots grid and the bottom view.
     func updateViews() {
         let totalContentHeight = bottomView.frame.height + spotsCollectionView.frame.height
         let contentRowHeight = totalContentHeight / 5
@@ -232,95 +193,16 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         removeIcon.tintColor = .white
 
     }
-    
-    
-    /**
-     Updates the TabBar UI
-     */
-    func updateTabBarUI() {
-        tabBar.layer.borderWidth = 0.5
-        tabBar.layer.borderColor = UIColor.clear.cgColor
-        tabBar.clipsToBounds = true
-        
-        tabBar.backgroundColor = UIColor.clear
-        
-        // Changing the tabBar items' color to black
-        for item in tabBar.items! {
-            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.white], for: .normal)
-        }
-    }
-    
-    /**
-     Switches between showing and hiding the removal mode UI
-     
-     - Parameter show: True if show removal mode UI, false otherwise
-     */
-    func showRemovalUI(show: Bool) {
-        doneRemovingBtn.isHidden = !show
-        doneRemovingIcon.isHidden = !show
-        removeIcon.isHidden = !show
-        removeBtn.isHidden = !show
-        enableRemoveButton(enable: false)
-        enableDoneRemovingButton(enable: false)
-//        removalSumLabel.isHidden = !show
-//        removalSumTitleLabel.isHidden = !show
-        removeLabelsView.isHidden = !show
-        removalSumLabel.adjustsFontSizeToFitWidth = true
-        removalSumLabel.minimumScaleFactor = 0.2
-        
-        hideNextCardsWithAnimation(hide: show)
-        
-        if show {
-            enableOptionCards(forCardAt: nil)
-        }
-        
-//        if show {
-//            nextCardImageView.image = UIImage(named: spotImageName)
-//        }
-    }
-    
-    /**
-     Enables the Done Removing button
-     */
-    func enableDoneRemovingButton(enable: Bool) {
-        
-        var shouldEnableBySetting = false
-        
-//        let doneRemovingAnytime = getSettingValue(for: .doneRemovingAnytime)
-        
-        if difficulty.doneRemovingAnytime {
-            if !isBoardFull() {
-                shouldEnableBySetting = true
-            }
-        } else if !checkForPairs(){
-            shouldEnableBySetting = true
-        }
-        
-        let finalDecision = shouldEnableBySetting && enable
-        
-        doneRemovingBtn.isEnabled = finalDecision
-        doneRemovingIcon.alpha = finalDecision ? 1 : 0.5
-        doneRemovingIcon.isUserInteractionEnabled = finalDecision
-        doneRemovingAreaStackView.isUserInteractionEnabled = finalDecision
-    }
-    
-    // MARK: - Game Flow
-    
-    
-    
-    
-    
-    
-    
-    // MARK: - IBActions
-    
+}
+
+
+// MARK: - TabBar
+extension GameVC {
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         switch item.tag {
         case 1:
             
-//            let settingsVC = NewSettingsVC()
-//            settingsVC.gameDifficulty = difficulty
-            
+            // Prepare for segue is called before performing the segue so the difficulty is passed to the NewSettingsVC
             performSegue(withIdentifier: "goToSettings", sender: nil)
         case 2:
             if isGameWon() {
@@ -348,83 +230,23 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
     }
     
-    /** Called when **Remove** button is pressed.
-     The function checks whether one card or two cards are selected, and removes them if they are summed to 10 or 11 (depending on the mode).
-    */
-    @IBAction func removePressed(_ sender: Any) {
-        // Validity checks (no index paths, same index path)
-        // TODO: maybe change ifs to if lets
+    /// Updates the TabBar UI
+    func updateTabBarUI() {
+        tabBar.layer.borderWidth = 0.5
+        tabBar.layer.borderColor = UIColor.clear.cgColor
+        tabBar.clipsToBounds = true
         
-        // Option 1 - Only one card is selected
-        if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath == nil {
-            let firstCardCell = getSpot(at: firstSelectedCardIndexPath!)
-            let firstCard = firstCardCell.card!
-            // If the card is 10 - remove
-            if difficulty.sumMode == .ten && firstCard.rank! == .ten {
-                removeCards(at: [firstSelectedCardIndexPath!])
-            } else {
-                haptic(.removeError)
-                Toast.show(message: "Can't remove cards that don't sum to \(difficulty.sumMode.getRawValue())", controller: self)
-            }
-        // Option 2 - Two cards are selected
-        } else if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath != nil {
-            let firstCardCell = getSpot(at: firstSelectedCardIndexPath!)
-            let firstCard = firstCardCell.card!
-            
-            let secondCardCell = getSpot(at: secondSelectedCardIndexPath!)
-            let secondCard = secondCardCell.card!
-            
-            // If the cards match - remove
-            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == difficulty.sumMode.getRawValue() {
-                removeCards(at: [firstSelectedCardIndexPath!, secondSelectedCardIndexPath!])
-            } else {
-                haptic(.removeError)
-                Toast.show(message: "Can't remove cards that don't sum to \(difficulty.sumMode.getRawValue())", controller: self)
-            }
+        tabBar.backgroundColor = UIColor.clear
+        // Changing the tabBar items' color to black
+        for item in tabBar.items! {
+            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.white], for: .normal)
         }
-                
-        resetCardIndexes()
-        
-        markCardAsSelected(at: nil)
-        enableOptionCards(forCardAt: nil)
-        
-        finishedRemovingCard()
-    }
-    
-    func removeCards(at indexPaths: [IndexPath]) {
-        var newlyRemovedCards = [Card]()
-        var cardsLocations = [IndexPath]()
-        
-        for indexPath in indexPaths {
-            let spot = getSpot(at: indexPath)
-            let card = spot.card!
-            playSound(.removeCard)
-            haptic(.removeSuccess)
-            newlyRemovedCards.append(card)
-            cardsLocations.append(indexPath)
-            spot.removeCard()
-        }
-        
-        enableRemoveButton(enable: false)
-        enableDoneRemovingButton(enable: true)
-        
-        let move = GameMove(cards: newlyRemovedCards, indexPaths: cardsLocations, moveType: .remove)
-        moves.append(move)
-    }
-    
-    
-    /** Called when **Done** button is pressed.
-     Switches between removing and placing game modes and deselects all cards.
-     */
-    @IBAction func doneRemovingPressed(_ sender: Any) {
-        finishedPlacingCard(cardPlaced: false)
-        
-        markCardAsSelected(at: nil)
-        enableOptionSpots()
     }
 
-    // MARK: - CollectionView Methods
+}
 
+// MARK: - CollectionView
+extension GameVC {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 4
     }
@@ -433,6 +255,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return 4
     }
     
+    /// Creates the spot for a specific IndexPath.
+    /// - Parameters:
+    ///   - collectionView: The spots' collection view
+    ///   - indexPath: The spot's location
+    /// - Returns: A cell of type CardCollectionViewCell
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let spot = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath) as! CardCollectionViewCell
         spot.initializeSpot(with: nil, at: indexPath)
@@ -440,7 +267,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return spot
     }
     
-    // didSelectCard
+    /// Calls when a spot was tapped. Acts differently based on the game status (placing, removing, game over, win).
+    /// - Parameters:
+    ///   - collectionView: The spots collection view
+    ///   - indexPath: The selected spot's IndexPath
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
                 
         switch gameStatus {
@@ -460,48 +290,67 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        
-//        let totalCardWidth: CGFloat = cardWidth * 4
-//        let gridWidth = collectionView.frame.width
-//        let spacing: CGFloat = (gridWidth - (4 * cardWidth)) / 4
-//        let totalSpacingWidth: CGFloat = spacing * (4 - 1)
-        
+                
         let edgeInsets = (self.view.frame.size.width - (4 * cardWidth)) / (4 + 1)
         
         return UIEdgeInsets(top: 5.0, left: edgeInsets, bottom: 5.0, right: edgeInsets)
-
     }
     
+    /// Calculates the size of each spot.
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-//        let gridWidth = collectionView.frame.width
-//        let spacing = (gridWidth - (4 * cardWidth)) / 4
-        
+                
         cardHeight = collectionView.frame.height / 4 - 10
         cardWidth = cardHeight / 3 * 2
-        
 
         return CGSize(width: cardWidth, height: cardHeight)
     }
-    
-    // MARK: - Spots Handling and Interface Methods
 
+}
+
+// MARK: - Animating
+extension GameVC {
+    /// Animates a card from a spot to another spot
+    /// - Parameters:
+    ///   - card: The card to animate
+    ///   - origin: The origin spot's IndexPath
+    ///   - destination: The destination spot's IndexPath
     func animateCard(card: Card, from origin: IndexPath, to destination: IndexPath) {
         animateCard(card: card, from: origin as Any, to: destination as Any)
     }
     
+    /// Animates a card from a spot to a different location (next cards / removed stack)
+    /// - Parameters:
+    ///   - card: The card to animate
+    ///   - origin: The origin spot's IndexPath
+    ///   - destination: The destination location
     func animateCard(card: Card, from origin: IndexPath, to destination: CardAnimationLocation) {
         animateCard(card: card, from: origin as Any, to: destination as Any)
     }
     
+    /// Animates a card from a location (next cards / removed stack) to a spot
+    /// - Parameters:
+    ///   - card: The card to animate
+    ///   - origin: The origin location
+    ///   - destination: The destination spot's IndexPath
     func animateCard(card: Card, from origin: CardAnimationLocation, to destination: IndexPath) {
         animateCard(card: card, from: origin as Any, to: destination as Any)
     }
     
+    /// Animates a card from a location (next cards / removed stack) to another location
+    /// - Parameters:
+    ///   - card: The card to animate
+    ///   - origin: The origin location
+    ///   - destination: The destination location
     func animateCard(card: Card, from origin: CardAnimationLocation, to destination: CardAnimationLocation) {
         animateCard(card: card, from: origin as Any, to: destination as Any)
     }
+
     
+    /// Animates a card from a location/spot to a location/spot by creating a new image view and move it from origin to destination.
+    /// - Parameters:
+    ///   - card: The card to animate
+    ///   - origin: The origin of the card
+    ///   - destination: The destination of the card
     func animateCard(card: Card, from origin: Any, to destination: Any) {
 
         allowPlacing = false
@@ -513,7 +362,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         let tempImageView = UIImageView(image: UIImage(named: card.imageName))
 
         // Apply origin properties to imageView
-        tempImageView.frame = originFrame        
+        tempImageView.frame = originFrame
         
         var destinationTransform = CGAffineTransform.identity
 
@@ -563,33 +412,14 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    func getRotationForLocation(location: CardAnimationLocation) -> CGFloat {
-        
-        switch difficulty.numberOfNextCards {
-        case 3:
-            switch location {
-            case .nextCard:
-                return 0.2
-            case .next3Card:
-                return -0.2
-            default:
-                return 0
-            }
-        case 2:
-            switch location {
-            case .nextCard:
-                return 0.2
-            case .next2Card:
-                return -0.2
-            default:
-                return 0
-            }
-        default:
-            return 0
-        }
-    }
-    
-        
+    /// Gets the frame for a location.
+    ///
+    /// Possible locations:
+    /// * IndexPath - The frame of the spot at the index path
+    /// * Next 1/2/3 card
+    /// * Removed cards stack (outside of screen)
+    /// - Parameter location: The location to get the frame of. Should be of type IndexPath or CardAnimationLocation.
+    /// - Returns: The frame of the location.
     func getFrame(for location: Any) -> CGRect {
 
         var point : CGPoint = CGPoint()
@@ -624,163 +454,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return rect
         
     }
-    
-    
-    /**
-     Shows alert for game ends (win/lose) with *OK* and *Restart* actions.
-     
-     - Parameter title: The title of the alert
-     - Parameter message: The message of the alert
-     */
-    func showAlert(title: String, message: String, dismissText: String, confirmText: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+}
 
-        let restartAction = UIAlertAction(title: confirmText, style: .default) { (action) in
-            self.stopTimer()
-            self.restartAfter = true
-            self.addStats()
-            self.startNewGame()
-        }
-        let okAction = UIAlertAction(title: dismissText, style: .cancel, handler: nil)
-
-        alert.addAction(okAction)
-        alert.addAction(restartAction)
-
-        present(alert, animated: true, completion: nil)
-    }
-    
-    func newGame() {
-        //TODO: Make it a new game
-        stopTimer()
-        startNewGame()
-    }
-    
-    /**
-     Changes the game status, changes the UI accordingly and calls functions that acts according to the new game status.
-     
-     - Parameter status: The game status to set
-     */
-    func setGameStatus(status: GameStatus) {
-        gameStatus = status
-        switch status {
-        case .placing:
-            showRemovalUI(show: false)
-        case .removing:
-            showRemovalUI(show: true)
-        case .gameOver:
-            showRemovalUI(show: false)
-            gameFinished = true
-            gameOver(toAddStats: true)
-        case .won:
-            showRemovalUI(show: false)
-            gameFinished = true
-            gameWon(toAddStats: true)
-        }
-    }
-    
-    
-    func resetCardIndexes() {
-        firstSelectedCardIndexPath = nil
-        secondSelectedCardIndexPath = nil
-    }
-    
-    func isNextCardBlocked() -> Bool {
-        if cardsLeft == 0 {
-            return false
-        }
-        
-        if let nextCardRank = nextCards[0].rank {
-            if nextCardRank == .jack && jacksAvailable == 0 {
-                return true
-            } else if nextCardRank == .queen && queensAvailable == 0{
-                return true
-            } else if nextCardRank == .king && kingsAvailable == 0 {
-                return true
-            } else {
-                return false
-            }
-        } else {
-            return false
-        }
-    }
-    
-    func finishedPlacingCard(cardPlaced: Bool) {
-        
-        checkAvailability()
-        
-        
-        let boardFull = isBoardFull()
-        let cardsToRemove = checkForPairs()
-        let nextCardIsBlocked = isNextCardBlocked()
-        
-        updateCardsLeftLabel()
-        
-        if boardFull {
-            if cardsToRemove {
-                setGameStatus(status: .removing)
-            } else {
-                setGameStatus(status: .gameOver)
-            }
-        } else if nextCardIsBlocked {
-            setGameStatus(status: .gameOver)
-        } else if gameStatus == .removing {
-            setGameStatus(status: .placing)
-        } else if cardsLeft == 0 {
-            setGameStatus(status: .removing)
-        }
-        
-        if isGameWon() {
-            setGameStatus(status: .won)
-        }
-        
-        if cardPlaced {
-            animateNextCards()
-        }
-    }
-    
-    /**
-     Handles what happens after pressed remove.
-     The function checks if it is the case of a full frame with middle cards that can't be removed (whilst no more cards in the deck) and if so it sets the game as over.
-     */
-    func finishedRemovingCard() {
-        
-        let cardsToRemove = getCardsToRemove()
-
-        if cardsToRemove.count == 0 {
-            Toast.show(message: "No more cards to remove. Tap done", controller: self)
-        }
-        
-        let cardsAtCenter = getEmptySpots(atCenter: true)
-        
-        if let cardsLeft = cardsLeft {
-            if cardsLeft == 0 && cardsToRemove.count == 0 && cardsAtCenter.count != 4 {
-                setGameStatus(status: .gameOver)
-                setNextCardsImages(next1ImageName: spotImageName, next2ImageName: nil, next3ImageName: nil)
-            } else {
-            }
-        }
-    }
-
-    func removeAllCards() {
-        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            spot.removeCard()
-        }
-    }
-    
-    func markCardAsSelected(at indexPath: IndexPath?) {
-        if let indexPath = indexPath {
-            if let spot = spotsCollectionView.cellForItem(at: indexPath) as? CardCollectionViewCell {
-                spot.mark(as: .selected, on: true)
-            }
-        } else {
-            for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-                if spot.isSpotSelected {
-                    spot.mark(as: .selected, on: false)
-                }
-            }
-        }
-    }
-    
+// MARK: - Highlighting
+extension GameVC {
+    /// Enables (highlights) all empty spots that are available for the next card.
     func enableOptionSpots() {
         let settingIsOn = getSettingValue(for: .highlightAvailableMoves)
         
@@ -819,7 +497,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    
+    /// Enables (highlights) option cards for a card.
+    /// - Parameters:
+    ///   - indexPath: The card's index path. If nil, disable all cards except for specific conditions
+    ///   - enableAll: True if enable all cards, false otherwise
     func enableOptionCards(forCardAt indexPath: IndexPath?, enableAll: Bool = false) {
         let settingIsOn = getSettingValue(for: .highlightAvailableMoves)
         let selectedCards = getSelectedIndexPaths(selected: true)
@@ -837,7 +518,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         // Option 2 - Disable all cards that can't be paired with another card | When setting is on & no indexPath & no cards are selected
         if settingIsOn && !enableAll && indexPath == nil && selectedCards.count == 0 {
             cardsToEnable = getCardsToRemove(false)
-            
         }
         
         // Option 3 - Disable all cards that are not selected | When setting is on & no indexPath & 2 cards are selected
@@ -864,13 +544,41 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
+    /// Gets the index paths of the spots that have cards
+    /// - Parameter placed: Whether to get all placed spots or empty spots
+    /// - Returns: The spots' index paths
+    func getPlacedIndexPaths(placed: Bool) -> [IndexPath] {
+        var indexPaths: [IndexPath] = []
+        for spot in getAllSpots() {
+            if spot.isEmpty != placed {
+                indexPaths.append(spot.indexPath!)
+            }
+        }
+        return indexPaths
+    }
+
+    /// Gets the index paths of the spots that are selected
+    /// - Parameter placed: Whether to get all selected spots or not selected spots
+    /// - Returns: The spots' index paths
+    func getSelectedIndexPaths(selected: Bool) -> [IndexPath] {
+        var indexPaths: [IndexPath] = []
+        for spot in getAllSpots() {
+            if spot.isSpotSelected == selected {
+                indexPaths.append(spot.indexPath!)
+            }
+        }
+        return indexPaths
+    }
     
+    /// Gets the cards that can be pairs with a certain card for removal.
+    /// - Parameter indexPath: The card's index path
+    /// - Returns: The index paths of the cards that can be paired.
     func getCardsToPairWith(cardAt indexPath: IndexPath) -> [IndexPath] {
         let selectedSpot = getSpot(at: indexPath)
         let selectedCard = selectedSpot.card!
         var optionsIndexPaths: [IndexPath] = []
         
-        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+        for spot in getAllSpots() {
             if let card = spot.card {
                 if selectedCard.rank!.getRawValue() + card.rank!.getRawValue() == difficulty.sumMode.getRawValue() {
                     let indexPathToAdd = spot.indexPath!
@@ -884,106 +592,90 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return optionsIndexPaths
     }
     
-    
-    func getSelectedIndexPaths(selected: Bool) -> [IndexPath] {
-        var indexPaths: [IndexPath] = []
-        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if spot.isSpotSelected == selected {
-                indexPaths.append(spot.indexPath!)
-            }
-        }
-        return indexPaths
+}
+
+// MARK: - UI
+extension GameVC {
+    /// Updates the cards left label with the current value
+    func updateCardsLeftLabel() {
+        cardsLeftLabel.text = "CARDS LEFT: \(cardsLeft ?? 0)"
     }
     
-    func getPlacedIndexPaths(placed: Bool) -> [IndexPath] {
-        var indexPaths: [IndexPath] = []
-        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if spot.isEmpty != placed {
-                indexPaths.append(spot.indexPath!)
+    /// Gets how much rotation the next cards need to have, depending on the number of next cards to display.
+    /// - Parameter location: The location to get the rotation for
+    /// - Returns: The rotation angle
+    func getRotationForLocation(location: CardAnimationLocation) -> CGFloat {
+        
+        let rotationAngle: CGFloat = 0.2
+        
+        switch difficulty.numberOfNextCards {
+        case 3:
+            switch location {
+            case .nextCard:
+                return rotationAngle
+            case .next3Card:
+                return -rotationAngle
+            default:
+                return 0
             }
+        case 2:
+            switch location {
+            case .nextCard:
+                return rotationAngle
+            case .next2Card:
+                return -rotationAngle
+            default:
+                return 0
+            }
+        default:
+            return 0
         }
-        return indexPaths
+    }
+
+}
+
+// MARK: - Placing Functions
+extension GameVC {
+    
+    // TODO: Rename function? It's also called when done removing.
+    /// Called when a card was placed or when done removing. It checks if game mode needs to be changed.
+    /// - Parameter cardPlaced: Whether a card was placed or not (to know if to animate the next cards)
+    func finishedPlacingCard(cardPlaced: Bool) {
+        
+        checkAvailability()
+        
+        let boardFull = isBoardFull()
+        let cardsToRemove = getCardsToRemove().count > 0
+        let nextCardIsBlocked = isNextCardBlocked()
+        
+        updateCardsLeftLabel()
+        
+        if boardFull {
+            if cardsToRemove {
+                setGameStatus(status: .removing)
+            } else {
+                setGameStatus(status: .gameOver)
+            }
+        } else if nextCardIsBlocked {
+            setGameStatus(status: .gameOver)
+        } else if gameStatus == .removing {
+            setGameStatus(status: .placing)
+        } else if cardsLeft == 0 {
+            setGameStatus(status: .removing)
+        }
+        
+        if isGameWon() {
+            setGameStatus(status: .won)
+        }
+        
+        if cardPlaced {
+            animateNextCards()
+        }
     }
     
-
-//    func markOptionCards(forCardAt indexPath: IndexPath? = nil, shouldMark: Bool = true) {
-//        var shouldMark: Bool = shouldMark
-//        var optionsIndexPaths = [IndexPath]()
-//        var markType: CardMarkEvent = .disabledForRemoving
-//
-//        if let indexPath = indexPath {
-//            markType = .disabledForRemoving
-//
-//            let selectedCell = spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
-//            let selectedCard = selectedCell.card!
-//
-//
-//            // Finding spots to "disable" for a specific selected card
-//            for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-//                if let card = cell.card {
-//                    if selectedCard.rank!.getRawValue() + card.rank!.getRawValue() != difficulty.sumMode.getRawValue() {
-//                        let indexPathToAdd = cell.indexPath!
-//                        if indexPathToAdd != indexPath {
-//                            optionsIndexPaths.append(cell.indexPath!)
-//                        }
-//                    }
-//                }
-//            }
-//
-//            // TODO: Make it to be only in case that the setting is on
-//            shouldMark = true
-//        } else {
-//            if gameStatus == .placing {
-//                markType = .disabledForPlacing
-//
-//                if nextCards.count < 1 {
-//                    return
-//                }
-//
-//                if let nextCardRank = nextCards[0].rank {
-//                    let allSpotsForRank = Utilities.getSpots(forRank: nextCardRank, overlapping: true)
-//
-//                    for spotIndexPath in allSpotsForRank {
-//                        let optionCell = spotsCollectionView.cellForItem(at: spotIndexPath) as! CardCollectionViewCell
-//                        if !optionCell.isEmpty {
-//                            optionsIndexPaths.append(spotIndexPath)
-//                        }
-//                    }
-//
-//                } else {
-//                    return
-//                }
-//            } else {
-//                markType = .disabledForRemoving
-//                shouldMark = false
-//            }
-//        }
-//
-//        if shouldMark && getSettingValue(for: .markSpots) {
-//            for optionIndexPath in optionsIndexPaths {
-//                let optionCell = spotsCollectionView.cellForItem(at: optionIndexPath) as! CardCollectionViewCell
-//                optionCell.mark(as: markType, on: true)
-//            }
-//        } else {
-//
-//            // Marking all cells as enables
-//            for cell in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-//                cell.mark(as: markType, on: false)
-//            }
-//        }
-//    }
-
-    // MARK: - Game Logic Functions
-
-    // Game Logic
-    
-    
-    /**
-     Checks if the card can be put at the spot and does it if so.
-     - Parameter indexPath: The spot's IndexPath
-     
-     - Returns: True if the card was placed, false otherwise
-     */
+    /// Checks if the next card can be put at the spot and does it if so.
+    /// - Parameter indexPath: The spot's IndexPath
+    /// - Returns: True if the card was placed, false otherwise
     func placeCard(at indexPath: IndexPath) -> Bool {
         
         if nextCards.count < 1 {
@@ -1052,17 +744,200 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         return false
     }
+
+}
+
+// MARK: - Removal Functions
+extension GameVC {
+    
+    /// Sets the remove screen labels & background UI
+    func updateRemoveLabelsUI() {
+        // TODO: Make it consistent with all screen sizes
+        let radius = removeLabelsBackground.frame.width / 2
+        removeLabelsBackground.roundCorners([.allCorners], radius: radius)
+        removeLabelsBackground.backgroundColor = .black
+        removeLabelsBackground.alpha = 0.7
+        
+        removeLabelsBackground.layer.borderColor = UIColor.white.cgColor
+        
+        removalSumLabel.textColor = .white
+        removalSumLabel.layer.zPosition = 4
+        removalSumTitleLabel.textColor = .white
+        removalSumTitleLabel.layer.zPosition = 4//.alpha = 1
+    }
+    
+    /// Enables/Disable the Remove button
+    /// - Parameter enable: True if enable, false if disable
+    func enableRemoveButton(enable: Bool) {
+        removeBtn.isEnabled = enable
+        removeIcon.alpha = enable ? 1 : 0.5
+        removeIcon.isUserInteractionEnabled = enable
+        removeAreaStackView.isUserInteractionEnabled = enable
+    }
+    
+    /// Adds gesture recognizer to removal screen buttons so they will react to taps.
+    func addRemovalButtonsRecognizer() {
+        let removeGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(removePressed(_:)))
+        removeIcon.addGestureRecognizer(removeGestureRecognizer)
+        removeAreaStackView.addGestureRecognizer(removeGestureRecognizer)
+
+        let doneRemovingGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(doneRemovingPressed(_:)))
+        doneRemovingIcon.addGestureRecognizer(doneRemovingGestureRecognizer)
+        doneRemovingAreaStackView.addGestureRecognizer(doneRemovingGestureRecognizer)
+
+    }
+    
+    /// Switches between showing and hiding the removal mode UI
+    /// - Parameter show: True if show removal mode UI, false otherwise
+    func showRemovalUI(show: Bool) {
+        doneRemovingBtn.isHidden = !show
+        doneRemovingIcon.isHidden = !show
+        removeIcon.isHidden = !show
+        removeBtn.isHidden = !show
+        enableRemoveButton(enable: false)
+        enableDoneRemovingButton(enable: false)
+        removeLabelsView.isHidden = !show
+        removalSumLabel.adjustsFontSizeToFitWidth = true
+        removalSumLabel.minimumScaleFactor = 0.2
+        
+        hideNextCardsWithAnimation(hide: show)
+        
+        if show {
+            enableOptionCards(forCardAt: nil)
+        }
+    }
+    
+    /// Enables/Disable the Done Removing button
+    /// - Parameter enable: True if enable, false if disable
+    func enableDoneRemovingButton(enable: Bool) {
+        
+        var shouldEnableBySetting = false
+        let cardsToRemove = getCardsToRemove()
+        
+        if difficulty.doneRemovingAnytime {
+            if !isBoardFull() {
+                shouldEnableBySetting = true
+            }
+        } else if cardsToRemove.count == 0 {
+            shouldEnableBySetting = true
+        }
+        
+        let finalDecision = shouldEnableBySetting && enable
+        
+        doneRemovingBtn.isEnabled = finalDecision
+        doneRemovingIcon.alpha = finalDecision ? 1 : 0.5
+        doneRemovingIcon.isUserInteractionEnabled = finalDecision
+        doneRemovingAreaStackView.isUserInteractionEnabled = finalDecision
+    }
     
     
-    /**
-     Checks what card are already selected and selects/deselects accordingly.
-     
-     - Parameter indexPath: The tapped spot's IndexPath
-     */
+    /// Called when **Remove** button is pressed.
+    /// The function checks whether one card or two cards are selected, and removes them if they are summed to 10 or 11 (depending on the mode).
+    @IBAction func removePressed(_ sender: Any) {
+        // Validity checks (no index paths, same index path)
+        // TODO: maybe change ifs to if lets
+        
+        // Option 1 - Only one card is selected
+        if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath == nil {
+            let firstCardCell = getSpot(at: firstSelectedCardIndexPath!)
+            let firstCard = firstCardCell.card!
+            // If the card is 10 - remove
+            if difficulty.sumMode == .ten && firstCard.rank! == .ten {
+                removeCards(at: [firstSelectedCardIndexPath!])
+            } else {
+                haptic(.removeError)
+                Toast.show(message: "Can't remove cards that don't sum to \(difficulty.sumMode.getRawValue())", controller: self)
+            }
+        // Option 2 - Two cards are selected
+        } else if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath != nil {
+            let firstCardCell = getSpot(at: firstSelectedCardIndexPath!)
+            let firstCard = firstCardCell.card!
+            
+            let secondCardCell = getSpot(at: secondSelectedCardIndexPath!)
+            let secondCard = secondCardCell.card!
+            
+            // If the cards match - remove
+            if firstCard.rank!.getRawValue() + secondCard.rank!.getRawValue() == difficulty.sumMode.getRawValue() {
+                removeCards(at: [firstSelectedCardIndexPath!, secondSelectedCardIndexPath!])
+            } else {
+                haptic(.removeError)
+                Toast.show(message: "Can't remove cards that don't sum to \(difficulty.sumMode.getRawValue())", controller: self)
+            }
+        }
+                
+        resetCardIndexes()
+        
+        markCardAsSelected(at: nil)
+        enableOptionCards(forCardAt: nil)
+        
+        finishedRemovingCard()
+    }
+    
+    /// Removes cards from the board.
+    /// - Parameter indexPaths: The IndexPaths of the spots to remove cards from.
+    func removeCards(at indexPaths: [IndexPath]) {
+        var newlyRemovedCards = [Card]()
+        var cardsLocations = [IndexPath]()
+        
+        for indexPath in indexPaths {
+            let spot = getSpot(at: indexPath)
+            let card = spot.card!
+            playSound(.removeCard)
+            haptic(.removeSuccess)
+            newlyRemovedCards.append(card)
+            cardsLocations.append(indexPath)
+            spot.removeCard()
+        }
+        
+        enableRemoveButton(enable: false)
+        enableDoneRemovingButton(enable: true)
+        
+        let move = GameMove(cards: newlyRemovedCards, indexPaths: cardsLocations, moveType: .remove)
+        moves.append(move)
+    }
+    
+    /// Called when **Done** button is pressed.
+    /// Switches between removing and placing game modes and deselects all cards.
+    @IBAction func doneRemovingPressed(_ sender: Any) {
+        finishedPlacingCard(cardPlaced: false)
+        
+        markCardAsSelected(at: nil)
+        enableOptionSpots()
+    }
+    
+    /// Resets both selected cards index paths.
+    func resetCardIndexes() {
+        firstSelectedCardIndexPath = nil
+        secondSelectedCardIndexPath = nil
+    }
+    
+    
+    /// Handles what happens after pressed remove.
+    /// The function checks if it is the case of a full frame with middle cards that can't be removed (whilst no more cards in the deck) and if so it sets the game as over.
+    func finishedRemovingCard() {
+        
+        let cardsToRemove = getCardsToRemove()
+
+        if cardsToRemove.count == 0 {
+            Toast.show(message: "No more cards to remove. Tap done", controller: self)
+        }
+        
+        let cardsAtCenter = getEmptySpots(atCenter: true)
+        
+        if let cardsLeft = cardsLeft {
+            if cardsLeft == 0 && cardsToRemove.count == 0 && cardsAtCenter.count != 4 {
+                setGameStatus(status: .gameOver)
+                setNextCardsImages(next1ImageName: spotImageName, next2ImageName: nil, next3ImageName: nil)
+            } else {
+            }
+        }
+    }
+    
+    /// Checks what card are already selected and selects/deselects accordingly.
+    /// - Parameter indexPath: The tapped spot's IndexPath
     func selectCardForRemoval(at indexPath: IndexPath) {
         
-        //TODO: Improve syntax, too many repeating lines
-        
+        // TODO: Improve syntax, too many repeating lines
         
         let tappedSpot = getSpot(at: indexPath)
         
@@ -1087,7 +962,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             // If the tapped card is already selected, deselect it
             if firstSelectedCardIndexPath == indexPath {
                 
-                // TODO: Add removal when 10 pressed twice
                 if difficulty.sumMode == .ten && rank == .ten {
                     removeCards(at: [firstSelectedCardIndexPath!])
                 }
@@ -1119,45 +993,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             }
         }
     }
-    
-    func updateCardsLeftLabel() {
-        cardsLeftLabel.text = "CARDS LEFT: \(cardsLeft ?? 0)"
-    }
-    
-    
-    // Game Logic
-    func checkForPairs() -> Bool {
-        var allNonRoyalValues : [Int] = [Int]()
-        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if let cardRankValue = spot.card?.rank!.getRawValue() {
-                if cardRankValue < 11 {
-                    allNonRoyalValues.append(cardRankValue)
-                }
-            }
-        }
-        if allNonRoyalValues.contains(10) && difficulty.sumMode == .ten{
-            return true
-        }
-        for i in 0..<allNonRoyalValues.count {
-            for j in i+1..<allNonRoyalValues.count {
-                if allNonRoyalValues[i] + allNonRoyalValues[j] == difficulty.sumMode.getRawValue() {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-    
-    // Game Logic
-    func isBoardFull() -> Bool {
-        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if spot.isEmpty {
-                return false
-            }
-        }
-        return true
-    }
-    
+}
+
+// MARK: - Game End
+extension GameVC {
+    /// Called when the game is over
+    /// - Parameter toAddStats: Whether to add the stats or not (in case of recurring winning feedback for the same game)
     func gameOver(toAddStats: Bool) {
         
         stopTimer()
@@ -1176,6 +1017,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
+    /// Feedback a game loss
     func gameOverFeedback() {
         gameLoseReason = getLoseReason()
         let loseReasonText = getLoseReasonText(loseReason: gameLoseReason)
@@ -1185,9 +1027,14 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         playSound(.lose)
         haptic(.gameOver)
         showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game")
-
     }
     
+    /// Creates a string of basic game stats.
+    ///
+    /// Stats:
+    /// 1. Cards left
+    /// 1. Time passed
+    /// - Returns: The text for the stats.
     func getGameStatsText() -> String {
         var cardsLeftText = ""
         if cardsLeft != nil && cardsLeft! > 0 {
@@ -1199,44 +1046,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return statsText
     }
     
-    func getLoseReasonText(loseReason: LoseReason) -> String {
-        switch loseReason {
-        case .noEmptyJackSpots:
-            return "The next card is a Jack and there are no available spots in the sides."
-        case .noEmptyKingSpots:
-            return "The next card is a King and there are no available spots in the corners."
-        case .noEmptyQueenSpots:
-            return "The next card is a Queen and there are no available spots in the top and bottom."
-        case .noCardsToRemove:
-            return "There aren't any cards that sum up to \(difficulty.sumMode) to remove."
-        default:
-            return ""
-        }
-    }
-    
-    func getLoseReason() -> LoseReason {
-        if !checkForPairs() && isBoardFull() {
-            return .noCardsToRemove
-        }
-        
-        if nextCards.count < 1 {
-            return .noCardsToRemove
-        }
-        
-        if let nextCardRank = nextCards[0].rank {
-            if nextCardRank == .jack && jacksAvailable == 0 {
-                return .noEmptyJackSpots
-            }
-            if nextCardRank == .queen && queensAvailable == 0 {
-                return .noEmptyQueenSpots
-            }
-            if nextCardRank == .king && kingsAvailable == 0 {
-                return .noEmptyKingSpots
-            }
-        }
-        return .unknown
-    }
-    
+    /// Called in case the game is won.
+    /// - Parameter toAddStats: Whether to add the stats or not (in case of recurring winning feedback for the same game)
     func gameWon(toAddStats: Bool) {
         stopTimer()
         
@@ -1276,40 +1087,81 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             addStats()
         }
     }
-
-    // Game Logic
-    func checkAvailability() {
-        kingsAvailable = 0
-        queensAvailable = 0
-        jacksAvailable = 0
-        spotsAvailable = 0
+    
+    /// Checks why the game was lost
+    /// - Returns: The LoseReason of the game
+    func getLoseReason() -> LoseReason {
+        let cardsToRemove = getCardsToRemove()
+        if cardsToRemove.count == 0 && isBoardFull() {
+            return .noCardsToRemove
+        }
         
-        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            let indexPath = spot.indexPath!
-            let allowedRanks = getDesignatedRanksByPosition(indexPath: indexPath)
-            if spot.isEmpty {
-                switch allowedRanks {
-                case .jacks:
-                    jacksAvailable += 1
-                case .queens:
-                    queensAvailable += 1
-                case .kings:
-                    kingsAvailable += 1
-                default:
-                    spotsAvailable += 1
-                }
+        if nextCards.count < 1 {
+            return .noCardsToRemove
+        }
+        
+        if let nextCardRank = nextCards[0].rank {
+            if nextCardRank == .jack && jacksAvailable == 0 {
+                return .noEmptyJackSpots
             }
-            spotsAvailable = spotsAvailable + jacksAvailable + queensAvailable + kingsAvailable
+            if nextCardRank == .queen && queensAvailable == 0 {
+                return .noEmptyQueenSpots
+            }
+            if nextCardRank == .king && kingsAvailable == 0 {
+                return .noEmptyKingSpots
+            }
+        }
+        return .unknown
+    }
+    
+    /// Creates a text for the LoseReason
+    /// - Parameter loseReason: The LoseReason to create string of.
+    /// - Returns: The formatted text for the lose reason.
+    func getLoseReasonText(loseReason: LoseReason) -> String {
+        switch loseReason {
+        case .noEmptyJackSpots:
+            return "The next card is a Jack and there are no available spots in the sides."
+        case .noEmptyKingSpots:
+            return "The next card is a King and there are no available spots in the corners."
+        case .noEmptyQueenSpots:
+            return "The next card is a Queen and there are no available spots in the top and bottom."
+        case .noCardsToRemove:
+            return "There aren't any cards that sum up to \(difficulty.sumMode) to remove."
+        default:
+            return ""
         }
     }
     
-    // MARK: - Stats Functions
+    /// Shows alert for game ends (win/lose) with *OK* and *Restart* actions.
+    /// - Parameters:
+    ///     - title: The title of the alert
+    ///     - message: The message of the alert
+    ///     - dismissText: Text for dismiss button
+    ///     - confirmText: Text for confirm button
+    func showAlert(title: String, message: String, dismissText: String, confirmText: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+        let restartAction = UIAlertAction(title: confirmText, style: .default) { (action) in
+            self.stopTimer()
+            self.restartAfter = true
+            self.addStats()
+            self.startNewGame()
+        }
+        let okAction = UIAlertAction(title: dismissText, style: .cancel, handler: nil)
+
+        alert.addAction(okAction)
+        alert.addAction(restartAction)
+
+        present(alert, animated: true, completion: nil)
+    }
     
-    /**
-     Adds the game stats to the context.
-     */
+}
+
+// MARK: - Stats
+extension GameVC {
+    
+    /// Adds the game stats to the context.
     func addStats() {
-        
         let gameSavedStats = getStats(for: gameID)
         
         if let gameStatsToAdd = gameSavedStats {
@@ -1342,9 +1194,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         saveStats()
     }
     
-    /**
-     Save the stats that are staged in the context.
-     */
+    /// Save the stats that are staged in the context.
     func saveStats() {
         do {
             try context.save()
@@ -1353,12 +1203,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
     }
     
-    /**
-     Gets the stats for a gameID
-     
-     - Parameter gameID: The gameID to get the stats for
-     - Returns: The game object with all the stats
-     */
+    /// Gets the stats for a gameID
+    /// - Parameter gameID: The gameID to get the stats for
+    /// - Returns: The game object with all the stats
     func getStats(for gameID: UUID) -> Game? {
         var gameRow: Game? = nil
         
@@ -1378,6 +1225,9 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return gameRow
     }
     
+    /// Creates the stats to upload and uploads them to both user and game paths in Firebase
+    /// - Parameter game: The game object
+    /// - Returns: True if the game was uploaded to both user and game paths, false otherwise
     func uploadStats(forGame game: Game?) -> Bool {
         var statsUploaded = false
         
@@ -1412,14 +1262,19 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             var dataToAddGame = dataToAdd
             dataToAddGame["userID"] = uuid
             
-            let gameDataUploaded = up(referenceString: "games/\(game.gameID!)", dataToAdd: dataToAddGame)
-            let userDataUploaded = up(referenceString: "users/\(uuid!)/games/\(game.gameID!)", dataToAdd: dataToAddUser)
+            let gameDataUploaded = uploadStats(referenceString: "games/\(game.gameID!)", dataToAdd: dataToAddGame)
+            let userDataUploaded = uploadStats(referenceString: "users/\(uuid!)/games/\(game.gameID!)", dataToAdd: dataToAddUser)
             statsUploaded = gameDataUploaded && userDataUploaded
         }
         return statsUploaded
     }
     
-    func up(referenceString: String, dataToAdd: [String: Any]) -> Bool {
+    /// Uploads stats to Firebase
+    /// - Parameters:
+    ///   - referenceString: The document reference string
+    ///   - dataToAdd: The data to upload
+    /// - Returns: True if the stats were uploaded, false otherwise
+    func uploadStats(referenceString: String, dataToAdd: [String: Any]) -> Bool {
         var statsUploaded = false
         let ref = Firestore.firestore().document(referenceString)
         
@@ -1434,6 +1289,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         return statsUploaded
     }
     
+    /// Gets the fastest win duration yet
+    /// - Returns:The duration of the fastest win in seconds. If there is no win, returns nil.
     func getFastestWinDuration() -> Int? {
         var fastestWin: Int?
         let request : NSFetchRequest<Game> = Game.fetchRequest()
@@ -1455,15 +1312,58 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         }
         return fastestWin
     }
+
+}
+
+// MARK: - Spots Handling
+extension GameVC {
     
+    /// Gets the number of cards that are currently placed on the board
+    /// - Parameter rank: The rank of which to count placed cards
+    /// - Returns: The numebr of cards of the specified rank placed on the board
+    func getNumberOfCardsPlaced(withRank rank: CardRank) -> Int {
+        var nofCards : Int = 0
+        for spot in getAllSpots() {
+            if let card = spot.card {
+                if card.rank! == rank {
+                    nofCards += 1
+                }
+            }
+        }
+        return nofCards
+    }
     
-    // MARK: - Helper Functions
+    /// Removes all cards in the board.
+    func removeAllCards() {
+        for spot in getAllSpots() {
+            spot.removeCard()
+        }
+    }
+   
+    /// Gets all cells as spots (CardCollectionViewCell)
+    func getAllSpots() -> [CardCollectionViewCell] {
+        return spotsCollectionView.visibleCells as! [CardCollectionViewCell]
+    }
+
+    /// Marks a card as selected. If nil then deselect all cards.
+    /// - Parameter indexPath: The cards to mark as selected. If nil then deselect all cards.
+    func markCardAsSelected(at indexPath: IndexPath?) {
+        if let indexPath = indexPath {
+            if let spot = spotsCollectionView.cellForItem(at: indexPath) as? CardCollectionViewCell {
+                spot.mark(as: .selected, on: true)
+            }
+        } else {
+            for spot in getAllSpots() {
+                if spot.isSpotSelected {
+                    spot.mark(as: .selected, on: false)
+                }
+            }
+        }
+    }
     
-    /**
-     Checks for a certain IndexPath which type of cards should be placed.
-     - Parameter indexPath: The spot's IndexPath
-     - Returns: The appropriate AllowedRanks for the spot
-     */
+    /// Checks for a certain IndexPath which type of cards should be placed.
+    /// - Parameter indexPath: The spot's IndexPath
+    /// - Returns: The appropriate AllowedRanks for the sp
     func getDesignatedRanksByPosition(indexPath: IndexPath) -> DesignatedRanks {
         let row = indexPath.row
         let column = indexPath.section
@@ -1483,30 +1383,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             return .notRoyal
         }
     }
-    
-    /**
-     Gets the number of cards that are currently placed on the board
-     
-     - Parameter rank: The rank of which to count placed cards
-     - Returns: The numebr of cards of the specified rank placed on the board
-     */
-    func getNumberOfCardsPlaced(withRank rank: CardRank) -> Int {
-        var nofCards : Int = 0
-        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            if let card = spot.card {
-                if card.rank! == rank {
-                    nofCards += 1
-                }
-            }
-        }
-        return nofCards
-    }
-    
-    func isSpotEmpty(indexPath: IndexPath) -> Bool {
-        let spot = getSpot(at: indexPath)
-        return spot.isEmpty
-    }
-    
+
     /// Filters index paths and returns only the wanted (empty or not)
     /// - Parameters:
     ///   - indexPaths: The index paths to filter
@@ -1514,39 +1391,61 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     /// - Returns: The filtered index paths
     func filterSpots(indexPaths: [IndexPath], empty: Bool) -> [IndexPath] {
         return indexPaths.filter { (indexPath) -> Bool in
+            
+            let spot = getSpot(at: indexPath)
             if empty {
-                return isSpotEmpty(indexPath: indexPath)
+                return spot.isEmpty
             } else {
-                return !isSpotEmpty(indexPath: indexPath)
+                return !spot.isEmpty
             }
         }
     }
     
+    /// Gets the spot (CardCollectionViewCell) for a certain IndexPath
+    /// - Parameter indexPath: The IndexPath of the wanted spot
+    /// - Returns: The collectionViewCell of the spot
     func getSpot(at indexPath: IndexPath) -> CardCollectionViewCell {
         return spotsCollectionView.cellForItem(at: indexPath) as! CardCollectionViewCell
     }
     
+    /// Gets the card at a certain IndexPath
+    /// - Parameter indexPath: The IndexPath of the wanted card
+    /// - Returns: The card in the spot if it has one, nil otherwise.
     func getCard(at indexPath: IndexPath) -> Card? {
         let spot = getSpot(at: indexPath)
         return spot.card
     }
 }
 
-// MARK: - Game Logic
-
+// MARK: - General Game Flow
 extension GameVC {
     
-    /**
-     Starts a new game.
-     */
+    /// Changes the game status, changes the UI accordingly and calls functions that acts according to the new game status.
+    /// - Parameter status: The game status to set
+    func setGameStatus(status: GameStatus) {
+        gameStatus = status
+        switch status {
+        case .placing:
+            showRemovalUI(show: false)
+        case .removing:
+            showRemovalUI(show: true)
+        case .gameOver:
+            showRemovalUI(show: false)
+            gameFinished = true
+            gameOver(toAddStats: true)
+        case .won:
+            showRemovalUI(show: false)
+            gameFinished = true
+            gameWon(toAddStats: true)
+        }
+    }
+    
+    /// Starts a new game
     func startNewGame() {
             
         // Get game settings
         setGameStatus(status: .placing)
-
-
         difficulty = getDifficulty()
-        
         
         // Stats
         restartAfter = false
@@ -1560,7 +1459,6 @@ extension GameVC {
         
         moves = []
         
-        
         // Get deck
         deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
@@ -1568,10 +1466,7 @@ extension GameVC {
 //        deck = model.getDeck(ofType: .fromString, random: false, from: "h10d05c10c05h13c13d13s13h12c12d12s12h11c11d11s11", fullDeck: false)
         
         deckString = model.getDeckString(deck: deck)
-        
         cardsLeft = deck.count
-        
-        Utilities.log("Started new game \(gameID.uuidString)")
         
         stopTimer()
 
@@ -1579,31 +1474,139 @@ extension GameVC {
         configureNextCardsUI()
         removalSumLabel.text = "\(difficulty.sumMode.getRawValue())"
         updateCardsLeftLabel()
-        
         markCardAsSelected(at: nil)
         enableOptionSpots()
-        
         removeAllCards()
         confettiEmitter.removeFromSuperlayer()
 
-        
         // Handle first card
         requestNextCard(firstCard: true)
         updateCardsLeftLabel()
         
-
         // Timer
         addTimer()
+
+        Utilities.log("Started new game \(gameID.uuidString)")
+    }
+}
+
+// MARK: - Game validations
+extension GameVC {
+    /// Checks if the next card's spot is taken.
+    /// - Returns: True if the next card is blocked, false otherwise
+    func isNextCardBlocked() -> Bool {
+        if cardsLeft == 0 {
+            return false
+        }
+        
+        if let nextCardRank = nextCards[0].rank {
+            if nextCardRank == .jack && jacksAvailable == 0 {
+                return true
+            } else if nextCardRank == .queen && queensAvailable == 0{
+                return true
+            } else if nextCardRank == .king && kingsAvailable == 0 {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
     }
     
-    /**
-     Checks whether the next card can be placed at a spot on the board.
-     
-     - Parameter card: The card to check
-     - Parameter indexPath: The designated spot to place the card at
-     
-     - Returns: True if the card can be placed at the spot, false otherwise
-     */
+    /// Checks if the board is full (all spots are taken).
+    /// - Returns: True if the board is full, false otherwise
+    func isBoardFull() -> Bool {
+        for spot in getAllSpots() {
+            if spot.isEmpty {
+                return false
+            }
+        }
+        return true
+    }
+
+    /// Checks what spots are available and updates the relevant properties
+    func checkAvailability() {
+        kingsAvailable = 0
+        queensAvailable = 0
+        jacksAvailable = 0
+        spotsAvailable = 0
+        
+        for spot in getAllSpots() {
+            let indexPath = spot.indexPath!
+            let allowedRanks = getDesignatedRanksByPosition(indexPath: indexPath)
+            if spot.isEmpty {
+                switch allowedRanks {
+                case .jacks:
+                    jacksAvailable += 1
+                case .queens:
+                    queensAvailable += 1
+                case .kings:
+                    kingsAvailable += 1
+                default:
+                    spotsAvailable += 1
+                }
+            }
+        }
+        spotsAvailable = spotsAvailable + jacksAvailable + queensAvailable + kingsAvailable
+    }
+    
+    /// Checks whether the game was completed and the user have won.
+    /// Game is won if all royal cards are placed at appropriate place and no cards are in the center.
+    /// - Returns: True if the user won the game, false otherwise
+    func isGameWon() -> Bool {
+        
+        for spot in getAllSpots() {
+            
+            let allowedRanks = getDesignatedRanksByPosition(indexPath: spot.indexPath!)
+            // If the spot contains a card that does not match it's designated rank, the function returns false.
+            if let card = spot.card {
+                let cardRank = card.rank!
+                if (allowedRanks == .jacks && cardRank != .jack) || (allowedRanks == .queens && cardRank != .queen) || (allowedRanks == .kings && cardRank != .king) || (allowedRanks == .notRoyal && !difficulty.canWinWithCardsAtTheCenter) {
+                    return false
+                }
+            // If there is no card at the spot and it is a royal spot, the function returns false.
+            } else if allowedRanks != .notRoyal{
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    /// Checks whether the user lose. It's using the nextCard so must be called after a turn.
+    ///
+    /// Game is over if board is full and there are no cards that can be removed or if the next card is royal and it's spots are taken
+    /// - Returns: True if the game is over, false otherwise
+    func isGameOver() -> Bool {
+        
+        let boardFull = isBoardFull()
+        let cardsToRemove = getCardsToRemove()
+        let nextCardRank = nextCards[0].rank!
+        
+        // If the board is full and there are no cards to remove
+        if boardFull && cardsToRemove.count == 0 {
+            return true
+        }
+        // If the next card is royal and all of the relevant spots are taken
+        if !boardFull && nextCardRank == .jack && jacksAvailable == 0 {
+            return true
+        }
+        if !boardFull && nextCardRank == .queen && queensAvailable == 0 {
+            return true
+        }
+        if !boardFull && nextCardRank == .king && kingsAvailable == 0 {
+            return true
+        }
+        
+        return false
+    }
+    
+    /// Checks whether the next card can be placed at a spot on the board.
+    /// - Parameters:
+    ///   - card: The card to check
+    ///   - indexPath: The designated spot to place the card at
+    /// - Returns: True if the card can be placed at the spot, false otherwise
     func canPutCard(_ card: Card, at indexPath: IndexPath) -> Bool {
         // If the spot is empty then check whether the spot position and the card rank fit
         
@@ -1628,65 +1631,12 @@ extension GameVC {
         }
         return false
     }
-    
-    /**
-     Checks whether the game was completed and the user have won.
-     Game is won if all royal cards are placed at appropriate place and no cards are in the center.
-     
-     - Returns: True if the user won the game, false otherwise
-     */
-    func isGameWon() -> Bool {
+}
 
-        let canWinWithCardsInTheMiddle = true
-        
-        for spot in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
-            
-            let allowedRanks = getDesignatedRanksByPosition(indexPath: spot.indexPath!)
-            // If the spot contains a card that does not match it's designated rank, the function returns false.
-            if let card = spot.card {
-                let cardRank = card.rank!
-                if (allowedRanks == .jacks && cardRank != .jack) || (allowedRanks == .queens && cardRank != .queen) || (allowedRanks == .kings && cardRank != .king) || (allowedRanks == .notRoyal && !canWinWithCardsInTheMiddle) {
-                    return false
-                }
-            // If there is no card at the spot and it is a royal spot, the function returns false.
-            } else if allowedRanks != .notRoyal{
-                return false
-            }
-        }
-        
-        return true
-    }
-    
-    /**
-     Checks whether the user lose. It's using the nextCard so must be called after a turn
-     Game is over if board is full and there are no cards that can be removed or if the next card is royal and it's spots are taken
-     
-     - Returns: True if the game is over, false otherwise
-     */
-    func isGameOver() -> Bool {
-        
-        let boardFull = isBoardFull()
-        let pairsToRemove = checkForPairs()
-        let nextCardRank = nextCards[0].rank!
-        
-        // If the board is full and there are no cards to remove
-        if boardFull && !pairsToRemove {
-            return true
-        }
-        // If the next card is royal and all of the relevant spots are taken
-        if !boardFull && nextCardRank == .jack && jacksAvailable == 0 {
-            return true
-        }
-        if !boardFull && nextCardRank == .queen && queensAvailable == 0 {
-            return true
-        }
-        if !boardFull && nextCardRank == .king && kingsAvailable == 0 {
-            return true
-        }
-        
-        return false
-    }
-    
+// MARK: - Undo
+extension GameVC {
+    /// Undos the previous move if it's allowed by setting. Also handles animation.
+    /// Can't undo when switching between modes (placing, removing, game over/win)
     func undo() {
         if !difficulty.undosAvailable {
             return
@@ -1736,12 +1686,6 @@ extension GameVC {
     }
 }
 
-
-// MARK: - Undo
-extension GameVC {
-    
-}
-
 // MARK: - Hints
 extension GameVC {
     
@@ -1767,11 +1711,13 @@ extension GameVC {
     }
     
     /// Gets the spots to hint.
-    ///     - When placing cards, it hints:
-    ///         - Designated spots for the royal cards
-    ///         - Center spots if available
-    ///         - Royal with most empty spots
-    ///     - When removing cards, it takes a random pair of cards to remove.
+    ///
+    /// Logic:
+    /// * When placing cards, it hints:
+    ///     * Designated spots for the royal cards
+    ///     * Center spots if available
+    ///     * Royal with most empty spots
+    /// * When removing cards, it takes a random pair of cards to remove.
     /// - Returns: The hinted spots' index paths
     func getHints() -> [IndexPath] {
         var indexPathsToHint = [IndexPath]()
@@ -1898,7 +1844,7 @@ extension GameVC {
         return emptySpots
     }
     
-    /// Gets cards that can be removed when paird.
+    /// Gets cards that can be removed when paired.
     /// - Parameter randomElement: True if want only one pair (or 10), false if want all cards that can be removed.
     /// - Returns: Index paths of the cards that can be removed.
     func getCardsToRemove(_ randomElement: Bool = true) -> [IndexPath] {
@@ -1906,7 +1852,9 @@ extension GameVC {
         
         var allPairs = [[IndexPath]]()
         
-        for spot1 in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+        let allSpots = getAllSpots()
+        
+        for spot1 in allSpots {
             if let card1 = spot1.card {
                 let card1RankValue = card1.rank!.getRawValue()
                 if card1RankValue < 11 {
@@ -1917,7 +1865,7 @@ extension GameVC {
                             allPairs.append([spot1.indexPath!])
                         }
                     }
-                    for spot2 in spotsCollectionView.visibleCells as! [CardCollectionViewCell] {
+                    for spot2 in allSpots {
                         if let card2 = spot2.card {
                             let card2RankValue = card2.rank!.getRawValue()
                             if card2RankValue < 11 && spot1 != spot2 {
@@ -2042,15 +1990,11 @@ extension GameVC {
             hapticGenerator.notificationOccurred(.success)
         case .gameOver:
             hapticGenerator.notificationOccurred(.error)
-            hapticGenerator.notificationOccurred(.error)
         case .win:
-            hapticGenerator.notificationOccurred(.success)
-            hapticGenerator.notificationOccurred(.success)
             hapticGenerator.notificationOccurred(.success)
         }
     }
 }
-
 
 // MARK: - Confetti
 extension GameVC {
@@ -2124,7 +2068,6 @@ extension GameVC {
     }
 }
 
-
 // MARK: - Settings
 extension GameVC {
     
@@ -2197,7 +2140,6 @@ extension GameVC {
         }
     }
 }
-
 
 // MARK: - Next card handling
 extension GameVC {
@@ -2447,7 +2389,7 @@ extension GameVC {
         
     }
     
-    /// Sets the UI of the next cards according to the numebr of next cards:
+    /// Sets the UI of the next cards according to the numebr of next cards.
     /// - Rotates the cards
     /// - Moves them horizontally
     /// - Shows/hides them
