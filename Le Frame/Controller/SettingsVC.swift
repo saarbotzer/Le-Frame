@@ -10,7 +10,7 @@ import UIKit
 import StoreKit
 import MessageUI
 
-class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     // MARK: - IBOutlets
     
@@ -487,7 +487,7 @@ class NewSettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             NSLayoutConstraint.activate([
                 infoButton.heightAnchor.constraint(equalToConstant: labelHeight - 5),
                 infoButton.widthAnchor.constraint(equalToConstant: labelHeight - 5),
-                infoButton.leadingAnchor.constraint(equalTo: label.trailingAnchor, constant: 10),
+                infoButton.leadingAnchor.constraint(equalTo: label.trailingAnchor, constant: 7),
                 infoButton.centerYAnchor.constraint(equalTo: label.centerYAnchor, constant: 0)
             ])
         }
@@ -592,7 +592,7 @@ class CustomSegmentedControl : UISegmentedControl {
 }
 
 
-extension NewSettingsVC: MFMailComposeViewControllerDelegate {
+extension SettingsVC: MFMailComposeViewControllerDelegate {
     func sendEmail() {
         
         let mailTo = "royalframegame@gmail.com"

@@ -140,7 +140,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToSettings" {
             if let navigationController = segue.destination as? UINavigationController,
-                let settingsVC = navigationController.viewControllers.first as? NewSettingsVC {
+                let settingsVC = navigationController.viewControllers.first as? SettingsVC {
                 settingsVC.gameDifficulty = difficulty
             }
         }

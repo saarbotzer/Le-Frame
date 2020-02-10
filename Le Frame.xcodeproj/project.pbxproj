@@ -15,7 +15,7 @@
 		BC7A9B1823918A5B002CC9B3 /* lose.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1723918A5B002CC9B3 /* lose.wav */; };
 		BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */; };
 		BC8197FF23A5941300DC3257 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */; };
-		BC81982123AD893700DC3257 /* NewSettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC81982023AD893700DC3257 /* NewSettingsVC.swift */; };
+		BC81982123AD893700DC3257 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC81982023AD893700DC3257 /* SettingsVC.swift */; };
 		BCB7463023AE8B2300C7C841 /* AboutUsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7462F23AE8B2300C7C841 /* AboutUsVC.swift */; };
 		BCB7463623AE94BC00C7C841 /* StatsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7463523AE94BC00C7C841 /* StatsVC.swift */; };
 		BCB7463823AEC02100C7C841 /* faqVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7463723AEC02100C7C841 /* faqVC.swift */; };
@@ -46,7 +46,7 @@
 		BC7A9B1723918A5B002CC9B3 /* lose.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = lose.wav; sourceTree = "<group>"; };
 		BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestartAlertController.swift; sourceTree = "<group>"; };
 		BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		BC81982023AD893700DC3257 /* NewSettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSettingsVC.swift; sourceTree = "<group>"; };
+		BC81982023AD893700DC3257 /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		BCB7462F23AE8B2300C7C841 /* AboutUsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsVC.swift; sourceTree = "<group>"; };
 		BCB7463523AE94BC00C7C841 /* StatsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsVC.swift; sourceTree = "<group>"; };
 		BCB7463723AEC02100C7C841 /* faqVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = faqVC.swift; sourceTree = "<group>"; };
@@ -171,7 +171,7 @@
 				BCE12CEE234E35E400962F00 /* Utilities.swift */,
 				BCB7463423AE937A00C7C841 /* Settings Screens */,
 				BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */,
-				BC81982023AD893700DC3257 /* NewSettingsVC.swift */,
+				BC81982023AD893700DC3257 /* SettingsVC.swift */,
 				BCF0F9FD23B9403300EB266C /* Enums.swift */,
 			);
 			path = Controller;
@@ -319,7 +319,7 @@
 				BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */,
 				BCF57EAE239ED8F200F762FA /* SceneDelegate.swift in Sources */,
 				BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */,
-				BC81982123AD893700DC3257 /* NewSettingsVC.swift in Sources */,
+				BC81982123AD893700DC3257 /* SettingsVC.swift in Sources */,
 				BCF0FA0023BE7CC000EB266C /* ContactUsVC.swift in Sources */,
 				BCF0F9FE23B9403300EB266C /* Enums.swift in Sources */,
 				BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */,
