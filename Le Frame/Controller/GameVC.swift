@@ -1080,7 +1080,7 @@ extension GameVC {
                 
         showAlert(title: title, message: messageText, dismissText: "Great", confirmText: "Start a new game")
         
-        setNextCardsImages(next1ImageName: spotImageName, next2ImageName: nil, next3ImageName: nil)
+//        setNextCardsImages(next1ImageName: spotImageName, next2ImageName: nil, next3ImageName: nil)
         enableOptionCards(forCardAt: nil, enableAll: true)
         
         if toAddStats {
@@ -1463,8 +1463,8 @@ extension GameVC {
         deck = model.getDeck(ofType: .regularDeck, random: true, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .onlyRoyals, random: false, from: nil, fullDeck: nil)
 //        deck = model.getDeck(ofType: .notRoyals, random: false, from: nil, fullDeck: nil)
-//        deck = model.getDeck(ofType: .fromString, random: false, from: "h10d05c10c05h13c13d13s13h12c12d12s12h11c11d11s11", fullDeck: false)
-        
+//        deck = model.getDeck(ofType: .fromString, random: false, from: "h10d05c10c05h13c13d13s13h12c12d12s12h11c11d11s11h04c01", fullDeck: false)
+
         deckString = model.getDeckString(deck: deck)
         cardsLeft = deck.count
         

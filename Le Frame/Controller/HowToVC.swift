@@ -41,24 +41,24 @@ class HowToVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewCon
     var originalTransform: CGAffineTransform?
     
     let royalFrameGrid = [
-        ["h13", "c12",          "d12",          "s13"],
-        ["s11", "green_card",   "green_card",   "h11"],
-        ["c11", "green_card",   "green_card",   "d11"],
-        ["d13", "s12",          "h12",          "c13"]
-            ]
+        ["h13"      ,   "c12"       ,   "d12"       ,   "s13"   ],
+        ["s11"      ,   "card-spot" ,   "card-spot" ,   "h11"   ],
+        ["c11"      ,   "card-spot" ,   "card-spot" ,   "d11"   ],
+        ["d13"      ,   "s12"       ,   "h12"       ,   "c13"   ]
+    ]
     
     let removalGrid = [
-        ["s13", "s10",   "h8",  "d13"],
-        ["c3",  "c3",    "d5",  "h8"],
-        ["d1",  "d6",    "h1",  "c11"],
-        ["h3",  "s9",    "s12", "c1"]
+        ["s13"      ,   "s10"       ,   "h8"        ,   "d13"   ],
+        ["c3"       ,   "c3"        ,   "d5"        ,   "h8"    ],
+        ["d1"       ,   "d6"        ,   "h1"        ,   "c11"   ],
+        ["h3"       ,   "s9"        ,   "s12"       ,   "c1"    ]
     ]
     
     let blockedGrid = [
-        ["s13",         "green_card",   "h8",   "d13"],
-        ["c3",          "c3",           "d5",   "h8"],
-        ["green_card",  "d6",           "h1",   "c11"],
-        ["h3",          "green_card",   "s12",  "c1"]
+        ["s13"      ,   "card-spot" ,   "h8"        ,   "d13"   ],
+        ["c3"       ,   "c3"        ,   "d5"        ,   "h8"    ],
+        ["card-spot",   "d6"        ,   "h1"        ,   "c11"   ],
+        ["h3"       ,   "card-spot" ,   "s12"       ,   "c1"    ]
     ]
     
     
