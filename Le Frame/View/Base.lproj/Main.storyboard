@@ -132,21 +132,23 @@
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OD8-o4-nzx">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="135" height="143"/>
+                                                                        <rect key="frame" x="-4" y="0.0" width="143" height="143"/>
                                                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" secondItem="OD8-o4-nzx" secondAttribute="height" multiplier="1:1" id="f9o-ub-DLn"/>
+                                                                        </constraints>
                                                                     </view>
                                                                 </subviews>
                                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <constraints>
-                                                                    <constraint firstAttribute="trailing" secondItem="OD8-o4-nzx" secondAttribute="trailing" id="F3u-CR-rjf"/>
                                                                     <constraint firstItem="G55-yI-rCv" firstAttribute="centerX" secondItem="UhM-kx-4NP" secondAttribute="centerX" id="FcS-Mn-uni"/>
+                                                                    <constraint firstItem="OD8-o4-nzx" firstAttribute="centerY" secondItem="UhM-kx-4NP" secondAttribute="centerY" id="IQC-s8-sM8"/>
                                                                     <constraint firstItem="G55-yI-rCv" firstAttribute="centerY" secondItem="UhM-kx-4NP" secondAttribute="centerY" id="SLO-JS-Hej"/>
-                                                                    <constraint firstItem="OD8-o4-nzx" firstAttribute="top" secondItem="UhM-kx-4NP" secondAttribute="top" id="TZn-s2-khw"/>
+                                                                    <constraint firstItem="OD8-o4-nzx" firstAttribute="centerX" secondItem="UhM-kx-4NP" secondAttribute="centerX" id="VJf-2q-LxY"/>
                                                                     <constraint firstItem="jqr-nC-F10" firstAttribute="centerX" secondItem="UhM-kx-4NP" secondAttribute="centerX" id="XVo-G7-kHm"/>
                                                                     <constraint firstItem="G55-yI-rCv" firstAttribute="top" secondItem="jqr-nC-F10" secondAttribute="bottom" constant="2" id="Y6H-vB-hIC"/>
                                                                     <constraint firstAttribute="width" secondItem="UhM-kx-4NP" secondAttribute="height" multiplier="135:143" id="gaa-nO-Onx"/>
-                                                                    <constraint firstAttribute="bottom" secondItem="OD8-o4-nzx" secondAttribute="bottom" id="mkG-6X-lLH"/>
-                                                                    <constraint firstItem="OD8-o4-nzx" firstAttribute="leading" secondItem="UhM-kx-4NP" secondAttribute="leading" id="mqs-IQ-9Vn"/>
+                                                                    <constraint firstItem="OD8-o4-nzx" firstAttribute="height" secondItem="UhM-kx-4NP" secondAttribute="height" id="ybP-hP-exU"/>
                                                                 </constraints>
                                                                 <variation key="default">
                                                                     <mask key="constraints">
@@ -624,7 +626,7 @@
                                 <rect key="frame" x="20" y="76" width="374" height="134"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Royal Frame Icon" translatesAutoresizingMaskIntoConstraints="NO" id="YUh-GA-W9V">
-                                        <rect key="frame" x="0.0" y="0.0" width="374.00000000000023" height="100"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="374" height="100"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="100" id="r1V-yS-mdd"/>
                                         </constraints>

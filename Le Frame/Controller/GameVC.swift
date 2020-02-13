@@ -117,14 +117,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         setDelegates()
         
-        updateUI()
         addRemovalButtonsRecognizer()
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
         
-        configureNextCardsUI()
+        updateUI()
         
         let viewingMode = getViewingMode()
         if viewingMode == .onboarding {
@@ -167,6 +166,7 @@ extension GameVC {
         updateViews()
         updateTabBarUI()
         updateRemoveLabelsUI()
+        configureNextCardsUI()
     }
     
     /// Updates the appearance of the spots grid and the bottom view.
@@ -200,8 +200,7 @@ extension GameVC {
     
     /// Sets the remove screen labels & background UI
     func updateRemoveLabelsUI() {
-        // TODO: Make it consistent with all screen sizes
-        let radius = removeLabelsBackground.frame.width / 2
+        let radius: CGFloat = (removeLabelsBackground.frame.width / 2)
         removeLabelsBackground.roundCorners([.allCorners], radius: radius)
         removeLabelsBackground.backgroundColor = .black
         removeLabelsBackground.alpha = 0.7
@@ -212,6 +211,19 @@ extension GameVC {
         removalSumLabel.layer.zPosition = 4
         removalSumTitleLabel.textColor = .white
         removalSumTitleLabel.layer.zPosition = 4//.alpha = 1
+    }
+    
+    /// Updates the TabBar UI
+    func updateTabBarUI() {
+        tabBar.layer.borderWidth = 0.5
+        tabBar.layer.borderColor = UIColor.clear.cgColor
+        tabBar.clipsToBounds = true
+        
+        tabBar.backgroundColor = UIColor.clear
+        // Changing the tabBar items' color to black
+        for item in tabBar.items! {
+            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.white], for: .normal)
+        }
     }
 }
 
@@ -248,19 +260,6 @@ extension GameVC {
             self.tabBar.selectedItem = nil
         }
         
-    }
-    
-    /// Updates the TabBar UI
-    func updateTabBarUI() {
-        tabBar.layer.borderWidth = 0.5
-        tabBar.layer.borderColor = UIColor.clear.cgColor
-        tabBar.clipsToBounds = true
-        
-        tabBar.backgroundColor = UIColor.clear
-        // Changing the tabBar items' color to black
-        for item in tabBar.items! {
-            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.white], for: .normal)
-        }
     }
 
 }
