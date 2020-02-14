@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19C57" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Game" representedClassName=".Game" syncable="YES" codeGenerationType="class">
+        <attribute name="appVersion" optional="YES" attributeType="String"/>
         <attribute name="deck" attributeType="String"/>
         <attribute name="didWin" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="difficulty" optional="YES" attributeType="String"/>
@@ -18,6 +19,6 @@
         <attribute name="synced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
     </entity>
     <elements>
-        <element name="Game" positionX="-63" positionY="-18" width="128" height="268"/>
+        <element name="Game" positionX="-63" positionY="-18" width="128" height="283"/>
     </elements>
 </model>

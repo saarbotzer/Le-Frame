@@ -64,6 +64,13 @@ enum MoveType {
     case place, remove
 }
 
+enum StatAddingReason: String {
+    case gameLost, gameWon, newGame = "newGame", newGameWithNewDifficulty = "newGameWithNewDifficulty"
+    
+    func getRawValue() -> String {
+        return self.rawValue
+    }
+}
 
 enum GameLevel {
     case easy

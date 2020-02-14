@@ -14,15 +14,22 @@ import Firebase
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window : UIWindow?
+    let defaults = UserDefaults.standard
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        FirebaseApp.configure()
+        getAppVersionAndBuild()
         
+        FirebaseApp.configure()
+
         Auth.auth().signInAnonymously { (authResult, error) in
-            guard let user = authResult?.user else { return }
+            guard let user = authResult?.user else {
+                self.defaults.set(UUID().uuidString, forKey: "uuid")
+                return
+            }
             _ = user.isAnonymous  // let isAnonymous
-            _ = user.uid // let uid
+            let uid = user.uid // let uid
+            self.defaults.set(uid, forKey: "uuid")
         }
         
         _ = Firestore.firestore() // let db
@@ -72,6 +79,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
+    }
+    
+    func getAppVersionAndBuild() {
+        var versionString = "Unknown"
+        if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String, let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
+            versionString = "\(appVersion) (\(appBuild))"
+        }
+        
+        defaults.set(versionString, forKey: "appVersion")
     }
 }
 

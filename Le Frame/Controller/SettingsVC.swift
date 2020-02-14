@@ -27,7 +27,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .difficulty, segmentedControlAlertText: "Yes", infoText: "Very easy - 3 next cards\n Easy - 2 next cards\nNormal - 1 next card\nHard - 1 next card, remove cards that sum to 11"),
 //                Setting(label: "Done removing anytime", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .doneRemovingAnytime, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
-                Setting(label: "Highlight available moves", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .highlightAvailableMoves, segmentedControlAlertText: nil, segueName: nil, infoText: "Available options will be highlighted"),
+                Setting(label: "Highlight available moves", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .highlightAvailableMoves, segmentedControlAlertText: nil, segueName: nil, infoText: "Available spots and matching cards will be highlighted"),
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No"),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No"),
                 Setting(label: "Haptic feedback", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No"),
@@ -128,7 +128,9 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             sectionLabel.heightAnchor.constraint(equalToConstant: 40)
         ])
         
-        if #available(iOS 12.0, *) {
+        if #available(iOS 13.0, *) {
+            
+        } else {
             sectionLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 20).isActive = true
         }
         
@@ -147,6 +149,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 //    }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
         if section == settingsSections.count - 1 {
             let versionLabel = UILabel()
             if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
@@ -289,6 +292,9 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let newGameAction = UIAlertAction(title: "Start a new game", style: .default) { (action) in
             
             if let presenter = self.presentingViewController as? GameVC {
+                
+                presenter.addStats(because: .newGameWithNewDifficulty)
+                
                 // Using a delay because of a next cards animation location bug
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
                     presenter.startNewGame()

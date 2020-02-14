@@ -130,8 +130,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             performSegue(withIdentifier: "goToHowTo", sender: nil)
             defaults.set(true, forKey: "firstGamePlayed")
             
-            // TODO: Verify that this is a good place and a way to create uuids
-            defaults.set(UUID().uuidString, forKey: "uuid")
+//            // TODO: Verify that this is a good place and a way to create uuids
+//            defaults.set(UUID().uuidString, forKey: "uuid")
         }
         
         if !viewFinishedLoading {
@@ -246,11 +246,11 @@ extension GameVC {
         case 3:
             switch gameStatus {
             case .gameOver:
-                showAlert(title: "Try again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure")
+                showAlert(title: "Try again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure", because: .gameLost)
             case .won:
-                showAlert(title: "Play again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure")
+                showAlert(title: "Play again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure", because: .gameWon)
             default:
-                showAlert(title: "New Game?", message: "Are you sure you want to start a new game?", dismissText: "Nevermind", confirmText: "Yes")
+                showAlert(title: "New Game?", message: "Are you sure you want to start a new game?", dismissText: "Nevermind", confirmText: "Yes", because: .newGame)
             }
         default:
             return
@@ -1018,7 +1018,7 @@ extension GameVC {
         enableOptionCards(forCardAt: nil, enableAll: true)
 
         if toAddStats {
-            addStats()
+            addStats(because: .gameLost)
         }
     }
     
@@ -1031,7 +1031,7 @@ extension GameVC {
 
         playSound(.lose)
         haptic(.gameOver)
-        showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game")
+        showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game", because: .gameLost)
     }
     
     /// Creates a string of basic game stats.
@@ -1083,13 +1083,13 @@ extension GameVC {
         }
         
                 
-        showAlert(title: title, message: messageText, dismissText: "Great", confirmText: "Start a new game")
+        showAlert(title: title, message: messageText, dismissText: "Great", confirmText: "Start a new game", because: .gameWon)
         
 //        setNextCardsImages(next1ImageName: spotImageName, next2ImageName: nil, next3ImageName: nil)
         enableOptionCards(forCardAt: nil, enableAll: true)
         
         if toAddStats {
-            addStats()
+            addStats(because: .gameWon)
         }
     }
     
@@ -1143,13 +1143,14 @@ extension GameVC {
     ///     - message: The message of the alert
     ///     - dismissText: Text for dismiss button
     ///     - confirmText: Text for confirm button
-    func showAlert(title: String, message: String, dismissText: String, confirmText: String) {
+    func showAlert(title: String, message: String, dismissText: String, confirmText: String, because reason: StatAddingReason) {
+        
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         let restartAction = UIAlertAction(title: confirmText, style: .default) { (action) in
             self.stopTimer()
             self.restartAfter = true
-            self.addStats()
+            self.addStats(because: reason)
             self.startNewGame()
         }
         let okAction = UIAlertAction(title: dismissText, style: .cancel, handler: nil)
@@ -1166,7 +1167,18 @@ extension GameVC {
 extension GameVC {
     
     /// Adds the game stats to the context.
-    func addStats() {
+    func addStats(because reason: StatAddingReason) {
+        
+        var loseReason = ""
+        switch reason {
+        case .gameLost:
+            loseReason = gameLoseReason.getRawValue()
+        case .gameWon:
+            loseReason = "gameWon"
+        case .newGame, .newGameWithNewDifficulty:
+            loseReason = reason.getRawValue()
+        }
+        
         let gameSavedStats = getStats(for: gameID)
         
         if let gameStatsToAdd = gameSavedStats {
@@ -1180,7 +1192,7 @@ extension GameVC {
             gameStatsToAdd.deck = deckString
             gameStatsToAdd.didWin = didWin
             gameStatsToAdd.duration = Int16(secondsPassed)
-            gameStatsToAdd.loseReason = didWin ? gameLoseReason.getRawValue() : ""
+            gameStatsToAdd.loseReason = loseReason
             gameStatsToAdd.nofCardsLeft = Int16(cardsLeft!)
             gameStatsToAdd.nofJacksPlaced = Int16(getNumberOfCardsPlaced(withRank: .jack))
             gameStatsToAdd.nofKingsPlaced = Int16(getNumberOfCardsPlaced(withRank: .king))
@@ -1191,6 +1203,7 @@ extension GameVC {
             gameStatsToAdd.sumMode = Int16(difficulty.sumMode.getRawValue())
             gameStatsToAdd.difficulty = difficulty.name
             gameStatsToAdd.synced = false
+            gameStatsToAdd.appVersion = defaults.string(forKey: "appVersion")
             
             let synced = uploadStats(forGame: gameStatsToAdd)
             gameStatsToAdd.synced = synced
@@ -1256,7 +1269,8 @@ extension GameVC {
                 "startTime": game.startTime as Any,
                 "sumMode": game.sumMode,
                 "difficulty": game.difficulty as Any,
-                "synced": true
+                "synced": true,
+                "appVersion": game.appVersion as Any
             ]
             
             let uuid = defaults.string(forKey: "uuid")
