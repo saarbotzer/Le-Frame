@@ -128,6 +128,10 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             sectionLabel.heightAnchor.constraint(equalToConstant: 40)
         ])
         
+        if #available(iOS 12.0, *) {
+            sectionLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 20).isActive = true
+        }
+        
         return headerView
     }
     
@@ -237,7 +241,6 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @objc
     func segmentControlValueChanged(sender: CustomSegmentedControl) {
-//        print(sender.settingKey)
         
         if let settingKey = sender.settingKey {
             let keyRawValue = settingKey.getRawValue()

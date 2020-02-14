@@ -26,8 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         _ = Firestore.firestore() // let db
-        
-        
+                
         return true
     }
     
