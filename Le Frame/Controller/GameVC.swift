@@ -1269,7 +1269,13 @@ extension GameVC {
             
             let gameDataUploaded = uploadStats(referenceString: "games/\(game.gameID!)", dataToAdd: dataToAddGame)
             let userDataUploaded = uploadStats(referenceString: "users/\(uuid!)/games/\(game.gameID!)", dataToAdd: dataToAddUser)
-            statsUploaded = gameDataUploaded && userDataUploaded
+            
+            if game.didWin {
+                let winDataUploaded = uploadStats(referenceString: "wins/\(game.gameID!)", dataToAdd: dataToAddGame)
+                statsUploaded = gameDataUploaded && userDataUploaded && winDataUploaded
+            } else {
+                statsUploaded = gameDataUploaded && userDataUploaded
+            }
         }
         return statsUploaded
     }
@@ -1956,7 +1962,7 @@ extension GameVC {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
 
-            /* The following line is required for the player to work on iOS 11. Change the file type accordingly*/
+            /* The following line is required for the player to work on iOS 11. Change the file type accordingly */
             player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.mp3.rawValue)
 
             /* iOS 10 and earlier require the following line:
