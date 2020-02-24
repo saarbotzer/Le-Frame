@@ -1011,7 +1011,7 @@ extension GameVC {
         gameOverFeedback()
         
         if let cardsLeft = cardsLeft {
-            if cardsLeft > 0 {
+            if cardsLeft > 0 && !difficulty.hideNextCardsWhenRemoving {
                 showNextCards()
             }
         }
@@ -1481,6 +1481,7 @@ extension GameVC {
         secondsPassed = 0
         hintsUsed = 0
         undosUsed = 0
+        didWin = false
         
         moves = []
         
