@@ -73,7 +73,8 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
         updateUI()
     }
-
+    
+    /// Updates the VC's UI
     func updateUI() {
         navigationController?.navigationBar.tintColor = UIColor.white
         let barAppearance = UINavigationBar.appearance()
@@ -84,9 +85,9 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.sectionHeaderHeight = 70
-        
     }
     
+    /// Called when the close button has been tapped
     @IBAction func closeButtonTapped(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
@@ -95,11 +96,8 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sectionName = sectionNames[section]
-
         return settingsSections[sectionName]?.count ?? 0
     }
-    
-    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell = UITableViewCell()
@@ -110,8 +108,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         }
 
         return cell
-     }
-    
+    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return settingsSections.count
@@ -199,16 +196,12 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         }
     }
     
-    
     // MARK: - Create Views
     
-    /**
-     Creates a UISegmentedControl for a setting row
-     
-     - Parameter setting: The Setting objects which contains the data to created the segmented control
-     - Returns: The segmented control with the properties defined in setting, nil if the row doesn't have a segmented control
-     */
-    func createSegmentedControl(for setting: Setting) -> CustomSegmentedControl? {
+    /// Creates a UISegmentedControl for a setting row
+    /// - Parameter setting: The Setting objects which contains the data to created the segmented control
+    /// - Returns: The segmented control with the properties defined in setting, nil if the row doesn't have a segmented control
+    func createSegmentedControl(for setting: Setting) -> SettingSegmentedControl? {
         let goldColor = UIColor(red: 1, green: 215.0/255.0, blue: 0, alpha: 1)
         let backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         let selectedColor = goldColor
@@ -219,7 +212,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let font = UIFont(name: settingFontName, size: settingFontSize)
         
         if setting.segmentedControlSegments != nil {
-            let segmentedControl = CustomSegmentedControl(setting: setting)
+            let segmentedControl = SettingSegmentedControl(setting: setting)
             segmentedControl.translatesAutoresizingMaskIntoConstraints = false
             segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: font!], for: .normal)
             segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: selectedTextColor, NSAttributedString.Key.font: font!], for: .selected)
@@ -242,9 +235,11 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         return nil
     }
     
+
+    /// Called when a segmented control value has been changed.
+    /// - Parameter sender: The segmented control
     @objc
-    func segmentControlValueChanged(sender: CustomSegmentedControl) {
-        
+    func segmentControlValueChanged(sender: SettingSegmentedControl) {
         if let settingKey = sender.settingKey {
             let keyRawValue = settingKey.getRawValue()
             switch settingKey {
@@ -282,6 +277,11 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         }
     }
     
+    
+    /// Shows an alert when a setting has been changed.
+    /// - Parameters:
+    ///   - settingName: The changed setting name
+    ///   - currentValue: The current setted value that is about to be changed.
     func alertChange(for settingName: String, currentValue: Any) {
         let title = settingName
         let message = "This setting for the current game has already been set on \(currentValue). This change will be active in the next game"
@@ -311,10 +311,9 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     }
     
-    /**
-     Updates the defaults settings and returns the selected index for the segmented control.
-     
-     */
+    /// Updates the defaults settings and returns the selected index for the segmented control.
+    /// - Parameter settingKey: The setting to update the defaults for
+    /// - Returns: The selected index for the setting's segmented control
     func updateDefaultSettings(for settingKey: SettingKey?) -> Int {
         var selectedSegmentIndex = 0
 
@@ -373,14 +372,9 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         return selectedSegmentIndex
     }
     
-    
-    
-    /**
-     Creates a header for the section
-     
-     - Parameter text: The text of the label
-     - Returns: A UILabel with the wanted properties
-     */
+    /// Creates a header for the section
+    /// - Parameter text: The text of the label
+    /// - Returns: A UILabel with the wanted properties
     func createHeaderLabel(text: String) -> UILabel {
         let label = UILabel()
         label.text = text
@@ -390,12 +384,9 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         return label
     }
     
-    /**
-     Create a UITableViewCell for a Setting row
-     
-     - Parameter setting: The Setting objects which contains the data to created the row cell
-     - Returns: The table view cell of the setting
-     */
+    /// Create a UITableViewCell for a Setting row
+    /// - Parameter setting: The Setting object which contains the data to created the row cell
+    /// - Returns: The table view cell of the setting
     func createCell(for setting: Setting) -> UITableViewCell {
         let cell = UITableViewCell()
         
@@ -526,8 +517,9 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
+    /// Called when a setting's info button is pressed.
+    /// - Parameter sender: The info button that got pressed
     @objc func infoButtonPressed(sender: InfoButton) {
-        
         var alertTitle = ""
         
         switch sender.settingKey {
@@ -573,7 +565,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-class CustomSegmentedControl : UISegmentedControl {
+class SettingSegmentedControl : UISegmentedControl {
     
     var name : String?
     var settingKey : SettingKey?
@@ -602,6 +594,7 @@ class CustomSegmentedControl : UISegmentedControl {
 
 
 extension SettingsVC: MFMailComposeViewControllerDelegate {
+    /// Opens a new mail to send to the developers. In case no account is linked to the iPhone, it opens Gmail app. If Gmail is not installed, it shows an alert with the email address.
     func sendEmail() {
         
         let mailTo = "royalframegame@gmail.com"
@@ -617,7 +610,7 @@ extension SettingsVC: MFMailComposeViewControllerDelegate {
         
         let canSendUsingMailApp = MFMailComposeViewController.canSendMail()
         
-        if canSendUsingMailApp && false {
+        if canSendUsingMailApp {
             // Send using Mail app
             let mail = MFMailComposeViewController()
             mail.mailComposeDelegate = self
@@ -626,7 +619,7 @@ extension SettingsVC: MFMailComposeViewControllerDelegate {
             mail.setMessageBody(mailBody, isHTML: false)
 
             present(mail, animated: true)
-        } else if canSendUsingGmail && false {
+        } else if canSendUsingGmail {
             // Send using gmail
             UIApplication.shared.open(URL(string: googleUrlString)!, options: [:], completionHandler: nil)
         } else {
