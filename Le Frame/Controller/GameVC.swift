@@ -923,7 +923,7 @@ extension GameVC {
         
         let cardsToRemove = getCardsToRemove()
 
-        if cardsToRemove.count == 0 {
+        if cardsToRemove.count == 0 && getSettingValue(for: .highlightAvailableMoves) {
             Toast.show(message: "No more cards to remove. Tap done", controller: self)
         }
         
@@ -1974,7 +1974,7 @@ extension GameVC {
         guard let url = Bundle.main.url(forResource: soundFileName, withExtension: soundFileExtension) else { return }
 
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setCategory(.soloAmbient, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
 
             /* The following line is required for the player to work on iOS 11. Change the file type accordingly */
