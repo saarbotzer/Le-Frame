@@ -116,10 +116,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         
         bannerView = GADBannerView(adSize: kGADAdSizeBanner)
-        addBannerViewToView(bannerView)
-        bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
-        bannerView.rootViewController = self
-//        bannerView.load(GADRequest())
+        addBannerIfNeeded()
+        
         
         // Un-comment to view onboarding screen every time
 //        defaults.set(false, forKey: "firstGamePlayed")
@@ -1520,6 +1518,7 @@ extension GameVC {
         addTimer()
 
         Utilities.log("Started new game \(gameID.uuidString)")
+        incrementNumberOfGamesPlayed()
     }
 }
 
@@ -2161,6 +2160,27 @@ extension GameVC {
         return Difficulty(from: difficultyString)
     }
     
+    func getNumberOfGamesPlayed() -> Int {
+        let currentlySavedKeys = defaults.dictionaryRepresentation().keys
+        let gamesPlayedKey = "GamesPlayed"
+        let keyExists = currentlySavedKeys.contains(gamesPlayedKey)
+        var numberOfGames = 0
+        
+        if keyExists {
+            numberOfGames = defaults.integer(forKey: gamesPlayedKey)
+        } else {
+            defaults.set(0, forKey: gamesPlayedKey)
+        }
+        return numberOfGames
+    }
+    
+    func incrementNumberOfGamesPlayed(_ byNumber: Int = 1) {
+        let gamesPlayedKey = "GamesPlayed"
+        let numberOfGamesPlayed = getNumberOfGamesPlayed()
+        defaults.set(numberOfGamesPlayed + byNumber, forKey: gamesPlayedKey)
+    }
+    
+    
     /// Gets the viewing mode for the tutorial
     /// - Returns: Onboarding if first game, regular tutorial otherwise
     func getViewingMode() -> OnboardingViewingMode {
@@ -2475,6 +2495,25 @@ extension GameVC {
 
 // MARK: - Ads
 extension GameVC {
+    
+    func addBannerIfNeeded() {
+        let numberOfGamesPlayed = getNumberOfGamesPlayed()
+        let switchEveryXGames : Double = 15
+        
+        // Every 15 games it switches the showAds
+        let showAds = floor(Double(numberOfGamesPlayed) / switchEveryXGames).truncatingRemainder(dividingBy: 2) == 1
+        
+        if showAds {
+            
+            addBannerViewToView(bannerView)
+            bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+            bannerView.rootViewController = self
+        } else {
+            topView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
+        }
+    }
+    
+    
     func addBannerViewToView(_ bannerView: GADBannerView) {
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         bannerView.backgroundColor = nil
@@ -2486,12 +2525,26 @@ extension GameVC {
         let bannerHeight: CGFloat = 50
 
         bannerView.heightAnchor.constraint(equalToConstant: bannerHeight).isActive = true
+        
         bannerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
         bannerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
         bannerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
         
         topView.topAnchor.constraint(equalTo: bannerView.bottomAnchor, constant: 0).isActive = true
-        
     }
+    
+    
+    func hideBannerView(_ bannerView: GADBannerView) {
+//        bannerView.isHidden = true
+//
+        bannerView.removeFromSuperview()
+        
+        topView.topAnchor.constraint(equalTo: bannerView.bottomAnchor, constant: 0).isActive = false
+        topView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
+
+        updateUI()
+
+    }
+    
 
 }

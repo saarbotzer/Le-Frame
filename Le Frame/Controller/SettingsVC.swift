@@ -31,6 +31,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No"),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No"),
                 Setting(label: "Haptic feedback", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No"),
+//                Setting(label: "Ads", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .adsOn, segmentedControlAlertText: "No", infoText: "For tests"),
                 Setting(label: "Statistics", segueName: .goToStatistics)
             ],
             "HELP": [
@@ -270,7 +271,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 if gameDifficulty.sumMode.getRawValue() != newSumMode {
                     alertChange(for: sender.name!, currentValue: gameDifficulty.sumMode)
                 }
-            case .showHints, .soundsOn, .doneRemovingAnytime, .hapticOn, .highlightAvailableMoves:
+            case .showHints, .soundsOn, .doneRemovingAnytime, .hapticOn, .adsOn, .highlightAvailableMoves:
                 let newValue = sender.selectedSegmentIndex == 0
                 defaults.set(newValue, forKey: keyRawValue)
             }
@@ -331,7 +332,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     defaults.set(10, forKey: keyRawValue)
                     selectedSegmentIndex = 0
                 }
-            case .soundsOn, .hapticOn, .showHints, .highlightAvailableMoves:
+            case .soundsOn, .hapticOn, .showHints, .highlightAvailableMoves, .adsOn:
                 if keyExists {
                     let settingOn = defaults.bool(forKey: keyRawValue)
                     selectedSegmentIndex = settingOn ? 0 : 1
@@ -415,7 +416,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         switch setting.segmentedControlSettingKey {
         case .difficulty:
             segments = Difficulty.activeOptions
-        case .hapticOn, .soundsOn, .showHints, .doneRemovingAnytime, .highlightAvailableMoves:
+        case .hapticOn, .soundsOn, .showHints, .doneRemovingAnytime, .highlightAvailableMoves, .adsOn:
             segments = ["ON", "OFF"]
         default:
             segments = nil

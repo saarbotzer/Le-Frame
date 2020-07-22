@@ -158,6 +158,7 @@ enum SettingKey: String {
     case hapticOn = "HapticOn"
     case difficulty = "Difficulty"
     case highlightAvailableMoves = "HighlightAvailableMoves"
+    case adsOn = "AdsOn"
     
     func getRawValue() -> String {
         return self.rawValue
