@@ -30,7 +30,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 Setting(label: "Highlight available moves", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .highlightAvailableMoves, segmentedControlAlertText: nil, segueName: nil, infoText: "Available spots and matching cards will be highlighted"),
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No"),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No"),
-                Setting(label: "Haptic feedback", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No"),
+                Setting(label: "Vibrate", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No"),
 //                Setting(label: "Ads", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .adsOn, segmentedControlAlertText: "No", infoText: "For tests"),
                 Setting(label: "Statistics", segueName: .goToStatistics)
             ],

@@ -2506,7 +2506,12 @@ extension GameVC {
         if showAds {
             
             addBannerViewToView(bannerView)
-            bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+            
+            // Testing ad unit ID
+//            bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+            
+            bannerView.adUnitID = "ca-app-pub-6790454182464184/3177122320"
+            
             bannerView.rootViewController = self
         } else {
             topView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
