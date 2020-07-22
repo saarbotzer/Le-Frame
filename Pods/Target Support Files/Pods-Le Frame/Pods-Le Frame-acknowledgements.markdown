@@ -1904,6 +1904,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    limitations under the License.
 
 
+## Google-Mobile-Ads-SDK
+
+Copyright 2020 Google
+
+## GoogleAppMeasurement
+
+Copyright 2020 Google
+
 ## GoogleDataTransport
 
 

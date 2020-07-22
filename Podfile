@@ -8,5 +8,6 @@ target 'Le Frame' do
   # Pods for Le Frame
 pod 'Firebase/Auth'
 pod 'Firebase/Firestore'
+pod 'Google-Mobile-Ads-SDK'
 
 end

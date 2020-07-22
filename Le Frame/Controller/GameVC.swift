@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import AVFoundation
 import Firebase
+import GoogleMobileAds
 
 class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, UITabBarDelegate {
 
@@ -30,6 +31,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     @IBOutlet weak var removeIcon: UIImageView!
     
     
+    @IBOutlet weak var topView: UIView!
     @IBOutlet weak var tabBar: UITabBar!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var cardsLeftLabel: UILabel!
@@ -104,13 +106,20 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var blockedCardTaps : Int = 0
     var lastTapTime : Date?
     
-    
+    // Ads
+    var bannerView : GADBannerView!
     
     // MARK: - ViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
         Utilities.log(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
+        
+        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+        bannerView.rootViewController = self
+//        bannerView.load(GADRequest())
         
         // Un-comment to view onboarding screen every time
 //        defaults.set(false, forKey: "firstGamePlayed")
@@ -124,14 +133,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     override func viewDidAppear(_ animated: Bool) {
         
         updateUI()
+        bannerView.load(GADRequest())
         
         let viewingMode = getViewingMode()
         if viewingMode == .onboarding {
             performSegue(withIdentifier: "goToHowTo", sender: nil)
             defaults.set(true, forKey: "firstGamePlayed")
-            
-//            // TODO: Verify that this is a good place and a way to create uuids
-//            defaults.set(UUID().uuidString, forKey: "uuid")
         }
         
         if !viewFinishedLoading {
@@ -2464,4 +2471,27 @@ extension GameVC {
         next2CardImageView.addShadow(with: 1)
         next3CardImageView.addShadow(with: 1)
     }
+}
+
+// MARK: - Ads
+extension GameVC {
+    func addBannerViewToView(_ bannerView: GADBannerView) {
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        bannerView.backgroundColor = nil
+        let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(view.frame.width)
+        bannerView.adSize = adSize
+        
+        view.addSubview(bannerView)
+        
+        let bannerHeight: CGFloat = 50
+
+        bannerView.heightAnchor.constraint(equalToConstant: bannerHeight).isActive = true
+        bannerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        bannerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        bannerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
+        
+        topView.topAnchor.constraint(equalTo: bannerView.bottomAnchor, constant: 0).isActive = true
+        
+    }
+
 }

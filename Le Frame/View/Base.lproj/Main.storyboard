@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -287,13 +287,13 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="ayf-bV-tph" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="5" id="9ML-OP-SER"/>
                             <constraint firstAttribute="bottom" secondItem="78K-1u-GpS" secondAttribute="bottom" id="Cyd-ry-scy"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="WXt-9o-9ko" secondAttribute="trailing" id="D5O-oo-3nu"/>
                             <constraint firstAttribute="trailing" secondItem="ayf-bV-tph" secondAttribute="trailing" constant="20" id="Ftl-Z0-eA2"/>
                             <constraint firstItem="HgX-Qd-ei6" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="IDK-HN-JnD"/>
                             <constraint firstItem="78K-1u-GpS" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="Mj7-eQ-uzX"/>
                             <constraint firstItem="HgX-Qd-ei6" firstAttribute="top" secondItem="ayf-bV-tph" secondAttribute="bottom" id="Sdx-Ph-AuM"/>
+                            <constraint firstItem="ayf-bV-tph" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="5" placeholder="YES" identifier="topViewTopAnchor" id="Wbg-rC-ez1"/>
                             <constraint firstItem="ayf-bV-tph" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="dKw-9b-Q4L"/>
                             <constraint firstItem="HgX-Qd-ei6" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="eb3-Ax-Xz5"/>
                             <constraint firstItem="WXt-9o-9ko" firstAttribute="top" secondItem="HgX-Qd-ei6" secondAttribute="bottom" id="h2z-VR-fRJ"/>
@@ -324,6 +324,7 @@
                         <outlet property="spotsCollectionView" destination="xln-Id-4BC" id="bkj-Wd-Yui"/>
                         <outlet property="tabBar" destination="IIg-up-Rhk" id="9wS-RZ-kYI"/>
                         <outlet property="timeLabel" destination="MRB-3L-EFt" id="nMz-TW-mNZ"/>
+                        <outlet property="topView" destination="ayf-bV-tph" id="xJe-af-F9j"/>
                         <segue destination="Sub-aK-rx4" kind="presentation" identifier="goToSettings" modalPresentationStyle="automatic" id="j0P-9l-lCJ"/>
                         <segue destination="1Pn-E4-7OJ" kind="show" identifier="goToHowTo" id="Tlo-Vj-1Yy"/>
                     </connections>
@@ -625,7 +626,7 @@
                                 <rect key="frame" x="20" y="76" width="374" height="134"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Royal Frame Icon" translatesAutoresizingMaskIntoConstraints="NO" id="YUh-GA-W9V">
-                                        <rect key="frame" x="0.0" y="0.0" width="374.00000000000023" height="100"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="374" height="100"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="100" id="r1V-yS-mdd"/>
                                         </constraints>
@@ -1332,6 +1333,9 @@
             <point key="canvasLocation" x="4747.826086956522" y="-699.10714285714278"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="Tlo-Vj-1Yy"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="Background" width="375" height="812"/>
         <image name="Royal Frame Icon" width="856" height="986"/>
@@ -1345,7 +1349,4 @@
         <image name="tabbar-settings-icon" width="23" height="23"/>
         <image name="transparent_background" width="1" height="1"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="Tlo-Vj-1Yy"/>
-    </inferredMetricsTieBreakers>
 </document>

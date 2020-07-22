@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import Firebase
+import GoogleMobileAds
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -20,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         getAppVersionAndBuild()
         
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
         FirebaseApp.configure()
 
         Auth.auth().signInAnonymously { (authResult, error) in
