@@ -109,6 +109,11 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     // Ads
     var bannerView : GADBannerView!
     
+    // Testings
+    var testShowTaps : Bool = true
+    var testShowAds : Bool = false
+    var testShowOnboarding : Bool = false
+    
     // MARK: - ViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -119,8 +124,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         addBannerIfNeeded()
         
         
-        // Un-comment to view onboarding screen every time
-//        defaults.set(false, forKey: "firstGamePlayed")
+        if testShowOnboarding {
+            defaults.set(false, forKey: "firstGamePlayed")
+        }
+        
         
         setDelegates()
         
@@ -2503,7 +2510,7 @@ extension GameVC {
         // Every 15 games it switches the showAds
         let showAds = floor(Double(numberOfGamesPlayed) / switchEveryXGames).truncatingRemainder(dividingBy: 2) == 1
         
-        if showAds {
+        if showAds && testShowAds {
             
             addBannerViewToView(bannerView)
             
