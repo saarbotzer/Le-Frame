@@ -11,6 +11,7 @@ import CoreData
 import AVFoundation
 import Firebase
 import GoogleMobileAds
+import ShowTime
 
 class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, UITabBarDelegate {
 
@@ -110,8 +111,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var bannerView : GADBannerView!
     
     // Testings
-    var testShowTaps : Bool = true
-    var testShowAds : Bool = false
+    var testShowTaps : Bool = false
+    var testShowAds : Bool = true
     var testShowOnboarding : Bool = false
     
     // MARK: - ViewController Functions
@@ -127,6 +128,12 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         if testShowOnboarding {
             defaults.set(false, forKey: "firstGamePlayed")
         }
+
+        ShowTime.enabled = testShowTaps ? .always : .never
+        ShowTime.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.5)
+//        ShowTime.strokeColor = #colorLiteral(red: 0.6, green: 0.6, blue: 0.6, alpha: 1)
+        ShowTime.strokeColor = .clear
+        ShowTime.size = CGSize(width: 60, height: 60)
         
         
         setDelegates()
@@ -2514,10 +2521,14 @@ extension GameVC {
             
             addBannerViewToView(bannerView)
             
-            // Testing ad unit ID
-//            bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
             
-            bannerView.adUnitID = "ca-app-pub-6790454182464184/3177122320"
+            if self.testShowAds {
+                // Testing ad unit ID
+                bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+            } else {
+                // Actual ad unit ID
+                bannerView.adUnitID = "ca-app-pub-6790454182464184/3177122320"
+            }
             
             bannerView.rootViewController = self
         } else {

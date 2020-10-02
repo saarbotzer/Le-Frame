@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         getAppVersionAndBuild()
         
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
+//        GADMobileAds.sharedInstance().start(completionHandler: nil)
         FirebaseApp.configure()
 
         Auth.auth().signInAnonymously { (authResult, error) in

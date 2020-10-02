@@ -255,11 +255,13 @@ PODS:
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
+  - ShowTime (2.5.2)
 
 DEPENDENCIES:
   - Firebase/Auth
   - Firebase/Firestore
   - Google-Mobile-Ads-SDK
+  - ShowTime
 
 SPEC REPOS:
   trunk:
@@ -282,6 +284,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - leveldb-library
     - nanopb
+    - ShowTime
 
 SPEC CHECKSUMS:
   abseil: 18063d773f5366ff8736a050fe035a28f635fd27
@@ -303,7 +306,8 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 43b8b64263023d4f32caa0b40f4c8bfa3c5f36d8
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
+  ShowTime: 5cb2c5314da2983cec44f27123a15473cf29306f
 
-PODFILE CHECKSUM: e462fe7416e5604341f220e25b423baf1bff2b15
+PODFILE CHECKSUM: 1f2f2a7ebafd978eab5eafc8dbbce98982c19a2d
 
 COCOAPODS: 1.8.4

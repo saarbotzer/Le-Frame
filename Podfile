@@ -9,5 +9,6 @@ target 'Le Frame' do
 pod 'Firebase/Auth'
 pod 'Firebase/Firestore'
 pod 'Google-Mobile-Ads-SDK'
+pod 'ShowTime'
 
 end
