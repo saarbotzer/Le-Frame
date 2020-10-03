@@ -231,9 +231,20 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                         
             segmentedControl.addTarget(self, action: #selector(segmentControlValueChanged(sender:)), for: .valueChanged)
             
+            // TODO: Delete
+//            let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchHappen(_:)))
+//            segmentedControl.isUserInteractionEnabled = true
+//            segmentedControl.addGestureRecognizer(tap)
+            
             return segmentedControl
         }
         return nil
+    }
+    
+    // TODO: Delete
+    @objc
+    func touchHappen(_ sender: UITapGestureRecognizer) {
+        print("Hello Dear you are here")
     }
     
 
@@ -440,8 +451,8 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let selectedBackgroundView = UIView(frame: cell.frame)
 
         if let segmentedControl = createSegmentedControl(for: setting) {
-            cell.addSubview(segmentedControl)
             
+            cell.addSubview(segmentedControl)
             
             var segmentedControlYAnchor = segmentedControl.centerYAnchor.constraint(equalTo: cell.centerYAnchor)
             var segmentedControlXAnchor = segmentedControl.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10)

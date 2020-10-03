@@ -32,12 +32,12 @@
 		BCF0F9FE23B9403300EB266C /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF0F9FD23B9403300EB266C /* Enums.swift */; };
 		BCF0FA0023BE7CC000EB266C /* ContactUsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF0F9FF23BE7CC000EB266C /* ContactUsVC.swift */; };
 		BCF57EAE239ED8F200F762FA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF57EAD239ED8F200F762FA /* SceneDelegate.swift */; };
-		CA16A858B73314A99CA99614 /* Pods_Le_Frame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B1A4FD84B0357CE21C4F165 /* Pods_Le_Frame.framework */; };
+		FA7AF0F277BCA56E5A6396B5 /* Pods_Le_Frame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FED42C56E95C83F20EB50B92 /* Pods_Le_Frame.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		036C2198B029470711D4357C /* Pods-Le Frame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Le Frame.debug.xcconfig"; path = "Target Support Files/Pods-Le Frame/Pods-Le Frame.debug.xcconfig"; sourceTree = "<group>"; };
-		2B1A4FD84B0357CE21C4F165 /* Pods_Le_Frame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Le_Frame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		23578D29A3238AACD53BF5C8 /* Pods-Le Frame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Le Frame.debug.xcconfig"; path = "Target Support Files/Pods-Le Frame/Pods-Le Frame.debug.xcconfig"; sourceTree = "<group>"; };
+		5FD1969FB2FB81A2EFFFEBA9 /* Pods-Le Frame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Le Frame.release.xcconfig"; path = "Target Support Files/Pods-Le Frame/Pods-Le Frame.release.xcconfig"; sourceTree = "<group>"; };
 		BC13EFF92392CBA600DF4F1C /* HowToVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToVC.swift; sourceTree = "<group>"; };
 		BC36841A236B502500DCC703 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
 		BC7A9B1123914FF4002CC9B3 /* card-flip-2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "card-flip-2.wav"; sourceTree = "<group>"; };
@@ -65,7 +65,7 @@
 		BCF0F9FD23B9403300EB266C /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		BCF0F9FF23BE7CC000EB266C /* ContactUsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUsVC.swift; sourceTree = "<group>"; };
 		BCF57EAD239ED8F200F762FA /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		F376892DEEA52434674AAC1F /* Pods-Le Frame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Le Frame.release.xcconfig"; path = "Target Support Files/Pods-Le Frame/Pods-Le Frame.release.xcconfig"; sourceTree = "<group>"; };
+		FED42C56E95C83F20EB50B92 /* Pods_Le_Frame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Le_Frame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,17 +73,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA16A858B73314A99CA99614 /* Pods_Le_Frame.framework in Frameworks */,
+				FA7AF0F277BCA56E5A6396B5 /* Pods_Le_Frame.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2E892A0E1CD99C552889607E /* Frameworks */ = {
+		149E328C4244B3322F941199 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2B1A4FD84B0357CE21C4F165 /* Pods_Le_Frame.framework */,
+				FED42C56E95C83F20EB50B92 /* Pods_Le_Frame.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -91,8 +91,8 @@
 		8CDC3A5BCE1CEEC1D4E1D2E7 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				036C2198B029470711D4357C /* Pods-Le Frame.debug.xcconfig */,
-				F376892DEEA52434674AAC1F /* Pods-Le Frame.release.xcconfig */,
+				23578D29A3238AACD53BF5C8 /* Pods-Le Frame.debug.xcconfig */,
+				5FD1969FB2FB81A2EFFFEBA9 /* Pods-Le Frame.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -125,7 +125,7 @@
 				BCC40CED234DEDE400CD951D /* Le Frame */,
 				BCC40CEC234DEDE400CD951D /* Products */,
 				8CDC3A5BCE1CEEC1D4E1D2E7 /* Pods */,
-				2E892A0E1CD99C552889607E /* Frameworks */,
+				149E328C4244B3322F941199 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -203,11 +203,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BCC40CFF234DEDEB00CD951D /* Build configuration list for PBXNativeTarget "Le Frame" */;
 			buildPhases = (
-				69D6BAF196D9E676ACE7EB2E /* [CP] Check Pods Manifest.lock */,
+				1DC6F022E7FA5D387C3B3870 /* [CP] Check Pods Manifest.lock */,
 				BCC40CE7234DEDE400CD951D /* Sources */,
 				BCC40CE8234DEDE400CD951D /* Frameworks */,
 				BCC40CE9234DEDE400CD951D /* Resources */,
-				B83EB72B37EC3AFAFDE86280 /* [CP] Embed Pods Frameworks */,
+				9E9304E181467D9D550C499D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -270,7 +270,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		69D6BAF196D9E676ACE7EB2E /* [CP] Check Pods Manifest.lock */ = {
+		1DC6F022E7FA5D387C3B3870 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -292,7 +292,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B83EB72B37EC3AFAFDE86280 /* [CP] Embed Pods Frameworks */ = {
+		9E9304E181467D9D550C499D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -394,6 +394,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -454,6 +455,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -474,7 +476,7 @@
 		};
 		BCC40D00234DEDEB00CD951D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 036C2198B029470711D4357C /* Pods-Le Frame.debug.xcconfig */;
+			baseConfigurationReference = 23578D29A3238AACD53BF5C8 /* Pods-Le Frame.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -496,7 +498,7 @@
 		};
 		BCC40D01234DEDEB00CD951D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F376892DEEA52434674AAC1F /* Pods-Le Frame.release.xcconfig */;
+			baseConfigurationReference = 5FD1969FB2FB81A2EFFFEBA9 /* Pods-Le Frame.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
