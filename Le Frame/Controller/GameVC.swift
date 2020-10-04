@@ -2254,9 +2254,10 @@ extension GameVC {
     
     /// Handles which cards will be animated.
     func animateNextCards() {
-        if gameStatus != .placing {
-            return
-        }
+        // Commented to fix an issue with next card not showing.
+//        if gameStatus != .placing {
+//            return
+//        }
         
         switch deck.count {
         case 0 :

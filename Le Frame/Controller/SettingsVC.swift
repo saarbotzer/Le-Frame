@@ -231,20 +231,9 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                         
             segmentedControl.addTarget(self, action: #selector(segmentControlValueChanged(sender:)), for: .valueChanged)
             
-            // TODO: Delete
-//            let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchHappen(_:)))
-//            segmentedControl.isUserInteractionEnabled = true
-//            segmentedControl.addGestureRecognizer(tap)
-            
             return segmentedControl
         }
         return nil
-    }
-    
-    // TODO: Delete
-    @objc
-    func touchHappen(_ sender: UITapGestureRecognizer) {
-        print("Hello Dear you are here")
     }
     
 
@@ -421,8 +410,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let labelHeight : CGFloat = 20
         let segmentedControlHeight : CGFloat = 25
         var segmentedControlWidth : CGFloat = 100
-        
-        
+                
         var segments: [Any]?
         switch setting.segmentedControlSettingKey {
         case .difficulty:
@@ -439,6 +427,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 labelYAnchor = label.topAnchor.constraint(equalTo: cell.topAnchor, constant: 20)
                 
                 cell.heightAnchor.constraint(equalToConstant: labelHeight + segmentedControlHeight + 30).isActive = true
+                cell.contentView.heightAnchor.constraint(equalToConstant: labelHeight + segmentedControlHeight + 30).isActive = true
                 specialCell = true
             }
         }
@@ -452,7 +441,8 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
         if let segmentedControl = createSegmentedControl(for: setting) {
             
-            cell.addSubview(segmentedControl)
+//            cell.addSubview(segmentedControl)
+            cell.contentView.addSubview(segmentedControl)
             
             var segmentedControlYAnchor = segmentedControl.centerYAnchor.constraint(equalTo: cell.centerYAnchor)
             var segmentedControlXAnchor = segmentedControl.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -10)
@@ -495,7 +485,8 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             
             infoButton.addTarget(self, action: #selector(infoButtonPressed(sender:)), for: .touchUpInside)
             
-            cell.addSubview(infoButton)
+//            cell.addSubview(infoButton)
+            cell.contentView.addSubview(infoButton)
             NSLayoutConstraint.activate([
                 infoButton.heightAnchor.constraint(equalToConstant: labelHeight - 5),
                 infoButton.widthAnchor.constraint(equalToConstant: labelHeight - 5),
