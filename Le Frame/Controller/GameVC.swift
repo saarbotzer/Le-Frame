@@ -12,6 +12,7 @@ import AVFoundation
 import Firebase
 import GoogleMobileAds
 import ShowTime
+import Instructions
 
 class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, UITabBarDelegate {
 
@@ -107,18 +108,25 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var blockedCardTaps : Int = 0
     var lastTapTime : Date?
     
+    
+    //
+    var coachMarksController = CoachMarksController()
+    var itemsToCoach: [CoachItem] = [CoachItem]()
+    
     // Ads
     var bannerView : GADBannerView!
     
     // Testings
     var testShowTaps : Bool = false
-    var testShowAds : Bool = true
+    var testShowAds : Bool = false
     var testShowOnboarding : Bool = false
     
     // MARK: - ViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
         Utilities.log(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        
+        self.coachMarksController.dataSource = self
         
         
         bannerView = GADBannerView(adSize: kGADAdSizeBanner)
@@ -147,6 +155,10 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         updateUI()
         bannerView.load(GADRequest())
         
+        itemsToCoach = getItemsToCoach()
+        self.coachMarksController.start(in: .window(over: self))
+        
+        
         let viewingMode = getViewingMode()
         if viewingMode == .onboarding {
             performSegue(withIdentifier: "goToHowTo", sender: nil)
@@ -157,6 +169,13 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             startNewGame()
             viewFinishedLoading = true
         }
+    }
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        self.coachMarksController.stop(immediately: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -496,91 +515,86 @@ extension GameVC {
 
 // MARK: - Highlighting
 extension GameVC {
-    /// Enables (highlights) all empty spots that are available for the next card.
-    func enableOptionSpots() {
+    /// Highlight all empty spots that are available for the next card.
+    func highlightSpotsForNextCard() {
         let settingIsOn = getSettingValue(for: .highlightAvailableMoves)
         
         let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
-        var spotsToEnable: [IndexPath] = allSpots
-        var spotsToDisable: [IndexPath] = []
+        var spotsToHighlight: [IndexPath] = allSpots
+        var spotsToUnhighlight: [IndexPath] = []
 
-        // Option 1 - Disable nothing
+        // Option 1 - Disable nothing (if there are no more next cards
         if !settingIsOn || nextCards.count < 1 {
-            spotsToEnable = allSpots
+            spotsToHighlight = allSpots
         // Option 2 - Disable not royal-specific spots
         } else if let nextCardRank = nextCards[0].rank {
-            spotsToEnable = []
+            spotsToHighlight = []
             let allSpotsForRank = Utilities.getSpots(forRank: nextCardRank, overlapping: true)
             for spotIndexPath in allSpotsForRank {
                 let optionSpot = getSpot(at: spotIndexPath)
                 if optionSpot.isEmpty {
-                    spotsToEnable.append(spotIndexPath)
+                    spotsToHighlight.append(spotIndexPath)
                 }
             }
             
             let placedSpots = getPlacedIndexPaths(placed: true)
-            spotsToEnable.append(contentsOf: placedSpots)
+            spotsToHighlight.append(contentsOf: placedSpots)
         }
             
-        spotsToDisable = allSpots.difference(from: spotsToEnable)
-        
-        for ip in spotsToEnable {
-            let spot = getSpot(at: ip)
-            spot.mark(as: .disabledForPlacing, on: false)
-        }
-        
-        for ip in spotsToDisable {
-            let spot = getSpot(at: ip)
-            spot.mark(as: .disabledForPlacing, on: true)
-        }
+        highlight(spots: spotsToHighlight, withEvent: .placingHighlight)
     }
     
-    /// Enables (highlights) option cards for a card.
+    /// Enables (highlights) option cards for a card. (removal)
     /// - Parameters:
     ///   - indexPath: The card's index path. If nil, disable all cards except for specific conditions
     ///   - enableAll: True if enable all cards, false otherwise
-    func enableOptionCards(forCardAt indexPath: IndexPath?, enableAll: Bool = false) {
+    func highlightCardsForRemoval(forCardAt indexPath: IndexPath?, highlightAllCards: Bool = false) {
         let settingIsOn = getSettingValue(for: .highlightAvailableMoves)
         let selectedCards = getSelectedIndexPaths(selected: true)
         
         let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
-        var cardsToEnable: [IndexPath] = []
-        var cardsToDisable: [IndexPath] = []
+        var cardsToHighlight: [IndexPath] = []
         
         // Option 1 - Disable nothing | When the setting is off
-        let enableAllCards = enableAll || !settingIsOn
-        if enableAllCards {
-            cardsToEnable = allSpots
+        if highlightAllCards || !settingIsOn {
+            cardsToHighlight = allSpots
         }
         
         // Option 2 - Disable all cards that can't be paired with another card | When setting is on & no indexPath & no cards are selected
-        if settingIsOn && !enableAll && indexPath == nil && selectedCards.count == 0 {
-            cardsToEnable = getCardsToRemove(false)
+        if settingIsOn && !highlightAllCards && indexPath == nil && selectedCards.count == 0 {
+            cardsToHighlight = getCardsToRemove(false)
         }
         
         // Option 3 - Disable all cards that are not selected | When setting is on & no indexPath & 2 cards are selected
         if settingIsOn && indexPath == nil && selectedCards.count == 2 {
-            cardsToEnable = selectedCards
+            cardsToHighlight = selectedCards
         }
         
         // Option 4 - Disable all cards that can't be removed with the card at indexPath | When setting is on and there is an indexPath
         if settingIsOn && indexPath != nil {
-            cardsToEnable = getCardsToPairWith(cardAt: indexPath!)
-            cardsToEnable.append(indexPath!)
+            cardsToHighlight = getCardsToPairWith(cardAt: indexPath!)
+            cardsToHighlight.append(indexPath!)
         }
         
-        cardsToDisable = allSpots.difference(from: cardsToEnable)
-
-        for ip in cardsToEnable {
-            let spot = getSpot(at: ip)
-            spot.mark(as: .disabledForRemoving, on: false)
+        highlight(spots: cardsToHighlight, withEvent: .removingHighlight)
+    }
+    
+    func highlight(spots spotsToHighlight: [IndexPath], withEvent event: CardMarkEvent) {
+        let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
+        
+        let spotsToUnhighlight = allSpots.difference(from: spotsToHighlight)
+        
+        for indexPath in spotsToHighlight {
+            let spot = getSpot(at: indexPath)
+            spot.mark(as: event, on: true)
         }
         
-        for ip in cardsToDisable {
-            let spot = getSpot(at: ip)
-            spot.mark(as: .disabledForRemoving, on: true)
+        for indexPath in spotsToUnhighlight {
+            let spot = getSpot(at: indexPath)
+            spot.mark(as: event, on: false)
         }
     }
+    
     
     /// Gets the index paths of the spots that have cards
     /// - Parameter placed: Whether to get all placed spots or empty spots
@@ -813,7 +827,7 @@ extension GameVC {
     
     /// Switches between showing and hiding the removal mode UI
     /// - Parameter show: True if show removal mode UI, false otherwise
-    func showRemovalUI(show: Bool) {
+    func showRemovalUI(show: Bool, isOnboarding: Bool = false) {
         doneRemovingBtn.isHidden = !show
         doneRemovingIcon.isHidden = !show
         removeIcon.isHidden = !show
@@ -826,8 +840,8 @@ extension GameVC {
         
         hideNextCardsWithAnimation(hide: show)
         
-        if show {
-            enableOptionCards(forCardAt: nil)
+        if show && !isOnboarding {
+            highlightCardsForRemoval(forCardAt: nil)
         }
     }
     
@@ -892,7 +906,7 @@ extension GameVC {
         resetCardIndexes()
         
         markCardAsSelected(at: nil)
-        enableOptionCards(forCardAt: nil)
+        highlightCardsForRemoval(forCardAt: nil)
         
         finishedRemovingCard()
     }
@@ -926,7 +940,7 @@ extension GameVC {
         finishedPlacingCard(cardPlaced: false)
         
         markCardAsSelected(at: nil)
-        enableOptionSpots()
+        highlightSpotsForNextCard()
     }
     
     /// Resets both selected cards index paths.
@@ -980,7 +994,7 @@ extension GameVC {
             secondSelectedCardIndexPath = nil
             
             markCardAsSelected(at: firstSelectedCardIndexPath)
-            enableOptionCards(forCardAt: firstSelectedCardIndexPath)
+            highlightCardsForRemoval(forCardAt: firstSelectedCardIndexPath)
             
         } else {
             // If the tapped card is already selected, deselect it
@@ -994,7 +1008,7 @@ extension GameVC {
                 secondSelectedCardIndexPath = nil
                 
                 markCardAsSelected(at: nil)
-                enableOptionCards(forCardAt: nil)
+                highlightCardsForRemoval(forCardAt: nil)
                 
                 enableRemoveButton(enable: false)
             }
@@ -1003,7 +1017,7 @@ extension GameVC {
                 secondSelectedCardIndexPath = indexPath
                 
                 markCardAsSelected(at: secondSelectedCardIndexPath)
-                enableOptionCards(forCardAt: nil)
+                highlightCardsForRemoval(forCardAt: nil)
             }
             // If two cards are already selected, deselect them and select the tapped card
             else {
@@ -1013,7 +1027,7 @@ extension GameVC {
                 secondSelectedCardIndexPath = nil
                 
                 markCardAsSelected(at: firstSelectedCardIndexPath)
-                enableOptionCards(forCardAt: firstSelectedCardIndexPath)
+                highlightCardsForRemoval(forCardAt: firstSelectedCardIndexPath)
             }
         }
     }
@@ -1034,7 +1048,7 @@ extension GameVC {
                 showNextCards()
             }
         }
-        enableOptionCards(forCardAt: nil, enableAll: true)
+        highlightCardsForRemoval(forCardAt: nil, highlightAllCards: true)
 
         if toAddStats {
             addStats(because: .gameLost)
@@ -1105,7 +1119,7 @@ extension GameVC {
         showAlert(title: title, message: messageText, dismissText: "Great", confirmText: "Start a new game", because: .gameWon)
         
 //        setNextCardsImages(next1ImageName: spotImageName, next2ImageName: nil, next3ImageName: nil)
-        enableOptionCards(forCardAt: nil, enableAll: true)
+        highlightCardsForRemoval(forCardAt: nil, highlightAllCards: true)
         
         if toAddStats {
             addStats(because: .gameWon)
@@ -1520,7 +1534,7 @@ extension GameVC {
         removalSumLabel.text = "\(difficulty.sumMode.getRawValue())"
         updateCardsLeftLabel()
         markCardAsSelected(at: nil)
-        enableOptionSpots()
+        highlightSpotsForNextCard()
         removeAllCards()
         confettiEmitter.removeFromSuperlayer()
 
@@ -2217,7 +2231,7 @@ extension GameVC {
         
         if !firstCard {
             cardsLeft = cardsLeft! - 1
-            enableOptionSpots()
+            highlightSpotsForNextCard()
         }
 
         switch deck.count {
@@ -2249,7 +2263,7 @@ extension GameVC {
             nextCards.append(deck.remove(at: 0))
         }
         
-        enableOptionSpots()
+        highlightSpotsForNextCard()
     }
     
     /// Handles which cards will be animated.
@@ -2571,4 +2585,116 @@ extension GameVC {
     }
     
 
+}
+
+
+
+extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
+    
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return itemsToCoach.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        return coachMarksController.helper.makeCoachMark(for: itemsToCoach[index].view)
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: UIView & CoachMarkBodyView, arrowView: (UIView & CoachMarkArrowView)?) {
+        
+        let item = itemsToCoach[index]
+        
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(
+            withArrow: true,
+            arrowOrientation: coachMark.arrowOrientation
+        )
+
+        coachViews.bodyView.hintLabel.text = item.text + "\n(\(index + 1)/\(itemsToCoach.count))"
+        coachViews.bodyView.nextLabel.text = item.nextText
+        
+        performFunction(coachItem: item)
+
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
+    }
+    
+    func performFunction(coachItem: CoachItem) {
+        let function = coachItem.function
+        
+        let kingSpotsIndexPaths = Utilities.getSpots(forRank: .king)
+        let queenSpotsIndexPaths = Utilities.getSpots(forRank: .queen)
+        let jackSpotsIndexPaths = Utilities.getSpots(forRank: .jack)
+        let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
+
+        
+        switch function {
+        case .hideRemovalUI:
+            showRemovalUI(show: false, isOnboarding: true)
+        case .showRemovalUI:
+            showRemovalUI(show: true, isOnboarding: true)
+        case .highlightKingSpots:
+            highlight(spots: kingSpotsIndexPaths, withEvent: .markForTutorial)
+        case .highlightJackSpots:
+            highlight(spots: jackSpotsIndexPaths, withEvent: .markForTutorial)
+        case .highlightQueenSpots:
+            highlight(spots: queenSpotsIndexPaths, withEvent: .markForTutorial)
+        case .highlightAll:
+            highlight(spots: allSpots, withEvent: .placingHighlight)
+        default:
+            break
+        }
+    }
+    
+    
+    func beforeCoachMarks() {
+        // Hide highlighting
+        highlightCardsForRemoval(forCardAt: nil)
+    }
+    
+    func afterCoachMarks() {
+        // Show highlighting
+//        enableOptionCards(forCardAt: <#T##IndexPath?#>, enableAll: <#T##Bool#>)
+    }
+    
+    // TODO: Document
+    func getItemsToCoach() -> [CoachItem] {
+        let items = [
+            CoachItem(view: removeLabelsBackground, text: "Here you'll see the next card(s) in the deck. You don't need to tap the card - to place a card simply tap the wanted spot.\nYou can change the number of cards shown in settings.")
+            , CoachItem(view: spotsCollectionView, text: "Place kings in the corners", function: .highlightKingSpots)
+            , CoachItem(view: spotsCollectionView, text: "Place queens in the top and bottom", function: .highlightQueenSpots)
+            , CoachItem(view: spotsCollectionView, text: "Place jacks at the sides", function: .highlightJackSpots)
+            , CoachItem(view: spotsCollectionView, text: "You can place numeric cards anywhere on the board. As much as you can - try to reserve the frame for the royal cards.", function: .highlightAll)
+            , CoachItem(view: removeLabelsBackground, text: "You can only remove pairs of cards that sum to the number shown here", function: .showRemovalUI) // Show here
+            , CoachItem(view: removeAreaStackView, text: "In order to remove cards, select matching cards and than tap here")
+            , CoachItem(view: doneRemovingAreaStackView, text: "Once you're done removing cards, tap here to get back to card placing screen")
+            , CoachItem(view: topView, text: "Here you can see how much time has passed and how many cards are left in this deck", function: .hideRemovalUI) // Hide here
+//            , CoachItem(view: view, text: "That's it! Go and fill the frame with royal cards!")
+        ]
+        
+        return items
+    }
+}
+
+
+
+struct CoachItem {
+    var view: UIView
+    var text: String
+    var nextText: String
+    var function: CoachItemFunction?
+    
+    init(view: UIView, text: String, nextText: String = "OK!", function: CoachItemFunction? = nil) {
+        self.view = view
+        self.text = text
+        self.function = function
+        self.nextText = nextText
+    }
+    
+    
+    enum CoachItemFunction {
+        case showRemovalUI
+        case hideRemovalUI
+        case highlightKingSpots
+        case highlightQueenSpots
+        case highlightJackSpots
+        case highlightAll
+    }
 }

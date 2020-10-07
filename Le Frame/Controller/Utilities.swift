@@ -35,6 +35,7 @@ struct Utilities {
     }
     
     
+    // TODO: Document
     static func getSpots(forRank rank: CardRank, overlapping: Bool = false) -> [IndexPath] {
         var indexPaths = [IndexPath]()
         var spotsList = [(Int, Int)]()
@@ -222,6 +223,7 @@ class Toast {
 
 
 extension Array where Element: Hashable {
+    // TODO: Document
     func difference(from other: [Element]) -> [Element] {
         let thisSet = Set(self)
         let otherSet = Set(other)

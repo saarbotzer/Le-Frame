@@ -142,11 +142,11 @@ class CardCollectionViewCell: UICollectionViewCell {
         
         switch type {
         case .selected:
-            borderColor = on ? selectedBorderColor : defaultBorderColor
-            borderWidth = on ? selectedBorderWidth : defaultBorderWidth
-            shadowRadius = on ? selectedShadowRadius : defaultShadowRadius
-            transform = on ? selectedTransform : defaultTransform
-            isSpotSelected = on
+            borderColor     = on ? selectedBorderColor  : defaultBorderColor
+            borderWidth     = on ? selectedBorderWidth  : defaultBorderWidth
+            shadowRadius    = on ? selectedShadowRadius : defaultShadowRadius
+            transform       = on ? selectedTransform    : defaultTransform
+            isSpotSelected  = on
         case .hint:
             if isSpotSelected {
                 borderColor = selectedBorderColor
@@ -160,11 +160,17 @@ class CardCollectionViewCell: UICollectionViewCell {
             returnToNormal = true
             isSuggested = !on
             
-        case .disabledForPlacing, .disabledForRemoving:
-            opacity = on ? 0.5 : 1
-            borderColor = isSpotSelected ? selectedBorderColor : defaultBorderColor
-            borderWidth = isSpotSelected ? selectedBorderWidth : defaultBorderWidth
-            transform = isSpotSelected ? selectedTransform : defaultTransform
+        case .placingHighlight, .removingHighlight:
+            opacity     = on                ? 1                     : 0.5
+            borderColor = isSpotSelected    ? selectedBorderColor   : defaultBorderColor
+            borderWidth = isSpotSelected    ? selectedBorderWidth   : defaultBorderWidth
+            transform   = isSpotSelected    ? selectedTransform     : defaultTransform
+            
+        case .markForTutorial:
+            opacity     = on                ? 1                     : 0.5
+            borderColor = isSpotSelected    ? selectedBorderColor   : defaultBorderColor
+            borderWidth = isSpotSelected    ? selectedBorderWidth   : defaultBorderWidth
+            transform   = on                ? selectedTransform     : defaultTransform
         }
         
         
@@ -189,7 +195,7 @@ class CardCollectionViewCell: UICollectionViewCell {
                     if self.isSpotSelected {
                         self.mark(as: .selected, on: self.isSpotSelected)
                     } else if self.isSuggested {
-                        self.mark(as: .disabledForRemoving, on: self.isSuggested)
+                        self.mark(as: .removingHighlight, on: !self.isSuggested)
                     } else {
                         self.mark(as: .selected, on: false)
                     }
@@ -221,10 +227,13 @@ enum CardMarkEvent {
     case selected
     
     /// When the spot is suggested as an option to pair with the selected card
-    case disabledForRemoving
+    case removingHighlight
     
     /// When the spot is empty and suitable to place the next card in
-    case disabledForPlacing
+    case placingHighlight
+    
+    /// When the spot is marked for tutorial
+    case markForTutorial
 }
 
 
