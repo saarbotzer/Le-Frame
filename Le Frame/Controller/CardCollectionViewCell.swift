@@ -61,13 +61,17 @@ class CardCollectionViewCell: UICollectionViewCell {
      
      - Parameter card: The card to set. If nil then the card is removed
      */
-    func setCard(_ card: Card?) {
+    func setCard(_ card: Card?, animate: Bool = true) {
         if let card = card {
         
             self.card = card
             self.isEmpty = false
 
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+            if animate {
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + cardAnimationDuration) {
+                    self.imageView.image = UIImage(named: card.imageName)
+                }
+            } else {
                 self.imageView.image = UIImage(named: card.imageName)
             }
         } else {

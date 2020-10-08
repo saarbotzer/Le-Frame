@@ -14,6 +14,16 @@ class Card: CustomStringConvertible {
     var rank: CardRank?
     var suit: CardSuit?
     
+    init(suit: CardSuit, rank: CardRank) {
+        self.imageName = "\(suit.getRawValue())\(rank.getRawValue()).jpg"
+        self.rank = rank
+        self.suit = suit
+    }
+    
+    init() {
+        self.imageName = spotImageName
+    }
+    
     var description: String {
         return imageName
     }

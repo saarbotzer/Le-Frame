@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="kKV-po-k7v">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="kKV-po-k7v">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -26,7 +27,8 @@
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="bcN-vn-bfC" secondAttribute="bottom" id="3oC-rw-G22"/>
                             <constraint firstItem="WVe-2s-MTH" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" multiplier="1.2" id="Gh8-ID-erw"/>
@@ -36,7 +38,6 @@
                             <constraint firstItem="bcN-vn-bfC" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="WVm-7X-b1z"/>
                             <constraint firstItem="bcN-vn-bfC" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Xab-dW-xm6"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -128,7 +129,8 @@
                                 </subviews>
                             </stackView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="cjt-PE-9VQ"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="IHO-hP-prW" firstAttribute="trailing" secondItem="cjt-PE-9VQ" secondAttribute="trailing" id="2ke-gk-QBf"/>
                             <constraint firstItem="2tP-HI-UXe" firstAttribute="leading" secondItem="cjt-PE-9VQ" secondAttribute="leading" id="A3R-9e-zv0"/>
@@ -139,7 +141,6 @@
                             <constraint firstItem="2tP-HI-UXe" firstAttribute="top" secondItem="cjt-PE-9VQ" secondAttribute="top" constant="90" id="n6G-iW-al3"/>
                             <constraint firstItem="cjt-PE-9VQ" firstAttribute="bottom" secondItem="2tP-HI-UXe" secondAttribute="bottom" constant="200" id="uVF-D6-pdB"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="cjt-PE-9VQ"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Sm-8U-4LL" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -251,7 +252,8 @@
                                 </subviews>
                             </stackView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="Gp7-Z4-4fm"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="ddK-WD-XY8" firstAttribute="centerX" secondItem="cQ3-6O-DYh" secondAttribute="centerX" id="5Yc-yw-Kkk"/>
                             <constraint firstItem="YKr-W7-zLG" firstAttribute="leading" secondItem="Gp7-Z4-4fm" secondAttribute="leading" id="63r-PT-Ik1"/>
@@ -264,7 +266,6 @@
                             <constraint firstItem="YKr-W7-zLG" firstAttribute="trailing" secondItem="Gp7-Z4-4fm" secondAttribute="trailing" id="ypF-NY-yHJ"/>
                             <constraint firstItem="ddK-WD-XY8" firstAttribute="centerY" secondItem="cQ3-6O-DYh" secondAttribute="centerY" id="ztc-gv-gSy"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="Gp7-Z4-4fm"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="F8N-tJ-0hv" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -295,7 +296,8 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="eW3-Cp-H4P"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="9Nb-Aa-arf" firstAttribute="top" secondItem="hJ4-Wb-BzR" secondAttribute="bottom" constant="20" id="1AA-ML-lrD"/>
                             <constraint firstItem="hJ4-Wb-BzR" firstAttribute="centerX" secondItem="zJL-8N-yVw" secondAttribute="centerX" id="2rP-KP-Cp1"/>
@@ -309,7 +311,6 @@
                             <constraint firstItem="G0f-Hy-CfK" firstAttribute="top" secondItem="zJL-8N-yVw" secondAttribute="top" id="ubj-SX-DiL"/>
                             <constraint firstItem="hJ4-Wb-BzR" firstAttribute="leading" secondItem="zJL-8N-yVw" secondAttribute="leading" constant="20" symbolic="YES" id="xCn-2G-r9A"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="eW3-Cp-H4P"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FGl-XD-KeA" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -334,5 +335,8 @@
         <image name="s11" width="166.66667175292969" height="242"/>
         <image name="s12" width="166.66667175292969" height="242"/>
         <image name="s13" width="166.66667175292969" height="242"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

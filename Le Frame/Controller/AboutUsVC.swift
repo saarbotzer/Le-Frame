@@ -22,6 +22,7 @@ class AboutUsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         Credit(owner: "Freepik", urlString: "   https://www.flaticon.com/free-icon/information_906794?term=question%20mark&page=1&position=1", rawName: "question.png", name: "Question mark"),
         Credit(owner: "Dave Gandy", urlString: "https://www.flaticon.com/free-icon/correct-symbol_25404?term=check%20mark&page=1&position=3", rawName: "correct-symbol", name: "Checkmark icon"),
         Credit(owner: "Roundicons", urlString: "https://www.flaticon.com/free-icon/right-arrow_271228", rawName: "right-arrow", name: "Settings right arrow"),
+        Credit(owner: "ephread", urlString: "https://github.com/ephread/Instructions", rawName: "instuctions", name: "Walkthrough Instructions UI")
     ]
     
     override func viewDidLoad() {

@@ -24,8 +24,7 @@ class CardModel {
         
         for suit in allSuits {
             for rank in allRanks {
-                let card = Card()
-                card.createCard(withSuit: suit, withRank: rank)
+                let card = Card(suit: suit, rank: rank)
                 cards.append(card)
             }
         }
@@ -73,7 +72,7 @@ class CardModel {
     /**
      Creates a deck from a deck string
      
-     - Parameter string: The string to create the deck from. Should be of format 'aXX', where a is the suit (h, s, c, d) and XX is the rank (01-13)
+     - Parameter string: The string to create the deck from. Should be of format 'sXX', where s is the suit (h, s, c, d) and XX is the rank (01-13)
      - Parameter fullDeck: Represents whether the string represents a fully sized deck (52 cards) or not
      
      - Returns: An array of Cards that represents a deck
@@ -93,8 +92,8 @@ class CardModel {
                 let suit = CardSuit.create(from: cardString[0])
                 let rank = CardRank.create(from: Int(cardString[1..<3]) ?? -1)
                 if suit != nil && rank != nil {
-                    let card = Card()
-                    card.createCard(withSuit: suit!, withRank: rank!)
+                    let card = Card(suit: suit!, rank: rank!)
+//                    card.createCard(withSuit: suit!, withRank: rank!)
                     deck.append(card)
                 }
             }
@@ -159,4 +158,15 @@ class CardModel {
         return deckHash
     }
 
+    // TODO: Document
+    func getCards(ofRank rank: CardRank, randomOrder random: Bool = true) -> [Card] {
+        let cards = [
+                Card(suit: .club,       rank: rank)
+            ,   Card(suit: .diamond,    rank: rank)
+            ,   Card(suit: .heart,      rank: rank)
+            ,   Card(suit: .spade,      rank: rank)
+        ]
+        
+        return random ? cards.shuffled() : cards
+    }
 }

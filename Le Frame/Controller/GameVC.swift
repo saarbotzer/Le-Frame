@@ -156,7 +156,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         bannerView.load(GADRequest())
         
         itemsToCoach = getItemsToCoach()
-        self.coachMarksController.start(in: .window(over: self))
         
         
         let viewingMode = getViewingMode()
@@ -164,6 +163,8 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             performSegue(withIdentifier: "goToHowTo", sender: nil)
             defaults.set(true, forKey: "firstGamePlayed")
         }
+        
+        self.coachMarksController.start(in: .window(over: self))
         
         if !viewFinishedLoading {
             startNewGame()
@@ -521,7 +522,6 @@ extension GameVC {
         
         let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
         var spotsToHighlight: [IndexPath] = allSpots
-        var spotsToUnhighlight: [IndexPath] = []
 
         // Option 1 - Disable nothing (if there are no more next cards
         if !settingIsOn || nextCards.count < 1 {
@@ -862,10 +862,10 @@ extension GameVC {
         
         let finalDecision = shouldEnableBySetting && enable
         
-        doneRemovingBtn.isEnabled = finalDecision
-        doneRemovingIcon.alpha = finalDecision ? 1 : 0.5
-        doneRemovingIcon.isUserInteractionEnabled = finalDecision
-        doneRemovingAreaStackView.isUserInteractionEnabled = finalDecision
+        doneRemovingBtn.isEnabled =                             finalDecision
+        doneRemovingIcon.alpha =                                finalDecision ? 1 : 0.5
+        doneRemovingIcon.isUserInteractionEnabled =             finalDecision
+        doneRemovingAreaStackView.isUserInteractionEnabled =    finalDecision
     }
     
     
@@ -2611,35 +2611,111 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
         coachViews.bodyView.hintLabel.text = item.text + "\n(\(index + 1)/\(itemsToCoach.count))"
         coachViews.bodyView.nextLabel.text = item.nextText
         
-        performFunction(coachItem: item)
+//        performFunction(coachItem: item)
+        performFunction(forItemAtIndex: index)
 
         return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
     }
     
-    func performFunction(coachItem: CoachItem) {
-        let function = coachItem.function
-        
+    func performFunction(forItemAtIndex index: Int) {
+        // Function will be executed before/during the coaching of this item
         let kingSpotsIndexPaths = Utilities.getSpots(forRank: .king)
         let queenSpotsIndexPaths = Utilities.getSpots(forRank: .queen)
         let jackSpotsIndexPaths = Utilities.getSpots(forRank: .jack)
         let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
 
+        let kingCards = model.getCards(ofRank: .king, randomOrder: true)
+        let queenCards = model.getCards(ofRank: .queen, randomOrder: true)
+        let jackCards = model.getCards(ofRank: .jack, randomOrder: true)
         
-        switch function {
-        case .hideRemovalUI:
-            showRemovalUI(show: false, isOnboarding: true)
-        case .showRemovalUI:
-            showRemovalUI(show: true, isOnboarding: true)
-        case .highlightKingSpots:
+//        let nonRoyalCards = Array(model.getDeck(ofType: .notRoyals, random: true, from: nil, fullDeck: nil)[0..<16])
+        
+        let regularCardsString = [
+            "s13", "s10", "h08", "d13",
+            "c03", "s03", "d05", "s09",
+            "d01", "d06", "h01", "c11",
+            "h03", "d08", "s12", "c01"
+        ].joined()
+        
+        let regularBoardCards = model.getDeck(ofType: .fromString, random: false, from: regularCardsString, fullDeck: false)
+        
+        let cardsToRemoveIndexPaths = [IndexPath(row: 3, section: 1), IndexPath(row: 0, section: 2)]
+        
+        switch index {
+        case 0:
+            // Next card
+            break
+            
+        case 1:
+            // All board, show kings
             highlight(spots: kingSpotsIndexPaths, withEvent: .markForTutorial)
-        case .highlightJackSpots:
-            highlight(spots: jackSpotsIndexPaths, withEvent: .markForTutorial)
-        case .highlightQueenSpots:
+            placeCardsForCoaching(cards: kingCards, spots: kingSpotsIndexPaths)
+        case 2:
+            // All board, show queens
             highlight(spots: queenSpotsIndexPaths, withEvent: .markForTutorial)
-        case .highlightAll:
+            placeCardsForCoaching(cards: queenCards, spots: queenSpotsIndexPaths)
+        case 3:
+            // All board, show jacks
+            highlight(spots: jackSpotsIndexPaths, withEvent: .markForTutorial)
+            placeCardsForCoaching(cards: jackCards, spots: jackSpotsIndexPaths)
+        case 4:
+            // All board, show regular board (currently non-royal)
+            removeCardsForCoaching()
+            
             highlight(spots: allSpots, withEvent: .placingHighlight)
+            placeCardsForCoaching(cards: regularBoardCards, spots: allSpots)
+        case 5:
+            // Removal sum. First of removal area
+            showRemovalUI(show: true, isOnboarding: true)
+            enableRemoveButton(enable: true)
+            enableDoneRemovingButton(enable: true)
+            
+            highlight(spots: cardsToRemoveIndexPaths, withEvent: .markForTutorial)
+        case 6:
+            // Removal button
+            
+            break
+        case 7:
+            // Done removing button
+            for indexPath in cardsToRemoveIndexPaths {
+                let spot = getSpot(at: indexPath)
+                let card = spot.card!
+                animateCard(card: card, from: indexPath, to: .removedStack)
+                spot.removeCard()
+            }
+            break
+        case 8:
+            highlight(spots: allSpots, withEvent: .placingHighlight)
+            showRemovalUI(show: false, isOnboarding: true)
+            enableRemoveButton(enable: false)
+            enableDoneRemovingButton(enable: false)
+            removeCardsForCoaching()
         default:
             break
+        }
+    }
+    
+    func placeCardsForCoaching(cards: [Card]?, spots indexPaths: [IndexPath]?, _ animate: Bool = false) {
+        if cards != nil && indexPaths != nil {
+            for (card, indexPath) in zip(cards!, indexPaths!) {
+                let spot = getSpot(at: indexPath)
+                
+                if animate {
+                    animateCard(card: card, from: .nextCard, to: indexPath)
+                }
+                
+                spot.setCard(card, animate: animate)
+            }
+        }
+        
+    }
+    
+    func removeCardsForCoaching() {
+        let indexPaths = Utilities.getSpots(forRank: .ace, overlapping: true)
+        
+        for indexPath in indexPaths {
+            let spot = getSpot(at: indexPath)
+            spot.setCard(nil)
         }
     }
     
@@ -2647,25 +2723,34 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
     func beforeCoachMarks() {
         // Hide highlighting
         highlightCardsForRemoval(forCardAt: nil)
+        
+        // Stop timer
+        
+        // Introduction and welcome
     }
     
     func afterCoachMarks() {
         // Show highlighting
 //        enableOptionCards(forCardAt: <#T##IndexPath?#>, enableAll: <#T##Bool#>)
+        
+        // Hide removal UI
+        // Resume timer
+        // Explaination about winning and losing
+        // "Let's start playing"
     }
     
     // TODO: Document
     func getItemsToCoach() -> [CoachItem] {
         let items = [
-            CoachItem(view: removeLabelsBackground, text: "Here you'll see the next card(s) in the deck. You don't need to tap the card - to place a card simply tap the wanted spot.\nYou can change the number of cards shown in settings.")
-            , CoachItem(view: spotsCollectionView, text: "Place kings in the corners", function: .highlightKingSpots)
-            , CoachItem(view: spotsCollectionView, text: "Place queens in the top and bottom", function: .highlightQueenSpots)
-            , CoachItem(view: spotsCollectionView, text: "Place jacks at the sides", function: .highlightJackSpots)
-            , CoachItem(view: spotsCollectionView, text: "You can place numeric cards anywhere on the board. As much as you can - try to reserve the frame for the royal cards.", function: .highlightAll)
-            , CoachItem(view: removeLabelsBackground, text: "You can only remove pairs of cards that sum to the number shown here", function: .showRemovalUI) // Show here
+            CoachItem(view: removeLabelsBackground, text: "Here you'll see the next card in the deck. Place the card by tapping the wanted spot.\nYou can change the number of cards shown in settings.")
+            , CoachItem(view: spotsCollectionView, text: "Kings should be in the corners")
+            , CoachItem(view: spotsCollectionView, text: "Queens should be at the top and bottom")
+            , CoachItem(view: spotsCollectionView, text: "Jack should be at the sides")
+            , CoachItem(view: spotsCollectionView, text: "You can place numeric cards anywhere on the board -  try to reserve the frame for the royal cards.\nOnce the board is full of cards, you'll see the cards removal screen")
+            , CoachItem(view: removeLabelsBackground, text: "You can only remove pairs of cards that sum to the number shown here") // Show here
             , CoachItem(view: removeAreaStackView, text: "In order to remove cards, select matching cards and than tap here")
             , CoachItem(view: doneRemovingAreaStackView, text: "Once you're done removing cards, tap here to get back to card placing screen")
-            , CoachItem(view: topView, text: "Here you can see how much time has passed and how many cards are left in this deck", function: .hideRemovalUI) // Hide here
+            , CoachItem(view: topView, text: "Here you can see how much time has passed and how many cards are left in this deck") // Hide here
 //            , CoachItem(view: view, text: "That's it! Go and fill the frame with royal cards!")
         ]
         
@@ -2679,22 +2764,10 @@ struct CoachItem {
     var view: UIView
     var text: String
     var nextText: String
-    var function: CoachItemFunction?
     
-    init(view: UIView, text: String, nextText: String = "OK!", function: CoachItemFunction? = nil) {
+    init(view: UIView, text: String, nextText: String = "OK!") {
         self.view = view
         self.text = text
-        self.function = function
         self.nextText = nextText
-    }
-    
-    
-    enum CoachItemFunction {
-        case showRemovalUI
-        case hideRemovalUI
-        case highlightKingSpots
-        case highlightQueenSpots
-        case highlightJackSpots
-        case highlightAll
     }
 }
