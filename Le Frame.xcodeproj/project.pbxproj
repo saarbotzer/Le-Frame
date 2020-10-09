@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B6C0DBE2CC73AC7C276FF331 /* Pods_Le_Frame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75AC9365A92FE5C411186CCB /* Pods_Le_Frame.framework */; };
 		BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC13EFF92392CBA600DF4F1C /* HowToVC.swift */; };
+		BC2B7C3125308145009A4405 /* CoachMarkViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2B7C3025308145009A4405 /* CoachMarkViews.swift */; };
 		BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BC368419236B502500DCC703 /* Data Model.xcdatamodeld */; };
 		BC7A9B1323914FF4002CC9B3 /* card-flip-2.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1123914FF4002CC9B3 /* card-flip-2.wav */; };
 		BC7A9B1423914FF4002CC9B3 /* card-flip-1.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */; };
@@ -40,6 +41,7 @@
 		9CF039F84935245AA72FE904 /* Pods-Le Frame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Le Frame.debug.xcconfig"; path = "Target Support Files/Pods-Le Frame/Pods-Le Frame.debug.xcconfig"; sourceTree = "<group>"; };
 		A2A0BAC62632E223D0636B5E /* Pods-Le Frame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Le Frame.release.xcconfig"; path = "Target Support Files/Pods-Le Frame/Pods-Le Frame.release.xcconfig"; sourceTree = "<group>"; };
 		BC13EFF92392CBA600DF4F1C /* HowToVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToVC.swift; sourceTree = "<group>"; };
+		BC2B7C3025308145009A4405 /* CoachMarkViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachMarkViews.swift; sourceTree = "<group>"; };
 		BC36841A236B502500DCC703 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
 		BC7A9B1123914FF4002CC9B3 /* card-flip-2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "card-flip-2.wav"; sourceTree = "<group>"; };
 		BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "card-flip-1.wav"; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 				BCC40CF9234DEDEB00CD951D /* LaunchScreen.storyboard */,
 				BCC40CF4234DEDE400CD951D /* Main.storyboard */,
 				BCD6074B238C6482000AFA6F /* roundButton.swift */,
+				BC2B7C3025308145009A4405 /* CoachMarkViews.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC2B7C3125308145009A4405 /* CoachMarkViews.swift in Sources */,
 				BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */,
 				BCF57EAE239ED8F200F762FA /* SceneDelegate.swift in Sources */,
 				BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */,

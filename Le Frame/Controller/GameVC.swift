@@ -121,13 +121,16 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var testShowAds : Bool = false
     var testShowOnboarding : Bool = false
     
+    
+
     // MARK: - ViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
         Utilities.log(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         self.coachMarksController.dataSource = self
-        
+        self.coachMarksController.delegate = self
+        addSkipTourButton()
         
         bannerView = GADBannerView(adSize: kGADAdSizeBanner)
         addBannerIfNeeded()
@@ -148,6 +151,14 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         
         addRemovalButtonsRecognizer()
         
+    }
+    
+    func addSkipTourButton() {
+        let skipView = CoachMarkSkipDefaultView()
+        skipView.setTitle("Skip", for: .normal)
+        skipView.titleLabel?.font = UIFont(name: "Kefa", size: 14)
+        self.coachMarksController.skipView = skipView
+        self.coachMarksController.overlay.isUserInteractionEnabled = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -884,7 +895,7 @@ extension GameVC {
                 removeCards(at: [firstSelectedCardIndexPath!])
             } else {
                 haptic(.removeError)
-                Toast.show(message: "Can't remove cards that don't sum to \(difficulty.sumMode.getRawValue())", controller: self)
+                Toast.show(message: "Can't remove cards that don't sum up to \(difficulty.sumMode.getRawValue())", controller: self)
             }
         // Option 2 - Two cards are selected
         } else if firstSelectedCardIndexPath != nil && secondSelectedCardIndexPath != nil {
@@ -899,7 +910,7 @@ extension GameVC {
                 removeCards(at: [firstSelectedCardIndexPath!, secondSelectedCardIndexPath!])
             } else {
                 haptic(.removeError)
-                Toast.show(message: "Can't remove cards that don't sum to \(difficulty.sumMode.getRawValue())", controller: self)
+                Toast.show(message: "Can't remove cards that don't sum up to \(difficulty.sumMode.getRawValue())", controller: self)
             }
         }
                 
@@ -2597,7 +2608,21 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
     
     func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
         return coachMarksController.helper.makeCoachMark(for: itemsToCoach[index].view)
+//        return coachMarksController.helper.makeCoachMark(for: itemsToCoach[index].view) { (frame: CGRect) -> UIBezierPath in
+//            return UIBezierPath(rect: frame.insetBy(dx: 10, dy: 10))
+//        }
     }
+    
+    
+    func createCoachMarkViews() {
+//        let coachViews = coachMarksController.helper.makeDefaultCoachViews(
+//            withArrow: true,
+//            arrowOrientation: coachMark.arrowOrientation,
+//            hintText: self.postsText,
+//            nextText: self.nextButtonText
+//        )
+    }
+    
     
     func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: UIView & CoachMarkBodyView, arrowView: (UIView & CoachMarkArrowView)?) {
         
@@ -2611,10 +2636,17 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
         coachViews.bodyView.hintLabel.text = item.text + "\n(\(index + 1)/\(itemsToCoach.count))"
         coachViews.bodyView.nextLabel.text = item.nextText
         
+        coachViews.bodyView.hintLabel.font = UIFont(name: "Kefa", size: 12)
+        coachViews.bodyView.nextLabel.font = UIFont(name: "Kefa", size: 14)
+
 //        performFunction(coachItem: item)
         performFunction(forItemAtIndex: index)
 
         return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
+    }
+    
+    @objc func prevButtonTapped(sender: UIButton) {
+        print("prevButtonTapped")
     }
     
     func performFunction(forItemAtIndex index: Int) {
@@ -2741,20 +2773,28 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
     
     // TODO: Document
     func getItemsToCoach() -> [CoachItem] {
+        // TODO: Enable going back a step
+        // TODO: Explain about the hints
         let items = [
-            CoachItem(view: removeLabelsBackground, text: "Here you'll see the next card in the deck. Place the card by tapping the wanted spot.\nYou can change the number of cards shown in settings.")
-            , CoachItem(view: spotsCollectionView, text: "Kings should be in the corners")
-            , CoachItem(view: spotsCollectionView, text: "Queens should be at the top and bottom")
-            , CoachItem(view: spotsCollectionView, text: "Jack should be at the sides")
-            , CoachItem(view: spotsCollectionView, text: "You can place numeric cards anywhere on the board -  try to reserve the frame for the royal cards.\nOnce the board is full of cards, you'll see the cards removal screen")
-            , CoachItem(view: removeLabelsBackground, text: "You can only remove pairs of cards that sum to the number shown here") // Show here
+//            CoachItem(view: removeLabelsBackground, text: "Here you'll see the next card in the deck. Place the card by tapping the wanted spot.\nYou can change the number of cards shown in settings.")
+            CoachItem(view: removeLabelsBackground, text: "You place one card at a time by tapping the wanted spot")
+            , CoachItem(view: spotsCollectionView, text: "Kings are at the corners")
+            , CoachItem(view: spotsCollectionView, text: "Queens are at the top and bottom")
+            , CoachItem(view: spotsCollectionView, text: "Jacks are at the sides")
+            , CoachItem(view: spotsCollectionView, text: "You can place numeric cards anywhere on the board")
+            , CoachItem(view: removeLabelsBackground, text: "Once the board is full of cards, you'll see the cards removal screen. You can only remove one or two cards that sum up to the number shown here") // Show here
             , CoachItem(view: removeAreaStackView, text: "In order to remove cards, select matching cards and than tap here")
-            , CoachItem(view: doneRemovingAreaStackView, text: "Once you're done removing cards, tap here to get back to card placing screen")
+            , CoachItem(view: doneRemovingAreaStackView, text: "Once you're done removing cards, tap here to continue placing cards")
             , CoachItem(view: topView, text: "Here you can see how much time has passed and how many cards are left in this deck") // Hide here
 //            , CoachItem(view: view, text: "That's it! Go and fill the frame with royal cards!")
         ]
         
         return items
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, didEndShowingBySkipping skipped: Bool) {
+        // Called when all coach marks have been displayed
+        print(skipped)
     }
 }
 
@@ -2765,7 +2805,7 @@ struct CoachItem {
     var text: String
     var nextText: String
     
-    init(view: UIView, text: String, nextText: String = "OK!") {
+    init(view: UIView, text: String, nextText: String = "Next") {
         self.view = view
         self.text = text
         self.nextText = nextText
