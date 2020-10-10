@@ -534,18 +534,18 @@
             <objects>
                 <viewController storyboardIdentifier="RestartAlert" id="8wI-iX-vtZ" customClass="RestartAlertController" customModule="Royal_Frame" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="SBM-si-FCz">
-                        <rect key="frame" x="0.0" y="0.0" width="300" height="200"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="l93-YD-mbS">
-                                <rect key="frame" x="0.0" y="0.0" width="300" height="200"/>
+                                <rect key="frame" x="0.0" y="0.0" width="400" height="600"/>
                                 <color key="backgroundColor" red="0.059464998540000001" green="0.50947535040000003" blue="0.1175117269" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="zqs-vq-D96">
-                                <rect key="frame" x="0.0" y="140" width="300" height="60"/>
+                                <rect key="frame" x="0.0" y="550" width="400" height="50"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vVZ-bb-zjB">
-                                        <rect key="frame" x="0.0" y="0.0" width="150" height="60"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="200" height="50"/>
                                         <color key="backgroundColor" red="0.0019379535799999999" green="0.68250317260000004" blue="0.0030069114310000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <state key="normal" title="Yes">
@@ -556,7 +556,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bXR-V2-hdC">
-                                        <rect key="frame" x="150" y="0.0" width="150" height="60"/>
+                                        <rect key="frame" x="200" y="0.0" width="200" height="50"/>
                                         <color key="backgroundColor" red="0.0019379535801010582" green="0.68250317258883242" blue="0.0030069114310427112" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <state key="normal" title="Nevermind">
@@ -567,15 +567,19 @@
                                         </connections>
                                     </button>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="100" id="Szi-Hp-zf3"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="qcU-EC-orP"/>
+                                </constraints>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Restart?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y3P-Bi-Iig">
-                                <rect key="frame" x="10" y="20" width="280" height="30"/>
+                                <rect key="frame" x="10" y="20" width="380" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Are you sure you want to restart?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nPd-so-RAx">
-                                <rect key="frame" x="0.0" y="60" width="300" height="24"/>
+                                <rect key="frame" x="0.0" y="60" width="400" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -596,11 +600,11 @@
                             <constraint firstAttribute="bottom" secondItem="zqs-vq-D96" secondAttribute="bottom" id="dCS-10-C84"/>
                             <constraint firstAttribute="trailing" secondItem="zqs-vq-D96" secondAttribute="trailing" id="dTf-Se-EHX"/>
                             <constraint firstItem="zqs-vq-D96" firstAttribute="leading" secondItem="SBM-si-FCz" secondAttribute="leading" id="eil-AU-blp"/>
-                            <constraint firstItem="zqs-vq-D96" firstAttribute="height" secondItem="SBM-si-FCz" secondAttribute="height" multiplier="0.3" id="l8y-h5-390"/>
+                            <constraint firstItem="zqs-vq-D96" firstAttribute="height" relation="lessThanOrEqual" secondItem="SBM-si-FCz" secondAttribute="height" multiplier="0.3" id="l8y-h5-390"/>
                             <constraint firstItem="y3P-Bi-Iig" firstAttribute="leading" secondItem="SBM-si-FCz" secondAttribute="leading" constant="10" id="vZ0-MG-lXR"/>
                         </constraints>
                     </view>
-                    <size key="freeformSize" width="300" height="200"/>
+                    <size key="freeformSize" width="400" height="600"/>
                     <connections>
                         <outlet property="confirmButton" destination="vVZ-bb-zjB" id="CgT-ah-gOf"/>
                         <outlet property="dismissButton" destination="bXR-V2-hdC" id="RQU-zE-9CG"/>
@@ -610,7 +614,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Whs-Qn-U0R" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3190" y="38"/>
+            <point key="canvasLocation" x="3709" y="-55"/>
         </scene>
         <!--SettingsVC-->
         <scene sceneID="36N-Cc-QMP">

@@ -175,14 +175,15 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
             defaults.set(true, forKey: "firstGamePlayed")
         }
         
-        self.coachMarksController.start(in: .window(over: self))
+        showDialogue(ofType: .onboarding)
+//        self.coachMarksController.start(in: .window(over: self))
+        
         
         if !viewFinishedLoading {
             startNewGame()
             viewFinishedLoading = true
         }
     }
-    
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -296,7 +297,8 @@ extension GameVC {
         case 3:
             switch gameStatus {
             case .gameOver:
-                showAlert(title: "Try again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure", because: .gameLost)
+//                showAlert(title: "Try again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure", because: .gameLost)
+                showDialogue(ofType: .gameOver)
             case .won:
                 showAlert(title: "Play again", message: "Start a new game!", dismissText: "Nevermind", confirmText: "Sure", because: .gameWon)
             default:
@@ -1066,16 +1068,18 @@ extension GameVC {
         }
     }
     
-    /// Feedback a game loss
+    /// Feedbacks a game loss
     func gameOverFeedback() {
-        gameLoseReason = getLoseReason()
-        let loseReasonText = getLoseReasonText(loseReason: gameLoseReason)
-        let statsText = getGameStatsText()
-        let messageText = "\(loseReasonText)\n\n\(statsText)"
+        // TODO: Remove clutter
+//        gameLoseReason = getLoseReason()
+//        let loseReasonText = getLoseReasonText(loseReason: gameLoseReason)
+//        let statsText = getGameStatsText()
+//        let messageText = "\(loseReasonText)\n\n\(statsText)"
 
         playSound(.lose)
         haptic(.gameOver)
-        showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game", because: .gameLost)
+//        showAlert(title: "Game Over", message: messageText, dismissText: "OK", confirmText: "Start a new game", because: .gameLost)
+        showDialogue(ofType: .gameOver)
     }
     
     /// Creates a string of basic game stats.
@@ -1965,7 +1969,7 @@ extension GameVC {
     /// Called everytime the times elapses, increments the game duration by one second and updates the time label.
     @objc func timerElapsed() {
         // If another view controller is presented than pause the timer
-        if presentedViewController == nil {
+        if presentedViewController == nil && !coachMarksController.flow.isStarted{
             secondsPassed += 1
             updateTimeLabel()
         }
@@ -2794,10 +2798,134 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
     
     func coachMarksController(_ coachMarksController: CoachMarksController, didEndShowingBySkipping skipped: Bool) {
         // Called when all coach marks have been displayed
-        print(skipped)
+        showDialogue(ofType: skipped ? .skippedTour : .afterTour)        
+        removeAllCards()
+        highlightSpotsForNextCard()
     }
 }
 
+// MARK: Alerts and Dialogues
+extension GameVC {
+    
+    func showDialogue(ofType type: DialogueType) {
+        switch type {
+        case .onboarding:
+            showOnboardingDialogue()
+        case .afterTour:
+            showAfterTourDialogue(skippedTour: false)
+        case .skippedTour:
+            showAfterTourDialogue(skippedTour: true)
+        case .gameOver, .gameOverRestart:
+            showGameOverDialogue(type: type)
+        default:
+            break
+        }
+    }
+    
+    func showGameOverDialogue(type: DialogueType) {
+        
+        let isRestart = type == .gameOverRestart
+        
+        let button1Title = isRestart ? "Sure"        : "Start a new game!"
+        let button2Title = isRestart ? "Nevermind"   : "OK"
+        
+        let button1 = DialogueButton(text: button1Title, action: {
+            self.stopTimer()
+            self.restartAfter = true
+//            self.addStats(because: reason)
+            self.startNewGame()
+        })
+        let button2 = DialogueButton(text: button2Title, action: nil)
+        let buttons = [button1, button2]
+        
+        let title = isRestart ? "Try again" : "Game Over"
+        
+        gameLoseReason = getLoseReason()
+        let loseReasonText = getLoseReasonText(loseReason: gameLoseReason)
+        let statsText = getGameStatsText()
+        
+        let message1 = isRestart ? "Start a new game!" : loseReasonText
+        let message2 = statsText
+        let messages = isRestart ? [message1] : [message1, message2]
+        
+        let width: CGFloat = 300
+        
+        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons, width: width, height: nil, setSize: true)
+        
+        presentDialogue(payload: payload)
+    }
+    
+    func showOnboardingDialogue() {
+        let dialogueType: DialogueType = .onboarding
+        
+        let dialogueButton1 = DialogueButton(text: "Start tour", action: { self.coachMarksController.start(in: .window(over: self)) })
+        let dialogueButton2 = DialogueButton(text: "Skip tour", action: { self.showDialogue(ofType: .skippedTour) })
+        let dialogueButtons = [dialogueButton1, dialogueButton2]
+        
+        let dialogueTitle = "Welcome to Royal Frame"
+        
+        let dialogueMessage1 = "Thanks for downloading the game!"
+        let dialogueMessage2 = "Your goal is to fill the frame of the board with royal cards"
+        let dialogueMessage3 = "We'll have a quick tour to show you around"
+        let dialogueMessages = [dialogueMessage1, dialogueMessage2, dialogueMessage3]
+        
+        let dialogueHeight: CGFloat = 580
+        let dialogueWidth: CGFloat = 300
+        
+        let dialoguePayload = DialoguePayload(type: dialogueType, title: dialogueTitle, messages: dialogueMessages, buttons: dialogueButtons, width: dialogueWidth, height: dialogueHeight, setSize: true)
+        
+        presentDialogue(payload: dialoguePayload)
+    }
+    
+    func showAfterTourDialogue(skippedTour: Bool) {
+        let type = DialogueType.afterTour
+        
+        let button1 = DialogueButton(text: "Start playing", action: nil)
+        let button2 = DialogueButton(text: skippedTour ? "Take tour" : "Redo tour", action: { self.coachMarksController.start(in: .window(over: self)) })
+        let buttons = [button1, button2]
+        
+        let title = "That's all!"
+        
+        let message1 = "You can change the game difficulty in settings"
+        let message2 = "Tips & FAQ"
+        let message3 = skippedTour ? "" : ""
+        let messages = [message1, message2, message3]
+        
+        let height: CGFloat = 400
+        let width: CGFloat = 300
+        
+        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons, width: width, height: height, setSize: true)
+        
+        presentDialogue(payload: payload)
+    }
+    
+    func viewControllerIdentifier(for dialogueType: DialogueType) -> String {
+        switch dialogueType {
+        case .onboarding, .skippedTour, .afterTour:
+            return "onboarding"
+        default:
+            return "alert"
+        }
+    }
+    
+    func presentDialogue(payload: DialoguePayload) {
+        let dialogueType = payload.type!
+        
+        let myStoryboard = UIStoryboard(name: "Dialogues", bundle: nil)
+//        let dialogue = myStoryboard.instantiateViewController(withIdentifier: dialogueType.rawValue) as! DialogueVC
+        let identifier = viewControllerIdentifier(for: dialogueType)
+        let dialogue = myStoryboard.instantiateViewController(withIdentifier: identifier) as! DialogueVC
+        dialogue.modalPresentationStyle = .overCurrentContext
+        dialogue.modalTransitionStyle = .crossDissolve
+        dialogue.payload = payload
+        
+        // TODO: Change to universal color
+        dialogue.view.backgroundColor = coachMarksController.overlay.backgroundColor
+        
+        self.present(dialogue, animated: true, completion: nil)
+
+    }
+}
 
 
 struct CoachItem {

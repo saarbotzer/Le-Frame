@@ -86,33 +86,7 @@ struct Utilities {
         }
     }
     
-    /*
-    static func showAlert(payload: AlertPayload, parentViewController: UIViewController) {
-        var customAlertController: RestartAlertController!;
-        if (payload.buttons.count == 2) {
-            customAlertController = instantiateViewController(storyboardName: "Main", viewControllerIdentifier: "RestartAlert") as! RestartAlertController;
-        }
-        else {
-            // Action not supported
-            return;
-        }
-        customAlertController?.payload = payload
-        
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-        alertController.setValue(customAlertController, forKey: "contentViewController")
-        
-        var heightConstraint: NSLayoutConstraint = NSLayoutConstraint(item: alertController.view, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: parentViewController.view.frame.height * 0.30)
 
-        alertController.view.addConstraint(heightConstraint)
-        parentViewController.present(alertController, animated: true, completion: nil)
-    }
- 
-    
-    static func instantiateViewController(storyboardName: String, viewControllerIdentifier: String) -> UIViewController {
-        let storyboard = UIStoryboard(name: storyboardName, bundle: Bundle.main);
-        return storyboard.instantiateViewController(withIdentifier: viewControllerIdentifier);
-    }
- */
     
     static func formatSeconds(seconds: Int) -> String {
         // TODO: Add days, weeks, months
@@ -299,5 +273,39 @@ struct GameMove: CustomStringConvertible {
         }
         
         return "\(actionStr) \(cardsStrings.joined(separator: ", "))"
+    }
+}
+
+// MARK: Alert Functions
+extension Utilities {
+    static func showAlert(payload: AlertPayload, parentViewController: UIViewController) {
+        var customAlertController: RestartAlertController!;
+        if (payload.buttons.count == 2) {
+            customAlertController = instantiateViewController(storyboardName: "Main", viewControllerIdentifier: "RestartAlert") as! RestartAlertController;
+        }
+        else {
+            // Action not supported
+            return;
+        }
+        customAlertController?.payload = payload
+        
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+        alertController.setValue(customAlertController, forKey: "contentViewController")
+
+//        var heightConstraint: NSLayoutConstraint = NSLayoutConstraint(item: alertController.view, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: parentViewController.view.frame.height * 0.30)
+
+//        alertController.view.addConstraint(heightConstraint)
+        
+//        alertController.view.heightAnchor.constraint(equalToConstant: 300).isActive = true
+//        alertController.view.widthAnchor.constraint(equalToConstant: 300).isActive = true
+//        alertController.view.bounds = CGRect(x: 0, y: 0, width: 500, height: 500)
+//        alertController.view.layer.cornerRadius = 50
+        parentViewController.present(alertController, animated: true, completion: nil)
+    }
+ 
+    
+    static func instantiateViewController(storyboardName: String, viewControllerIdentifier: String) -> UIViewController {
+        let storyboard = UIStoryboard(name: storyboardName, bundle: Bundle.main);
+        return storyboard.instantiateViewController(withIdentifier: viewControllerIdentifier);
     }
 }

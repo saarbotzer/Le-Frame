@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="vRX-ka-FZS">
+            <objects>
+                <viewController id="v7K-Da-Gne" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ke1-HL-lHY">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="NV5-Gx-Pu9"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xwR-xX-NPK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-668" y="90"/>
+        </scene>
+        <!--DialogueVC-->
+        <scene sceneID="dRv-JB-O4H">
+            <objects>
+                <viewController storyboardIdentifier="onboarding" id="Zfh-gf-Fyv" customClass="DialogueVC" customModule="Royal_Frame" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="thZ-KE-ybX">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iDZ-7s-kj8">
+                                <rect key="frame" x="87" y="268" width="240" height="360"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="settings-background" translatesAutoresizingMaskIntoConstraints="NO" id="GFy-2e-euZ">
+                                        <rect key="frame" x="0.0" y="0.0" width="240" height="360"/>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pCJ-3V-2Gm">
+                                        <rect key="frame" x="16" y="16" width="208" height="27"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="23"/>
+                                        <color key="textColor" red="0.99711006879999997" green="0.84953999520000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Royal Frame Icon" translatesAutoresizingMaskIntoConstraints="NO" id="iLn-wf-vFG">
+                                        <rect key="frame" x="40" y="53" width="160" height="85.5"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="iLn-wf-vFG" secondAttribute="height" multiplier="15:8" id="hED-lv-4B6"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Message1" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S42-uS-eR6">
+                                        <rect key="frame" x="16" y="148.5" width="208" height="20"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lg2-az-cqc">
+                                        <rect key="frame" x="82" y="277" width="76" height="32"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="17"/>
+                                        <state key="normal" title="Start tour">
+                                            <color key="titleColor" red="0.99711006879999997" green="0.84953999520000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="button1Tapped:" destination="Zfh-gf-Fyv" eventType="touchUpInside" id="zRr-TK-8If"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QA1-vT-iYV">
+                                        <rect key="frame" x="93" y="316" width="54" height="28"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="13"/>
+                                        <state key="normal" title="Skip tour">
+                                            <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="button2Tapped:" destination="Zfh-gf-Fyv" eventType="touchUpInside" id="aoB-oj-JhF"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Message2" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IrY-EI-JIb">
+                                        <rect key="frame" x="16" y="178.5" width="208" height="20"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Message3" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BTp-tY-4pT">
+                                        <rect key="frame" x="16" y="247" width="208" height="20"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.0" green="0.37470256980812189" blue="0.0036172966270592742" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <constraints>
+                                    <constraint firstItem="GFy-2e-euZ" firstAttribute="leading" secondItem="iDZ-7s-kj8" secondAttribute="leading" id="1Dj-P6-m1n"/>
+                                    <constraint firstItem="pCJ-3V-2Gm" firstAttribute="leading" secondItem="iDZ-7s-kj8" secondAttribute="leading" constant="16" id="5Yj-zv-7oI"/>
+                                    <constraint firstItem="S42-uS-eR6" firstAttribute="top" secondItem="iLn-wf-vFG" secondAttribute="bottom" constant="10" id="CKY-ea-cnA"/>
+                                    <constraint firstItem="IrY-EI-JIb" firstAttribute="leading" secondItem="iDZ-7s-kj8" secondAttribute="leading" constant="16" id="FKE-cX-DOW"/>
+                                    <constraint firstItem="GFy-2e-euZ" firstAttribute="top" secondItem="iDZ-7s-kj8" secondAttribute="top" id="Grf-PO-jNJ"/>
+                                    <constraint firstItem="BTp-tY-4pT" firstAttribute="leading" secondItem="iDZ-7s-kj8" secondAttribute="leading" constant="16" id="IxN-CV-vwf"/>
+                                    <constraint firstAttribute="trailing" secondItem="GFy-2e-euZ" secondAttribute="trailing" id="KMO-1g-wP4"/>
+                                    <constraint firstItem="iLn-wf-vFG" firstAttribute="top" secondItem="pCJ-3V-2Gm" secondAttribute="bottom" constant="10" id="PdG-ZL-pX3"/>
+                                    <constraint firstItem="IrY-EI-JIb" firstAttribute="top" secondItem="S42-uS-eR6" secondAttribute="bottom" constant="10" id="R8f-IM-gac"/>
+                                    <constraint firstAttribute="trailing" secondItem="IrY-EI-JIb" secondAttribute="trailing" constant="16" id="V3Z-MO-ctJ"/>
+                                    <constraint firstItem="S42-uS-eR6" firstAttribute="leading" secondItem="iDZ-7s-kj8" secondAttribute="leading" constant="16" id="Vzc-cb-RlX"/>
+                                    <constraint firstItem="iLn-wf-vFG" firstAttribute="leading" secondItem="iDZ-7s-kj8" secondAttribute="leading" constant="40" id="WR5-Wq-9rS"/>
+                                    <constraint firstItem="QA1-vT-iYV" firstAttribute="top" secondItem="lg2-az-cqc" secondAttribute="bottom" constant="7" id="YVK-rP-0wz"/>
+                                    <constraint firstItem="lg2-az-cqc" firstAttribute="top" secondItem="BTp-tY-4pT" secondAttribute="bottom" constant="10" id="efa-ah-Jq9"/>
+                                    <constraint firstAttribute="trailing" secondItem="S42-uS-eR6" secondAttribute="trailing" constant="16" id="esB-6U-WkC"/>
+                                    <constraint firstItem="QA1-vT-iYV" firstAttribute="centerX" secondItem="iDZ-7s-kj8" secondAttribute="centerX" id="fQ7-Ul-ZyO"/>
+                                    <constraint firstAttribute="bottom" secondItem="GFy-2e-euZ" secondAttribute="bottom" id="gxV-8N-H5F"/>
+                                    <constraint firstAttribute="width" constant="240" id="iaN-Nv-jn7"/>
+                                    <constraint firstItem="BTp-tY-4pT" firstAttribute="top" relation="greaterThanOrEqual" secondItem="IrY-EI-JIb" secondAttribute="bottom" constant="20" id="k89-Sf-J3R"/>
+                                    <constraint firstAttribute="trailing" secondItem="iLn-wf-vFG" secondAttribute="trailing" constant="40" id="lPt-FT-rpW"/>
+                                    <constraint firstAttribute="trailing" secondItem="BTp-tY-4pT" secondAttribute="trailing" constant="16" id="mKC-yo-vtp"/>
+                                    <constraint firstAttribute="trailing" secondItem="pCJ-3V-2Gm" secondAttribute="trailing" constant="16" id="mpI-jX-cNs"/>
+                                    <constraint firstAttribute="width" secondItem="iDZ-7s-kj8" secondAttribute="height" multiplier="2:3" id="qy1-Jh-rua"/>
+                                    <constraint firstItem="lg2-az-cqc" firstAttribute="centerX" secondItem="iDZ-7s-kj8" secondAttribute="centerX" id="weH-qH-PdG"/>
+                                    <constraint firstAttribute="bottom" secondItem="QA1-vT-iYV" secondAttribute="bottom" constant="16" id="zMw-nC-6xH"/>
+                                    <constraint firstItem="pCJ-3V-2Gm" firstAttribute="top" secondItem="iDZ-7s-kj8" secondAttribute="top" constant="16" id="zie-KO-lde"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="UqG-hG-q2V"/>
+                        <color key="backgroundColor" white="1" alpha="0.50417380136986301" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="iDZ-7s-kj8" firstAttribute="centerY" secondItem="thZ-KE-ybX" secondAttribute="centerY" id="MHP-e1-AKd"/>
+                            <constraint firstItem="iDZ-7s-kj8" firstAttribute="centerX" secondItem="thZ-KE-ybX" secondAttribute="centerX" id="QzE-q2-kf5"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="alertView" destination="iDZ-7s-kj8" id="Yu4-DD-Z9c"/>
+                        <outlet property="button1" destination="lg2-az-cqc" id="hFL-cV-c4K"/>
+                        <outlet property="button2" destination="QA1-vT-iYV" id="FtM-sj-61v"/>
+                        <outlet property="message1Label" destination="S42-uS-eR6" id="cWI-g6-S6N"/>
+                        <outlet property="message2Label" destination="IrY-EI-JIb" id="g8c-81-Gt2"/>
+                        <outlet property="message3Label" destination="BTp-tY-4pT" id="0yx-uq-f0p"/>
+                        <outlet property="titleLabel" destination="pCJ-3V-2Gm" id="Pjz-Lm-GCY"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="T5g-1g-xsD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="28" y="90"/>
+        </scene>
+        <!--DialogueVC-->
+        <scene sceneID="l34-Ob-h4v">
+            <objects>
+                <viewController storyboardIdentifier="alert" id="KeD-Xa-gc6" customClass="DialogueVC" customModule="Royal_Frame" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="MCA-TK-t1r">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="s90-7M-dWi">
+                                <rect key="frame" x="87" y="318" width="240" height="260"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="settings-background" translatesAutoresizingMaskIntoConstraints="NO" id="eL1-iv-128">
+                                        <rect key="frame" x="0.0" y="0.0" width="240" height="260"/>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="upj-Zh-TcX">
+                                        <rect key="frame" x="16" y="16" width="208" height="27"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="23"/>
+                                        <color key="textColor" red="0.99711006879999997" green="0.84953999520000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Message1" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mif-IR-MiS">
+                                        <rect key="frame" x="16" y="55" width="208" height="20"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EAe-CH-Hbr">
+                                        <rect key="frame" x="82" y="177" width="76" height="32"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="17"/>
+                                        <state key="normal" title="Start tour">
+                                            <color key="titleColor" red="0.99711006879999997" green="0.84953999520000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="button1Tapped:" destination="KeD-Xa-gc6" eventType="touchUpInside" id="oM3-Of-fLF"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="atN-Ww-3FA">
+                                        <rect key="frame" x="93" y="216" width="54" height="28"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="13"/>
+                                        <state key="normal" title="Skip tour">
+                                            <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="button2Tapped:" destination="KeD-Xa-gc6" eventType="touchUpInside" id="2Vq-Si-dT4"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Message2" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hcg-hZ-FCY">
+                                        <rect key="frame" x="16" y="85" width="208" height="20"/>
+                                        <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.0" green="0.3747025698" blue="0.003617296627" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="Hcg-hZ-FCY" secondAttribute="trailing" constant="16" id="2Bh-iK-iLK"/>
+                                    <constraint firstItem="eL1-iv-128" firstAttribute="top" secondItem="s90-7M-dWi" secondAttribute="top" id="5AS-Ss-PbS"/>
+                                    <constraint firstItem="EAe-CH-Hbr" firstAttribute="centerX" secondItem="s90-7M-dWi" secondAttribute="centerX" id="5Ak-ve-Alz"/>
+                                    <constraint firstAttribute="trailing" secondItem="eL1-iv-128" secondAttribute="trailing" id="6MK-6d-tr4"/>
+                                    <constraint firstItem="upj-Zh-TcX" firstAttribute="top" secondItem="s90-7M-dWi" secondAttribute="top" constant="16" id="6cG-Zu-K5e"/>
+                                    <constraint firstItem="upj-Zh-TcX" firstAttribute="leading" secondItem="s90-7M-dWi" secondAttribute="leading" constant="16" id="76a-TB-gKv"/>
+                                    <constraint firstAttribute="trailing" secondItem="upj-Zh-TcX" secondAttribute="trailing" constant="16" id="B6s-GS-fa6"/>
+                                    <constraint firstItem="atN-Ww-3FA" firstAttribute="centerX" secondItem="s90-7M-dWi" secondAttribute="centerX" id="Cjx-SG-3xh"/>
+                                    <constraint firstItem="Mif-IR-MiS" firstAttribute="leading" secondItem="s90-7M-dWi" secondAttribute="leading" constant="16" id="JTY-h9-KuF"/>
+                                    <constraint firstItem="atN-Ww-3FA" firstAttribute="top" secondItem="EAe-CH-Hbr" secondAttribute="bottom" constant="7" id="KpN-vl-8mp"/>
+                                    <constraint firstItem="Mif-IR-MiS" firstAttribute="top" secondItem="upj-Zh-TcX" secondAttribute="bottom" constant="12" id="LTX-7T-M5B"/>
+                                    <constraint firstAttribute="width" constant="240" id="LeD-mn-q1k"/>
+                                    <constraint firstAttribute="bottom" secondItem="eL1-iv-128" secondAttribute="bottom" id="Pyv-PG-FhY"/>
+                                    <constraint firstItem="Hcg-hZ-FCY" firstAttribute="top" secondItem="Mif-IR-MiS" secondAttribute="bottom" constant="10" id="SD7-qx-ejZ"/>
+                                    <constraint firstAttribute="height" constant="260" id="dDT-4y-nd6"/>
+                                    <constraint firstAttribute="bottom" secondItem="atN-Ww-3FA" secondAttribute="bottom" constant="16" id="gKM-rC-R5g"/>
+                                    <constraint firstItem="eL1-iv-128" firstAttribute="leading" secondItem="s90-7M-dWi" secondAttribute="leading" id="msv-L5-0FP"/>
+                                    <constraint firstItem="Hcg-hZ-FCY" firstAttribute="leading" secondItem="s90-7M-dWi" secondAttribute="leading" constant="16" id="oWY-JR-GfK"/>
+                                    <constraint firstAttribute="trailing" secondItem="Mif-IR-MiS" secondAttribute="trailing" constant="16" id="qoQ-9c-9MQ"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="1hj-5r-Xbd"/>
+                        <color key="backgroundColor" white="1" alpha="0.50417380140000001" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="s90-7M-dWi" firstAttribute="centerY" secondItem="MCA-TK-t1r" secondAttribute="centerY" id="G2i-uv-4hA"/>
+                            <constraint firstItem="s90-7M-dWi" firstAttribute="centerX" secondItem="MCA-TK-t1r" secondAttribute="centerX" id="ae4-Wc-H6M"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="alertView" destination="s90-7M-dWi" id="aHa-Zf-rVX"/>
+                        <outlet property="button1" destination="EAe-CH-Hbr" id="3at-hL-JMA"/>
+                        <outlet property="button2" destination="atN-Ww-3FA" id="tfK-2z-EgE"/>
+                        <outlet property="message1Label" destination="Mif-IR-MiS" id="PfO-35-8BH"/>
+                        <outlet property="message2Label" destination="Hcg-hZ-FCY" id="jNe-Oe-ux1"/>
+                        <outlet property="titleLabel" destination="upj-Zh-TcX" id="DZZ-MM-pwL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uvf-wC-HAT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="674" y="90"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Royal Frame Icon" width="856" height="986"/>
+        <image name="settings-background" width="375" height="812"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
