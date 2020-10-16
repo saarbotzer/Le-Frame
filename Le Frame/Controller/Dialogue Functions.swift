@@ -181,9 +181,9 @@ extension GameVC {
         let title = "That's all!"
 
         // Messages
-        let message1 = "Set the difficulty and find tips and FAQ in Settings menu"
-        let message2 = "Enjoy plaing Royal Frame!"
-        let message3 = skippedTour ? "" : ""
+        let message1 = "You win if you've filled the frame with royal cards, and you lose if you can't place or remove more cards."
+        let message2 = "Set the difficulty and find tips and FAQ in Settings menu."
+        let message3 = "Enjoy playing Royal Frame!"
         let messages = [message1, message2, message3]
         
         // Buttons
@@ -202,7 +202,6 @@ extension GameVC {
         Utilities.presentDialogue(self, payload: payload)
     }
 }
-
 
 extension Utilities {
     static func viewControllerIdentifier(for dialogueType: DialogueType) -> String {

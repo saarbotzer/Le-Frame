@@ -562,8 +562,14 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Lk1-xr-7zp" userLabel="Middle view">
                                         <rect key="frame" x="0.0" y="143" width="375" height="71"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Goal: Fill the frame of the board with royal cards" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tVq-gh-ftA">
-                                                <rect key="frame" x="37.5" y="10" width="300" height="39.5"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Message 1" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tVq-gh-ftA">
+                                                <rect key="frame" x="37.5" y="10" width="300" height="20"/>
+                                                <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="17"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Message 2" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l44-pU-3jr">
+                                                <rect key="frame" x="37.5" y="40" width="300" height="20"/>
                                                 <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="17"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
@@ -572,6 +578,9 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstItem="tVq-gh-ftA" firstAttribute="width" secondItem="Lk1-xr-7zp" secondAttribute="width" multiplier="0.8" id="HyH-lv-tR8"/>
+                                            <constraint firstItem="l44-pU-3jr" firstAttribute="centerX" secondItem="Lk1-xr-7zp" secondAttribute="centerX" id="MLE-lk-Ai5"/>
+                                            <constraint firstItem="l44-pU-3jr" firstAttribute="width" secondItem="Lk1-xr-7zp" secondAttribute="width" multiplier="0.8" id="TXI-u5-7K4"/>
+                                            <constraint firstItem="l44-pU-3jr" firstAttribute="top" secondItem="tVq-gh-ftA" secondAttribute="bottom" constant="10" id="co1-hx-waX"/>
                                             <constraint firstItem="tVq-gh-ftA" firstAttribute="centerX" secondItem="Lk1-xr-7zp" secondAttribute="centerX" id="iWf-ge-LIK"/>
                                             <constraint firstItem="tVq-gh-ftA" firstAttribute="top" secondItem="Lk1-xr-7zp" secondAttribute="top" constant="10" id="lgM-z2-lub"/>
                                         </constraints>
@@ -599,12 +608,6 @@
                                                     <action selector="button1Tapped:" destination="XPr-k3-5y2" eventType="touchUpInside" id="VFF-FR-QD0"/>
                                                 </connections>
                                             </button>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We'll have a quick tour to show you around" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l44-pU-3jr">
-                                                <rect key="frame" x="37.5" y="18.5" width="300" height="39.5"/>
-                                                <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="17"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UdQ-SI-BY7" userLabel="Seperator">
                                                 <rect key="frame" x="37.5" y="65" width="300" height="1"/>
                                                 <color key="backgroundColor" name="FrameGold"/>
@@ -621,12 +624,9 @@
                                             <constraint firstItem="eTo-As-PUi" firstAttribute="top" secondItem="dsU-3d-MIr" secondAttribute="bottom" constant="3" id="7UQ-1l-qy7"/>
                                             <constraint firstItem="dsU-3d-MIr" firstAttribute="width" secondItem="M7N-lQ-7J5" secondAttribute="width" multiplier="0.4" id="8TI-e4-fxi"/>
                                             <constraint firstItem="dsU-3d-MIr" firstAttribute="top" secondItem="UdQ-SI-BY7" secondAttribute="bottom" constant="7" id="CL7-i8-1YS"/>
-                                            <constraint firstItem="l44-pU-3jr" firstAttribute="width" secondItem="M7N-lQ-7J5" secondAttribute="width" multiplier="0.8" id="JHg-Rd-OiL"/>
                                             <constraint firstAttribute="bottom" secondItem="eTo-As-PUi" secondAttribute="bottom" constant="3" id="JON-h7-0j5"/>
-                                            <constraint firstItem="UdQ-SI-BY7" firstAttribute="top" secondItem="l44-pU-3jr" secondAttribute="bottom" constant="7" id="KfL-In-Ze9"/>
                                             <constraint firstItem="eTo-As-PUi" firstAttribute="height" secondItem="M7N-lQ-7J5" secondAttribute="height" multiplier="0.2" id="YBU-Er-bun"/>
                                             <constraint firstItem="dsU-3d-MIr" firstAttribute="centerX" secondItem="M7N-lQ-7J5" secondAttribute="centerX" id="aaO-TT-5Gr"/>
-                                            <constraint firstItem="l44-pU-3jr" firstAttribute="centerX" secondItem="M7N-lQ-7J5" secondAttribute="centerX" id="d3J-J1-ZlL"/>
                                             <constraint firstItem="UdQ-SI-BY7" firstAttribute="width" secondItem="M7N-lQ-7J5" secondAttribute="width" multiplier="0.8" id="p9p-hQ-TO7"/>
                                             <constraint firstItem="eTo-As-PUi" firstAttribute="centerX" secondItem="M7N-lQ-7J5" secondAttribute="centerX" id="ssh-XQ-xYq"/>
                                         </constraints>
@@ -672,7 +672,6 @@
                         <outlet property="logoImageView" destination="I0U-AD-JCL" id="Gt7-Lh-jX5"/>
                         <outlet property="message1Label" destination="tVq-gh-ftA" id="jIo-RQ-B95"/>
                         <outlet property="message2Label" destination="l44-pU-3jr" id="ZXh-XW-9lJ"/>
-                        <outlet property="message3Label" destination="l44-pU-3jr" id="5PZ-7A-E6u"/>
                         <outlet property="titleLabel" destination="I6E-Jy-QbZ" id="XJy-ZV-qeE"/>
                     </connections>
                 </viewController>
