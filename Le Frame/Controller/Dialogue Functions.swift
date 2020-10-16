@@ -10,6 +10,8 @@ import UIKit
 
 extension GameVC {
     
+    /// Shows dialogue of chosen type.
+    /// - Parameter type: The dialogue type to present
     func showDialogue(ofType type: DialogueType) {
         switch type {
         case .onboarding:
@@ -29,6 +31,7 @@ extension GameVC {
         }
     }
     
+    /// Shows dialogue for .restart type.
     func showRestartDialogue() {
         // Parameters
         let type: DialogueType = .restart
@@ -46,17 +49,14 @@ extension GameVC {
         let button2 = DialogueButton(text: "Nevermind")
         let buttons = [button1, button2]
         
-        // Size
-        let height: CGFloat? = nil
-        let width: CGFloat? = nil
-        let setSize = false
-        
         // Payload
-        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons, width: width, height: height, setSize: setSize)
+        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons)
         
         Utilities.presentDialogue(self, payload: payload)
     }
     
+    /// Shows dialogue for .gameWon and .gameWonRestart types.
+    /// - Parameter type: The dialogue type to present
     func showGameWonDialogue(type: DialogueType) {
         // Parameters
         let isRestart = type == .gameWonRestart
@@ -98,17 +98,14 @@ extension GameVC {
         let button2 = DialogueButton(text: button2Title, action: nil)
         let buttons = [button1, button2]
         
-        // Size
-        let width: CGFloat? = 300
-        let height: CGFloat? = nil
-        let setSize = true
-        
         // Payload
-        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons, width: width, height: height, setSize: setSize)
+        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons)
         
         Utilities.presentDialogue(self, payload: payload)
     }
     
+    /// Shows dialogue for .gameOver and .gameOverRestart types.
+    /// - Parameter type: The dialogue type to present
     func showGameOverDialogue(type: DialogueType) {
         // Parameters
         let isRestart = type == .gameOverRestart
@@ -133,17 +130,13 @@ extension GameVC {
         let button2 = DialogueButton(text: button2Title, action: nil)
         let buttons = [button1, button2]
         
-        // Size
-        let width: CGFloat? = 300
-        let height: CGFloat? = nil
-        let setSize = true
-        
         // Payload
-        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons, width: width, height: height, setSize: setSize)
+        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons)
         
         Utilities.presentDialogue(self, payload: payload)
     }
     
+    /// Shows dialogue for .onboarding type.
     func showOnboardingDialogue() {
         // Parameters
         let type: DialogueType = .onboarding
@@ -162,20 +155,17 @@ extension GameVC {
         let button2 = DialogueButton(text: "Skip tour", action: { self.showDialogue(ofType: .skippedTour) })
         let buttons = [button1, button2]
         
-        // Size
-        let height: CGFloat? = 580
-        let width: CGFloat? = 300
-        let setSize = true
-        
         // Payload
-        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons, width: width, height: height, setSize: setSize)
+        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons)
         
         Utilities.presentDialogue(self, payload: payload)
     }
     
+    /// Shows dialogue for .afterTour and .skippedTour types.
+    /// - Parameter skippedTour: Whether the tour was skipped or not
     func showAfterTourDialogue(skippedTour: Bool) {
         // Parameters
-        let type = DialogueType.afterTour
+        let type: DialogueType = .afterTour
         
         // Title
         let title = "That's all!"
@@ -190,20 +180,18 @@ extension GameVC {
         let button1 = DialogueButton(text: "Start playing", action: nil)
         let button2 = DialogueButton(text: skippedTour ? "Take tour" : "Redo tour", action: { self.coachMarksController.start(in: .window(over: self)) })
         let buttons = [button1, button2]
-        
-        // Size
-        let height: CGFloat? = 400
-        let width: CGFloat? = 300
-        let setSize = true
 
         // Payload
-        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons, width: width, height: height, setSize: setSize)
+        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons)
         
         Utilities.presentDialogue(self, payload: payload)
     }
 }
 
 extension Utilities {
+    /// Gets the storyboard view controller identifier for a specific dialogue type.
+    /// - Parameter dialogueType: The dialogue type to get the identifier for.
+    /// - Returns: The ViewController identifier.
     static func viewControllerIdentifier(for dialogueType: DialogueType) -> String {
         switch dialogueType {
         case .onboarding:
@@ -217,11 +205,14 @@ extension Utilities {
         }
     }
     
+    /// Presents a dialogue over the received view controller with the data in the payload.
+    /// - Parameters:
+    ///   - presentingViewController: The view controller that will present the dialogue.
+    ///   - payload: The data to build the dialogue with.
     public static func presentDialogue(_ presentingViewController: UIViewController, payload: DialoguePayload) {
         let dialogueType = payload.type!
         
         let myStoryboard = UIStoryboard(name: "Dialogues", bundle: nil)
-//        let dialogue = myStoryboard.instantiateViewController(withIdentifier: dialogueType.rawValue) as! DialogueVC
         let identifier = viewControllerIdentifier(for: dialogueType)
         let dialogue = myStoryboard.instantiateViewController(withIdentifier: identifier) as! DialogueVC
         dialogue.modalPresentationStyle = .overCurrentContext
@@ -236,6 +227,10 @@ extension Utilities {
 }
 
 extension SettingsVC {
+    /// Shows dialogue for setting change
+    /// - Parameters:
+    ///   - settingName: The name of the setting.
+    ///   - currentValue: The current value of the setting, before the change.
     func showSettingChangeDialogue(for settingName: String, currentValue: Any) {
         // Parameters
         let type: DialogueType = .settingChange
@@ -263,22 +258,22 @@ extension SettingsVC {
         }
         
         let buttons = [button1, button2]
-        
-        // Size
-        let height: CGFloat? = nil
-        let width: CGFloat? = nil
-        let setSize = false
-        
+
         // Payload
-        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons, width: width, height: height, setSize: setSize)
+        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons)
         
         Utilities.presentDialogue(self, payload: payload)
     }
     
+    /// Shows dialogue for info button.
+    /// - Parameters:
+    ///   - title: The title of the info dialogue
+    ///   - text: The message of the info dialogue
     func showInfoDialogue(withTitle title: String, andMessage text: String) {
         // Parameters
         let type: DialogueType = .info
-        let isDifficulty = title.lowercased().contains("difficulty")
+        // TODO: Maybe set different size for difficulty info dialogue
+//        let isDifficulty = title.lowercased().contains("difficulty")
         
         // Messages
         let message1 = text
@@ -289,13 +284,8 @@ extension SettingsVC {
         let button1 = DialogueButton(text: "OK")
         let buttons = [button1, button1]
         
-        // Size
-        let height: CGFloat? = isDifficulty ? 300 : nil
-        let width: CGFloat? = nil
-        let setSize = isDifficulty ? true : false
-        
         // Payload
-        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons, width: width, height: height, setSize: setSize)
+        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons)
         Utilities.presentDialogue(self, payload: payload)
     }
 }
