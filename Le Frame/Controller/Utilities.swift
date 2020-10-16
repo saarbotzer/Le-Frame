@@ -309,3 +309,11 @@ extension Utilities {
         return storyboard.instantiateViewController(withIdentifier: viewControllerIdentifier);
     }
 }
+
+extension UIColor {
+    /// #FCD600
+    static let frameGold: UIColor = UIColor(red: 1, green: 0.84, blue: 0, alpha: 1)
+    
+    static let frameDarkGold: UIColor = UIColor(red: 0.78, green: 0.64, blue: 0, alpha: 1)
+    static let frameBackgroundOverlay: UIColor = UIColor(red: 0.65, green: 0.8, blue: 0.65, alpha: 0.65)
+}

@@ -44,15 +44,14 @@ class StatsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
     func formatSumModeSwitch() {
-        let goldColor = UIColor(red: 1, green: 215.0/255.0, blue: 0, alpha: 1)
+        let goldColor: UIColor = .frameGold
         let backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         let selectedColor = goldColor
-        let textColor = UIColor.white
-        let selectedTextColor = UIColor.black
-        let borderColor = UIColor.white
+        let textColor: UIColor = .white
+        let selectedTextColor: UIColor = .black
+        let borderColor: UIColor = .white
         let borderWidth: CGFloat = 0
         let font = UIFont(name: "Kefa", size: 14)
-        
         
         sumModeSwitch.removeAllSegments()
         for seg in dimensionsOption {

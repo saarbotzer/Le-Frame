@@ -24,7 +24,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         [
             "GAME": [
 //                Setting(label: "Removal sum", segmentedControlSegments: ["10", "11"], segmentedControlSettingKey: .sumMode, segmentedControlAlertText: "Yes"),
-                Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .difficulty, segmentedControlAlertText: "Yes", infoText: "Very easy - 3 next cards\n Easy - 2 next cards\nNormal - 1 next card\nHard - 1 next card, remove cards that sum to 11"),
+                Setting(label: "Difficulty", segmentedControlSegments: ["Very easy", "Easy", "Normal", "Hard"], segmentedControlSettingKey: .difficulty, segmentedControlAlertText: "Yes", infoText: "Very easy - 3 next cards\nEasy - 2 next cards\nNormal - 1 next card\nHard - 1 next card, remove cards that sum up to 11"),
 //                Setting(label: "Done removing anytime", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .doneRemovingAnytime, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
                 Setting(label: "Highlight available moves", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .highlightAvailableMoves, segmentedControlAlertText: nil, segueName: nil, infoText: "Available spots and matching cards will be highlighted"),
@@ -77,7 +77,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     /// Updates the VC's UI
     func updateUI() {
-        navigationController?.navigationBar.tintColor = UIColor.white
+        navigationController?.navigationBar.tintColor = .white
         let barAppearance = UINavigationBar.appearance()
         barAppearance.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         barAppearance.shadowImage = UIImage()
@@ -203,12 +203,12 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     /// - Parameter setting: The Setting objects which contains the data to created the segmented control
     /// - Returns: The segmented control with the properties defined in setting, nil if the row doesn't have a segmented control
     func createSegmentedControl(for setting: Setting) -> SettingSegmentedControl? {
-        let goldColor = UIColor(red: 1, green: 215.0/255.0, blue: 0, alpha: 1)
+        let goldColor: UIColor = .frameGold
         let backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         let selectedColor = goldColor
-        let textColor = UIColor.white
-        let selectedTextColor = UIColor.black
-        let borderColor = UIColor.white
+        let textColor: UIColor = .white
+        let selectedTextColor: UIColor = .black
+        let borderColor: UIColor = .white
         let borderWidth: CGFloat = 0
         let font = UIFont(name: settingFontName, size: settingFontSize)
         
@@ -235,7 +235,6 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         }
         return nil
     }
-    
 
     /// Called when a segmented control value has been changed.
     /// - Parameter sender: The segmented control
@@ -261,7 +260,10 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 defaults.set(newDifficulty, forKey: keyRawValue)
                 
                 if gameDifficulty.name != newDifficulty {
-                    alertChange(for: sender.name!, currentValue: gameDifficulty.name)
+                    let difficultyName = gameDifficulty.name.lowercased().contains("veryeasy") ? "very easy" : gameDifficulty.name
+                    showSettingChangeDialogue(for: sender.name!, currentValue: difficultyName)
+                    // TODO: Remove
+//                    alertChange(for: sender.name!, currentValue: gameDifficulty.name)
                 }
                 
             case .sumMode:
@@ -269,7 +271,9 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 defaults.set(newSumMode, forKey: keyRawValue)
 
                 if gameDifficulty.sumMode.getRawValue() != newSumMode {
-                    alertChange(for: sender.name!, currentValue: gameDifficulty.sumMode)
+                    showSettingChangeDialogue(for: sender.name!, currentValue: gameDifficulty.name)
+                    // TODO: Remove
+//                    alertChange(for: sender.name!, currentValue: gameDifficulty.sumMode)
                 }
             case .showHints, .soundsOn, .doneRemovingAnytime, .hapticOn, .adsOn, .highlightAvailableMoves:
                 let newValue = sender.selectedSegmentIndex == 0
@@ -536,13 +540,15 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
         if let infoText = sender.infoText {
             
-            let alert = UIAlertController(title: alertTitle, message: infoText, preferredStyle: .alert)
+//            let alert = UIAlertController(title: alertTitle, message: infoText, preferredStyle: .alert)
+//
+//            let okAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+//
+//            alert.addAction(okAction)
+//
+//            present(alert, animated: true, completion: nil)
             
-            let okAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-
-            alert.addAction(okAction)
-
-            present(alert, animated: true, completion: nil)
+            showInfoDialogue(withTitle: alertTitle, andMessage: infoText)
 
         }
     }
@@ -637,7 +643,6 @@ extension SettingsVC: MFMailComposeViewControllerDelegate {
         controller.dismiss(animated: true)
     }
 }
-
 
 
 // MARK: - Setting Object

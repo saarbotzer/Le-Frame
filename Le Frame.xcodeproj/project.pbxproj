@@ -14,6 +14,7 @@
 		BC2B7C3825308D4D009A4405 /* DialogueVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2B7C3725308D4D009A4405 /* DialogueVC.swift */; };
 		BC2B7C3B25308E8B009A4405 /* Dialogues.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC2B7C3A25308E8B009A4405 /* Dialogues.storyboard */; };
 		BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BC368419236B502500DCC703 /* Data Model.xcdatamodeld */; };
+		BC4F5BB12531DD1200EE8567 /* Dialogue Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4F5BB02531DD1200EE8567 /* Dialogue Functions.swift */; };
 		BC7A9B1323914FF4002CC9B3 /* card-flip-2.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1123914FF4002CC9B3 /* card-flip-2.wav */; };
 		BC7A9B1423914FF4002CC9B3 /* card-flip-1.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */; };
 		BC7A9B1623918799002CC9B3 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1523918798002CC9B3 /* win.wav */; };
@@ -49,6 +50,7 @@
 		BC2B7C3725308D4D009A4405 /* DialogueVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogueVC.swift; sourceTree = "<group>"; };
 		BC2B7C3A25308E8B009A4405 /* Dialogues.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Dialogues.storyboard; sourceTree = "<group>"; };
 		BC36841A236B502500DCC703 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
+		BC4F5BB02531DD1200EE8567 /* Dialogue Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dialogue Functions.swift"; sourceTree = "<group>"; };
 		BC7A9B1123914FF4002CC9B3 /* card-flip-2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "card-flip-2.wav"; sourceTree = "<group>"; };
 		BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "card-flip-1.wav"; sourceTree = "<group>"; };
 		BC7A9B1523918798002CC9B3 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = win.wav; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				BCC40CF2234DEDE400CD951D /* GameVC.swift */,
 				BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */,
 				BCE12CEE234E35E400962F00 /* Utilities.swift */,
+				BC4F5BB02531DD1200EE8567 /* Dialogue Functions.swift */,
 				BCB7463423AE937A00C7C841 /* Settings Screens */,
 				BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */,
 				BC81982023AD893700DC3257 /* SettingsVC.swift */,
@@ -340,6 +343,7 @@
 				BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */,
 				BCB7463023AE8B2300C7C841 /* AboutUsVC.swift in Sources */,
 				BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */,
+				BC4F5BB12531DD1200EE8567 /* Dialogue Functions.swift in Sources */,
 				BCB7463823AEC02100C7C841 /* faqVC.swift in Sources */,
 				BCD6074C238C6483000AFA6F /* roundButton.swift in Sources */,
 				BCE12CE9234E340400962F00 /* Card.swift in Sources */,
