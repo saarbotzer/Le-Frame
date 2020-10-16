@@ -8,22 +8,18 @@
 
 import UIKit
 
-
-
 public let spotImageName = "card-spot.png"
 
 /// The time that takes for a card to move from the new card spot to it's designated spot.
 public let cardAnimationDuration : Double = 0.2
 
-
 //public let nextCardSpot
-
-
 
 public var gameFinished : Bool = false
 //public var gameRemovalWhenFull : Bool = false
 
 struct Utilities {
+    
     static func getCenterSpots() -> [IndexPath] {
         var indexPaths = [IndexPath]()
         for i in 1...2 {
@@ -117,37 +113,130 @@ struct Utilities {
     }
 }
 
+// MARK: - User Defaults
+extension Utilities {
+    
+    /// Checks if a setting exists in user defaults
+    /// - Parameter settingKey: A key that represents the setting to check the data for.
+    /// - Returns: True if the setting exists, false otherwise
+    static public func isSettingExists(_ defaults: UserDefaults, settingKey: SettingKey) -> Bool {
+        let currentlySavedKeys = defaults.dictionaryRepresentation().keys
+        return currentlySavedKeys.contains(settingKey.getRawValue())
+    }
+    
+    /// Sets default setting for boolean settings.
+    /// - Parameter settingKey: A key that represents the setting to set the default for.
+    /// - Returns: The default value for the settingKey
+    static public func setDefaultSetting(_ defaults: UserDefaults, for settingKey: SettingKey) -> Bool {
+        var defaultValue = true
+        switch settingKey {
+        case .hapticOn, .soundsOn, .showHints, .highlightAvailableMoves:
+            defaultValue = true
+        case .doneRemovingAnytime:
+            defaultValue = false
+        default:
+            defaultValue = false
+        }
+        
+        defaults.set(defaultValue, forKey: settingKey.getRawValue())
+        return defaultValue
+    }
+    
+    /// Gets the setted value for boolean settings. If the key doesn't exist it sets the default value for that setting and returns it.
+    /// - Parameter settingKey: A key that represents the setting to get the value for.
+    /// - Returns: The value for the settingKey
+    static public func getSettingValue(_ defaults: UserDefaults, for settingKey: SettingKey) -> Bool {
+        let keyExists = isSettingExists(defaults, settingKey: settingKey)
+        if keyExists {
+            return defaults.bool(forKey: settingKey.getRawValue())
+        } else {
+            return setDefaultSetting(defaults, for: settingKey)
+        }
+    }
+    
+    /// Gets the setted difficulty
+    /// - Returns: The setted difficulty
+    static public func getDifficulty(_ defaults: UserDefaults) -> Difficulty {
+        let settingKey = SettingKey.difficulty
+        let keyExists = isSettingExists(defaults, settingKey: settingKey)
+        
+        let defaultValue = Difficulty.default.name
+        
+        var difficultyString = defaultValue
+        
+        if keyExists {
+            difficultyString = defaults.string(forKey: settingKey.getRawValue())!
+        } else {
+            defaults.set(defaultValue, forKey: settingKey.getRawValue())
+        }
+        
+        return Difficulty(from: difficultyString)
+    }
+    
+    static func getNumberOfGamesPlayed(_ defaults: UserDefaults) -> Int {
+        let currentlySavedKeys = defaults.dictionaryRepresentation().keys
+        let gamesPlayedKey = "GamesPlayed"
+        let keyExists = currentlySavedKeys.contains(gamesPlayedKey)
+        var numberOfGames = 0
+        
+        if keyExists {
+            numberOfGames = defaults.integer(forKey: gamesPlayedKey)
+        } else {
+            defaults.set(0, forKey: gamesPlayedKey)
+        }
+        return numberOfGames
+    }
+    
+    static func incrementNumberOfGamesPlayed(_ defaults: UserDefaults, _ byNumber: Int = 1) {
+        let gamesPlayedKey = "GamesPlayed"
+        let numberOfGamesPlayed = getNumberOfGamesPlayed(defaults)
+        defaults.set(numberOfGamesPlayed + byNumber, forKey: gamesPlayedKey)
+    }
+    
+    
+    /// Gets the viewing mode for the tutorial
+    /// - Returns: Onboarding if first game, regular tutorial otherwise
+    static func getViewingMode(_ defaults: UserDefaults) -> OnboardingViewingMode {
+        let firstGame = !defaults.bool(forKey: "firstGamePlayed")
+        
+        if firstGame {
+            return .onboarding
+        } else {
+            return .howTo
+        }
+    }
+}
 
 extension String {
 
-  var length: Int {
-    return count
-  }
+    // TODO: Document
+    
+    var length: Int {
+        return count
+    }
 
-  subscript (i: Int) -> String {
-    return self[i ..< i + 1]
-  }
+    subscript (i: Int) -> String {
+        return self[i ..< i + 1]
+    }
 
-  func substring(fromIndex: Int) -> String {
-    return self[min(fromIndex, length) ..< length]
-  }
+    func substring(fromIndex: Int) -> String {
+        return self[min(fromIndex, length) ..< length]
+    }
 
-  func substring(toIndex: Int) -> String {
-    return self[0 ..< max(0, toIndex)]
-  }
+    func substring(toIndex: Int) -> String {
+        return self[0 ..< max(0, toIndex)]
+    }
 
-  subscript (r: Range<Int>) -> String {
-    let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
-                                        upper: min(length, max(0, r.upperBound))))
-    let start = index(startIndex, offsetBy: range.lowerBound)
-    let end = index(start, offsetBy: range.upperBound - range.lowerBound)
-    return String(self[start ..< end])
-  }
-
+    subscript (r: Range<Int>) -> String {
+        let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)), upper: min(length, max(0, r.upperBound))))
+        let start = index(startIndex, offsetBy: range.lowerBound)
+        let end = index(start, offsetBy: range.upperBound - range.lowerBound)
+        return String(self[start ..< end])
+    }
 }
 
 
-
+// TODO: Document
 class Toast {
     static func show(message: String, controller: UIViewController) {
         let toastContainer = UIView(frame: CGRect())
@@ -195,7 +284,6 @@ class Toast {
     }
 }
 
-
 extension Array where Element: Hashable {
     // TODO: Document
     func difference(from other: [Element]) -> [Element] {
@@ -205,8 +293,13 @@ extension Array where Element: Hashable {
     }
 }
 
-
 extension UIImage {
+    static let frameSpot        : UIImage = #imageLiteral(resourceName: "card-spot")
+    static let frameKingSpot    : UIImage = #imageLiteral(resourceName: "card-spot-king")
+    static let frameQueenSpot   : UIImage = #imageLiteral(resourceName: "card-spot-queen")
+    static let frameJackSpot    : UIImage = #imageLiteral(resourceName: "card-spot-jack")
+    static let frameCardBack    : UIImage = .frameSpot
+    
     func rotate(radians: CGFloat) -> UIImage {
         let rotatedSize = CGRect(origin: .zero, size: size)
             .applying(CGAffineTransform(rotationAngle: CGFloat(radians)))
@@ -229,8 +322,6 @@ extension UIImage {
     }
 }
 
-
-
 extension UIView {
     func addShadow(with radius: CGFloat) {
         
@@ -249,7 +340,6 @@ extension UIView {
         self.layer.shadowPath = UIBezierPath(rect: bounds).cgPath
     }
 }
-
 
 struct GameMove: CustomStringConvertible {
     var cards: [Card]
@@ -276,44 +366,15 @@ struct GameMove: CustomStringConvertible {
     }
 }
 
-// MARK: Alert Functions
-extension Utilities {
-    static func showAlert(payload: AlertPayload, parentViewController: UIViewController) {
-        var customAlertController: RestartAlertController!;
-        if (payload.buttons.count == 2) {
-            customAlertController = instantiateViewController(storyboardName: "Main", viewControllerIdentifier: "RestartAlert") as! RestartAlertController;
-        }
-        else {
-            // Action not supported
-            return;
-        }
-        customAlertController?.payload = payload
-        
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-        alertController.setValue(customAlertController, forKey: "contentViewController")
-
-//        var heightConstraint: NSLayoutConstraint = NSLayoutConstraint(item: alertController.view, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: parentViewController.view.frame.height * 0.30)
-
-//        alertController.view.addConstraint(heightConstraint)
-        
-//        alertController.view.heightAnchor.constraint(equalToConstant: 300).isActive = true
-//        alertController.view.widthAnchor.constraint(equalToConstant: 300).isActive = true
-//        alertController.view.bounds = CGRect(x: 0, y: 0, width: 500, height: 500)
-//        alertController.view.layer.cornerRadius = 50
-        parentViewController.present(alertController, animated: true, completion: nil)
-    }
- 
-    
-    static func instantiateViewController(storyboardName: String, viewControllerIdentifier: String) -> UIViewController {
-        let storyboard = UIStoryboard(name: storyboardName, bundle: Bundle.main);
-        return storyboard.instantiateViewController(withIdentifier: viewControllerIdentifier);
-    }
-}
-
+// MARK: - Custom Colors
 extension UIColor {
+    // TODO: Document
     /// #FCD600
     static let frameGold: UIColor = UIColor(red: 1, green: 0.84, blue: 0, alpha: 1)
     
+    /// #hex
     static let frameDarkGold: UIColor = UIColor(red: 0.78, green: 0.64, blue: 0, alpha: 1)
+    
+    /// #hex
     static let frameBackgroundOverlay: UIColor = UIColor(red: 0.65, green: 0.8, blue: 0.65, alpha: 0.65)
 }

@@ -10,7 +10,6 @@
 		B6C0DBE2CC73AC7C276FF331 /* Pods_Le_Frame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75AC9365A92FE5C411186CCB /* Pods_Le_Frame.framework */; };
 		BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC13EFF92392CBA600DF4F1C /* HowToVC.swift */; };
 		BC2B7C3125308145009A4405 /* CoachMarkViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2B7C3025308145009A4405 /* CoachMarkViews.swift */; };
-		BC2B7C3525308B12009A4405 /* Dialogue.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC2B7C3425308B11009A4405 /* Dialogue.xib */; };
 		BC2B7C3825308D4D009A4405 /* DialogueVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2B7C3725308D4D009A4405 /* DialogueVC.swift */; };
 		BC2B7C3B25308E8B009A4405 /* Dialogues.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC2B7C3A25308E8B009A4405 /* Dialogues.storyboard */; };
 		BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BC368419236B502500DCC703 /* Data Model.xcdatamodeld */; };
@@ -19,7 +18,6 @@
 		BC7A9B1423914FF4002CC9B3 /* card-flip-1.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */; };
 		BC7A9B1623918799002CC9B3 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1523918798002CC9B3 /* win.wav */; };
 		BC7A9B1823918A5B002CC9B3 /* lose.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7A9B1723918A5B002CC9B3 /* lose.wav */; };
-		BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */; };
 		BC8197FF23A5941300DC3257 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */; };
 		BC81982123AD893700DC3257 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC81982023AD893700DC3257 /* SettingsVC.swift */; };
 		BCB7463023AE8B2300C7C841 /* AboutUsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7462F23AE8B2300C7C841 /* AboutUsVC.swift */; };
@@ -46,7 +44,6 @@
 		A2A0BAC62632E223D0636B5E /* Pods-Le Frame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Le Frame.release.xcconfig"; path = "Target Support Files/Pods-Le Frame/Pods-Le Frame.release.xcconfig"; sourceTree = "<group>"; };
 		BC13EFF92392CBA600DF4F1C /* HowToVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToVC.swift; sourceTree = "<group>"; };
 		BC2B7C3025308145009A4405 /* CoachMarkViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachMarkViews.swift; sourceTree = "<group>"; };
-		BC2B7C3425308B11009A4405 /* Dialogue.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Dialogue.xib; sourceTree = "<group>"; };
 		BC2B7C3725308D4D009A4405 /* DialogueVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogueVC.swift; sourceTree = "<group>"; };
 		BC2B7C3A25308E8B009A4405 /* Dialogues.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Dialogues.storyboard; sourceTree = "<group>"; };
 		BC36841A236B502500DCC703 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
@@ -55,7 +52,6 @@
 		BC7A9B1223914FF4002CC9B3 /* card-flip-1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "card-flip-1.wav"; sourceTree = "<group>"; };
 		BC7A9B1523918798002CC9B3 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = win.wav; sourceTree = "<group>"; };
 		BC7A9B1723918A5B002CC9B3 /* lose.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = lose.wav; sourceTree = "<group>"; };
-		BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestartAlertController.swift; sourceTree = "<group>"; };
 		BC8197FE23A5941200DC3257 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BC81982023AD893700DC3257 /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		BCB7462F23AE8B2300C7C841 /* AboutUsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsVC.swift; sourceTree = "<group>"; };
@@ -173,7 +169,6 @@
 				BCE12CEE234E35E400962F00 /* Utilities.swift */,
 				BC4F5BB02531DD1200EE8567 /* Dialogue Functions.swift */,
 				BCB7463423AE937A00C7C841 /* Settings Screens */,
-				BC7CFC90239C51D200B0BDFE /* RestartAlertController.swift */,
 				BC81982023AD893700DC3257 /* SettingsVC.swift */,
 				BCF0F9FD23B9403300EB266C /* Enums.swift */,
 			);
@@ -187,7 +182,6 @@
 				BCC40CF4234DEDE400CD951D /* Main.storyboard */,
 				BCD6074B238C6482000AFA6F /* roundButton.swift */,
 				BC2B7C3025308145009A4405 /* CoachMarkViews.swift */,
-				BC2B7C3425308B11009A4405 /* Dialogue.xib */,
 				BC2B7C3A25308E8B009A4405 /* Dialogues.storyboard */,
 				BC2B7C3725308D4D009A4405 /* DialogueVC.swift */,
 			);
@@ -273,7 +267,6 @@
 			files = (
 				BC7A9B1323914FF4002CC9B3 /* card-flip-2.wav in Resources */,
 				BC8197FF23A5941300DC3257 /* GoogleService-Info.plist in Resources */,
-				BC2B7C3525308B12009A4405 /* Dialogue.xib in Resources */,
 				BCC40CFB234DEDEB00CD951D /* LaunchScreen.storyboard in Resources */,
 				BC7A9B1423914FF4002CC9B3 /* card-flip-1.wav in Resources */,
 				BC7A9B1823918A5B002CC9B3 /* lose.wav in Resources */,
@@ -334,7 +327,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC2B7C3125308145009A4405 /* CoachMarkViews.swift in Sources */,
-				BC7CFC91239C51D200B0BDFE /* RestartAlertController.swift in Sources */,
 				BCF57EAE239ED8F200F762FA /* SceneDelegate.swift in Sources */,
 				BC13EFFA2392CBA600DF4F1C /* HowToVC.swift in Sources */,
 				BC81982123AD893700DC3257 /* SettingsVC.swift in Sources */,

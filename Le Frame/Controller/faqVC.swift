@@ -31,7 +31,7 @@ class faqVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     let questionFontName = "Kefa"
     let answerFontName = "Kefa"
-    let questionFontSize: CGFloat = 30.0
+    let questionFontSize: CGFloat = 25.0
     let answerFontSize: CGFloat = 14.0
 
     

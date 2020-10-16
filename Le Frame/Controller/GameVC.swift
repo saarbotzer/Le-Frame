@@ -88,7 +88,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     var secondsPassed: Int = 0
     
     // Settings
-    let defaults = UserDefaults.standard
+    let defaults: UserDefaults = .standard
     
     // Sounds
     var player: AVAudioPlayer?
@@ -111,7 +111,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     //
     var coachMarksController = CoachMarksController()
-    var itemsToCoach: [CoachItem] = [CoachItem]()
+    var itemsToCoach: [TourItem] = [TourItem]()
     
     // Ads
     var bannerView : GADBannerView!
@@ -173,7 +173,7 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         itemsToCoach = getItemsToCoach()
         
         
-        let viewingMode = getViewingMode()
+        let viewingMode = Utilities.getViewingMode(defaults)
         if viewingMode == .onboarding {
             performSegue(withIdentifier: "goToHowTo", sender: nil)
             defaults.set(true, forKey: "firstGamePlayed")
@@ -537,7 +537,7 @@ extension GameVC {
 extension GameVC {
     /// Highlight all empty spots that are available for the next card.
     func highlightSpotsForNextCard() {
-        let settingIsOn = getSettingValue(for: .highlightAvailableMoves)
+        let settingIsOn = Utilities.getSettingValue(defaults, for: .highlightAvailableMoves)
         
         let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
         var spotsToHighlight: [IndexPath] = allSpots
@@ -568,7 +568,7 @@ extension GameVC {
     ///   - indexPath: The card's index path. If nil, disable all cards except for specific conditions
     ///   - enableAll: True if enable all cards, false otherwise
     func highlightCardsForRemoval(forCardAt indexPath: IndexPath?, highlightAllCards: Bool = false) {
-        let settingIsOn = getSettingValue(for: .highlightAvailableMoves)
+        let settingIsOn = Utilities.getSettingValue(defaults, for: .highlightAvailableMoves)
         let selectedCards = getSelectedIndexPaths(selected: true)
         
         let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
@@ -974,8 +974,10 @@ extension GameVC {
     func finishedRemovingCard() {
         
         let cardsToRemove = getCardsToRemove()
+        
+        let settingIsOn = Utilities.getSettingValue(defaults, for: .highlightAvailableMoves)
 
-        if cardsToRemove.count == 0 && getSettingValue(for: .highlightAvailableMoves) {
+        if cardsToRemove.count == 0 && settingIsOn {
             Toast.show(message: "No more cards to remove. Tap done", controller: self)
         }
         
@@ -1494,6 +1496,20 @@ extension GameVC {
         let spot = getSpot(at: indexPath)
         return spot.card
     }
+    
+    
+    /// Updates the spot images according to the hinting settings (called from settings screen)
+    /// - Parameter showHints: Whether to show the hinted images or not
+    func updateSpotImages(showHints: Bool) {
+        let allSpots = Utilities.getSpots(forRank: .ace, overlapping: true)
+        
+        for indexPath in allSpots {
+            let spot = getSpot(at: indexPath)
+            if spot.isEmpty {
+                spot.removeCard()
+            }
+        }
+    }
 }
 
 // MARK: - General Game Flow
@@ -1524,7 +1540,7 @@ extension GameVC {
             
         // Get game settings
         setGameStatus(status: .placing)
-        difficulty = getDifficulty()
+        difficulty = Utilities.getDifficulty(defaults)
         
         // Stats
         restartAfter = false
@@ -1567,7 +1583,7 @@ extension GameVC {
         addTimer()
 
         Utilities.log("Started new game \(gameID.uuidString)")
-        incrementNumberOfGamesPlayed()
+        Utilities.incrementNumberOfGamesPlayed(defaults)
     }
 }
 
@@ -1773,7 +1789,7 @@ extension GameVC {
     /// Generates hints for the current board and next card and shows them on the board
     /// - Parameter hintType: The reason of the hint (User asked for it, waited too long, made mistakes)
     func showHints(hintType : HintType) {
-        let isShowHints = getSettingValue(for: .showHints)
+        let isShowHints = Utilities.getSettingValue(defaults, for: .showHints)
         if hintType != .tappedHintButton && !isShowHints {
             return
         }
@@ -2018,7 +2034,7 @@ extension GameVC {
     func playSound(_ sound: SoundType) {
         let soundFileFullName = sound.getRawValue()
         
-        let soundsOn = getSettingValue(for: .soundsOn)
+        let soundsOn = Utilities.getSettingValue(defaults, for: .soundsOn)
         if !soundsOn {
             return
         }
@@ -2051,14 +2067,13 @@ extension GameVC {
     /// - Parameter feedbackType: The type of the feedback
     func haptic(_ feedbackType: HapticFeedbackType) {
         
-        let hapticOn = getSettingValue(for: .hapticOn)
+        let hapticOn = Utilities.getSettingValue(defaults, for: .hapticOn)
         if !hapticOn {
             return
         }
         
         let hapticGenerator = UINotificationFeedbackGenerator()
         hapticGenerator.prepare()
-        
         
         switch feedbackType {
         case .placeError:
@@ -2145,100 +2160,6 @@ extension GameVC {
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
             self.confettiEmitter.lifetime = 0.0
-        }
-    }
-}
-
-// MARK: - Settings
-extension GameVC {
-    
-    /// Checks if a setting exists in user defaults
-    /// - Parameter settingKey: A key that represents the setting to check the data for.
-    /// - Returns: True if the setting exists, false otherwise
-    func isSettingExists(settingKey: SettingKey) -> Bool {
-        let currentlySavedKeys = defaults.dictionaryRepresentation().keys
-        return currentlySavedKeys.contains(settingKey.getRawValue())
-    }
-    
-    /// Sets default setting for boolean settings.
-    /// - Parameter settingKey: A key that represents the setting to set the default for.
-    /// - Returns: The default value for the settingKey
-    func setDefaultSetting(for settingKey: SettingKey) -> Bool {
-        var defaultValue = true
-        switch settingKey {
-        case .hapticOn, .soundsOn, .showHints, .highlightAvailableMoves:
-            defaultValue = true
-        case .doneRemovingAnytime:
-            defaultValue = false
-        default:
-            defaultValue = false
-        }
-        
-        defaults.set(defaultValue, forKey: settingKey.getRawValue())
-        return defaultValue
-    }
-    
-    /// Gets the setted value for boolean settings. If the key doesn't exist it sets the default value for that setting and returns it.
-    /// - Parameter settingKey: A key that represents the setting to get the value for.
-    /// - Returns: The value for the settingKey
-    func getSettingValue(for settingKey: SettingKey) -> Bool {
-        let keyExists = isSettingExists(settingKey: settingKey)
-        if keyExists {
-            return defaults.bool(forKey: settingKey.getRawValue())
-        } else {
-            return setDefaultSetting(for: settingKey)
-        }
-    }
-    
-    /// Gets the setted difficulty
-    /// - Returns: The setted difficulty
-    func getDifficulty() -> Difficulty {
-        let settingKey = SettingKey.difficulty
-        let keyExists = isSettingExists(settingKey: settingKey)
-        
-        let defaultValue = Difficulty.default.name
-        
-        var difficultyString = defaultValue
-        
-        if keyExists {
-            difficultyString = defaults.string(forKey: settingKey.getRawValue())!
-        } else {
-            defaults.set(defaultValue, forKey: settingKey.getRawValue())
-        }
-        
-        return Difficulty(from: difficultyString)
-    }
-    
-    func getNumberOfGamesPlayed() -> Int {
-        let currentlySavedKeys = defaults.dictionaryRepresentation().keys
-        let gamesPlayedKey = "GamesPlayed"
-        let keyExists = currentlySavedKeys.contains(gamesPlayedKey)
-        var numberOfGames = 0
-        
-        if keyExists {
-            numberOfGames = defaults.integer(forKey: gamesPlayedKey)
-        } else {
-            defaults.set(0, forKey: gamesPlayedKey)
-        }
-        return numberOfGames
-    }
-    
-    func incrementNumberOfGamesPlayed(_ byNumber: Int = 1) {
-        let gamesPlayedKey = "GamesPlayed"
-        let numberOfGamesPlayed = getNumberOfGamesPlayed()
-        defaults.set(numberOfGamesPlayed + byNumber, forKey: gamesPlayedKey)
-    }
-    
-    
-    /// Gets the viewing mode for the tutorial
-    /// - Returns: Onboarding if first game, regular tutorial otherwise
-    func getViewingMode() -> OnboardingViewingMode {
-        let firstGame = !defaults.bool(forKey: "firstGamePlayed")
-        
-        if firstGame {
-            return .onboarding
-        } else {
-            return .howTo
         }
     }
 }
@@ -2547,7 +2468,7 @@ extension GameVC {
 extension GameVC {
     
     func addBannerIfNeeded() {
-        let numberOfGamesPlayed = getNumberOfGamesPlayed()
+        let numberOfGamesPlayed = Utilities.getNumberOfGamesPlayed(defaults)
         let switchEveryXGames : Double = 15
         
         // Every 15 games it switches the showAds
@@ -2608,7 +2529,7 @@ extension GameVC {
 
 }
 
-
+// MARK: - Tour Functions
 
 extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
     
@@ -2618,21 +2539,7 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
     
     func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
         return coachMarksController.helper.makeCoachMark(for: itemsToCoach[index].view)
-//        return coachMarksController.helper.makeCoachMark(for: itemsToCoach[index].view) { (frame: CGRect) -> UIBezierPath in
-//            return UIBezierPath(rect: frame.insetBy(dx: 10, dy: 10))
-//        }
     }
-    
-    
-    func createCoachMarkViews() {
-//        let coachViews = coachMarksController.helper.makeDefaultCoachViews(
-//            withArrow: true,
-//            arrowOrientation: coachMark.arrowOrientation,
-//            hintText: self.postsText,
-//            nextText: self.nextButtonText
-//        )
-    }
-    
     
     func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: UIView & CoachMarkBodyView, arrowView: (UIView & CoachMarkArrowView)?) {
         
@@ -2649,16 +2556,14 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
         coachViews.bodyView.hintLabel.font = UIFont(name: "Kefa", size: 12)
         coachViews.bodyView.nextLabel.font = UIFont(name: "Kefa", size: 14)
 
-//        performFunction(coachItem: item)
         performFunction(forItemAtIndex: index)
 
         return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
     }
+
     
-    @objc func prevButtonTapped(sender: UIButton) {
-        print("prevButtonTapped")
-    }
-    
+    /// Perform functions before the coach mark is shown.
+    /// - Parameter index: The index of the coach mark to perform functions before.
     func performFunction(forItemAtIndex index: Int) {
         // Function will be executed before/during the coaching of this item
         let kingSpotsIndexPaths = Utilities.getSpots(forRank: .king)
@@ -2670,8 +2575,7 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
         let queenCards = model.getCards(ofRank: .queen, randomOrder: true)
         let jackCards = model.getCards(ofRank: .jack, randomOrder: true)
         
-//        let nonRoyalCards = Array(model.getDeck(ofType: .notRoyals, random: true, from: nil, fullDeck: nil)[0..<16])
-        
+        /// Example board string
         let regularCardsString = [
             "s13", "s10", "h08", "d13",
             "c03", "s03", "d05", "s09",
@@ -2679,8 +2583,10 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
             "h03", "d08", "s12", "c01"
         ].joined()
         
+        /// Example mini-deck
         let regularBoardCards = model.getDeck(ofType: .fromString, random: false, from: regularCardsString, fullDeck: false)
         
+        /// Example cards to remove
         let cardsToRemoveIndexPaths = [IndexPath(row: 3, section: 1), IndexPath(row: 0, section: 2)]
         
         switch index {
@@ -2692,20 +2598,23 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
             // All board, show kings
             highlight(spots: kingSpotsIndexPaths, withEvent: .markForTutorial)
             placeCardsForCoaching(cards: kingCards, spots: kingSpotsIndexPaths)
+            
         case 2:
             // All board, show queens
             highlight(spots: queenSpotsIndexPaths, withEvent: .markForTutorial)
             placeCardsForCoaching(cards: queenCards, spots: queenSpotsIndexPaths)
+            
         case 3:
             // All board, show jacks
             highlight(spots: jackSpotsIndexPaths, withEvent: .markForTutorial)
             placeCardsForCoaching(cards: jackCards, spots: jackSpotsIndexPaths)
+            
         case 4:
             // All board, show regular board (currently non-royal)
             removeCardsForCoaching()
-            
             highlight(spots: allSpots, withEvent: .placingHighlight)
             placeCardsForCoaching(cards: regularBoardCards, spots: allSpots)
+            
         case 5:
             // Removal sum. First of removal area
             showRemovalUI(show: true, isOnboarding: true)
@@ -2726,17 +2635,17 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
                 spot.removeCard()
             }
             break
-        case 8:
-            highlight(spots: allSpots, withEvent: .placingHighlight)
-            showRemovalUI(show: false, isOnboarding: true)
-            enableRemoveButton(enable: false)
-            enableDoneRemovingButton(enable: false)
-            removeCardsForCoaching()
+            
         default:
             break
         }
     }
     
+    /// Places cards on the board for tour purposes
+    /// - Parameters:
+    ///   - cards: Cards to place
+    ///   - indexPaths: IndexPaths to place (in the same order and length as the cards)
+    ///   - animate: Animate the placing/removing or not
     func placeCardsForCoaching(cards: [Card]?, spots indexPaths: [IndexPath]?, _ animate: Bool = false) {
         if cards != nil && indexPaths != nil {
             for (card, indexPath) in zip(cards!, indexPaths!) {
@@ -2752,17 +2661,14 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
         
     }
     
+    /// Removes cards from the board for tour purposes
     func removeCardsForCoaching() {
-        let indexPaths = Utilities.getSpots(forRank: .ace, overlapping: true)
-        
-        for indexPath in indexPaths {
-            let spot = getSpot(at: indexPath)
-            spot.setCard(nil)
-        }
+        removeAllCards()
     }
     
     
-    func beforeCoachMarks() {
+    /// Called before the tour
+    func beforeOnboardingTour() {
         // Hide highlighting
         highlightCardsForRemoval(forCardAt: nil)
         
@@ -2771,7 +2677,8 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
         // Introduction and welcome
     }
     
-    func afterCoachMarks() {
+    /// Called after the tour
+    func afterOnboardingTour() {
         // Show highlighting
 //        enableOptionCards(forCardAt: <#T##IndexPath?#>, enableAll: <#T##Bool#>)
         
@@ -2779,35 +2686,44 @@ extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
         // Resume timer
         // Explaination about winning and losing
         // "Let's start playing"
+        
+        showRemovalUI(show: false, isOnboarding: true)
+        enableRemoveButton(enable: false)
+        enableDoneRemovingButton(enable: false)
+        
+        highlightSpotsForNextCard()
+        
+        
+        removeCardsForCoaching()
     }
     
-    // TODO: Document
-    func getItemsToCoach() -> [CoachItem] {
+    /// Returns the hard-coded TourItems
+    /// - Returns: The tour items in the wanted order
+    func getItemsToCoach() -> [TourItem] {
         // TODO: Enable going back a step
         // TODO: Explain about the hints
         let items = [
-//            CoachItem(view: removeLabelsBackground, text: "Here you'll see the next card in the deck. Place the card by tapping the wanted spot.\nYou can change the number of cards shown in settings.")
-//            CoachItem(view: removeLabelsBackground, text: "You place one card at a time by tapping the wanted spot")
-            CoachItem(view: removeLabelsBackground, text: "Place the presented card by tapping the wanted spot")
-            , CoachItem(view: spotsCollectionView, text: "Place kings at the corners")
-            , CoachItem(view: spotsCollectionView, text: "Place queens at the top and bottom")
-            , CoachItem(view: spotsCollectionView, text: "Place jacks on the sides")
-            , CoachItem(view: spotsCollectionView, text: "You can place all other cards (not royal) anywhere on the board")
-            , CoachItem(view: removeLabelsBackground, text: "Once you've filled the board with cards, you'll see the cards removal screen. You can only remove one or two cards that sum up to the number shown here") // Show here
-            , CoachItem(view: removeAreaStackView, text: "In order to remove cards, select matching cards and than tap the trash bin")
-            , CoachItem(view: doneRemovingAreaStackView, text: "Once you're done removing cards, tap here to continue placing cards")
-            , CoachItem(view: topView, text: "Here you can see how much time has passed and how many cards are left in this deck") // Hide here
-//            , CoachItem(view: view, text: "That's it! Go and fill the frame with royal cards!")
+            TourItem(view: removeLabelsBackground, text: "Place the presented card by tapping the wanted spot")
+            , TourItem(view: spotsCollectionView, text: "Place kings at the corners")
+            , TourItem(view: spotsCollectionView, text: "Place queens at the top and bottom")
+            , TourItem(view: spotsCollectionView, text: "Place jacks on the sides")
+            , TourItem(view: spotsCollectionView, text: "You can place all other cards (not royal) anywhere on the board")
+            , TourItem(view: removeLabelsBackground, text: "Once you've filled the board with cards, you'll see the cards removal screen. You can only remove one or two cards that sum up to the number shown here") // Show here
+            , TourItem(view: removeAreaStackView, text: "In order to remove cards, select matching cards and than tap the trash bin")
+            , TourItem(view: doneRemovingAreaStackView, text: "Once you're done removing cards, tap here to continue placing cards")
         ]
         
         return items
     }
     
+    /// Called when all tour items have been displayed
+    /// - Parameters:
+    ///   - coachMarksController: The tour controller
+    ///   - skipped: Whether the tour was skipped using the skip button or not
     func coachMarksController(_ coachMarksController: CoachMarksController, didEndShowingBySkipping skipped: Bool) {
-        // Called when all coach marks have been displayed
-        showDialogue(ofType: skipped ? .skippedTour : .afterTour)        
-        removeAllCards()
-        highlightSpotsForNextCard()
+        
+        afterOnboardingTour()
+        showDialogue(ofType: skipped ? .skippedTour : .afterTour)
     }
 }
 
@@ -2825,7 +2741,7 @@ extension GameVC {
 }
 
 
-struct CoachItem {
+struct TourItem {
     var view: UIView
     var text: String
     var nextText: String

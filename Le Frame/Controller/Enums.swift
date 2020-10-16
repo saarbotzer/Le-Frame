@@ -160,6 +160,8 @@ enum SettingKey: String {
     case highlightAvailableMoves = "HighlightAvailableMoves"
     case adsOn = "AdsOn"
     
+    case spotsHints = "SpotsHints"
+    
     func getRawValue() -> String {
         return self.rawValue
     }

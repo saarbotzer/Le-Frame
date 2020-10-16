@@ -429,7 +429,7 @@
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="y47-H5-WxJ">
                                                 <rect key="frame" x="112.5" y="72.5" width="150" height="36"/>
-                                                <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="25"/>
+                                                <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="21"/>
                                                 <state key="normal" title="Start tour">
                                                     <color key="titleColor" name="FrameGold"/>
                                                 </state>
@@ -600,7 +600,7 @@
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dsU-3d-MIr">
                                                 <rect key="frame" x="112.5" y="73" width="150" height="35.5"/>
-                                                <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="25"/>
+                                                <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="21"/>
                                                 <state key="normal" title="Start Playing">
                                                     <color key="titleColor" name="FrameGold"/>
                                                 </state>
@@ -739,14 +739,14 @@
                                         <rect key="frame" x="0.0" y="186.5" width="375" height="46.5"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dmQ-af-7p9" userLabel="Seperator">
-                                                <rect key="frame" x="37.5" y="-1.5" width="300" height="1"/>
+                                                <rect key="frame" x="37.5" y="-11.5" width="300" height="1"/>
                                                 <color key="backgroundColor" name="FrameGold"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="1" id="aCN-qJ-mPR"/>
                                                 </constraints>
                                             </view>
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="VRl-vH-k8V">
-                                                <rect key="frame" x="37.5" y="4.5" width="300" height="37"/>
+                                                <rect key="frame" x="37.5" y="-5.5" width="300" height="37"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z6Y-Tp-uGt">
                                                         <rect key="frame" x="0.0" y="0.0" width="135" height="37"/>
@@ -776,7 +776,7 @@
                                             <constraint firstItem="dmQ-af-7p9" firstAttribute="width" secondItem="bku-Rx-tRV" secondAttribute="width" multiplier="0.8" id="EkK-6g-cYv"/>
                                             <constraint firstItem="dmQ-af-7p9" firstAttribute="centerX" secondItem="bku-Rx-tRV" secondAttribute="centerX" id="FTy-Nk-xSe"/>
                                             <constraint firstItem="VRl-vH-k8V" firstAttribute="top" secondItem="dmQ-af-7p9" secondAttribute="bottom" constant="5" id="Qnb-ti-4cV"/>
-                                            <constraint firstAttribute="bottom" secondItem="VRl-vH-k8V" secondAttribute="bottom" constant="5" id="Ys7-AW-dRh"/>
+                                            <constraint firstAttribute="bottom" secondItem="VRl-vH-k8V" secondAttribute="bottom" constant="15" id="Ys7-AW-dRh"/>
                                             <constraint firstItem="VRl-vH-k8V" firstAttribute="centerX" secondItem="bku-Rx-tRV" secondAttribute="centerX" id="bPO-LV-H1r"/>
                                             <constraint firstItem="VRl-vH-k8V" firstAttribute="width" secondItem="bku-Rx-tRV" secondAttribute="width" multiplier="0.8" id="g3I-oq-vwH"/>
                                             <constraint firstItem="VRl-vH-k8V" firstAttribute="height" secondItem="bku-Rx-tRV" secondAttribute="height" multiplier="0.8" id="mwO-fp-wWO"/>
@@ -881,14 +881,14 @@
                                         <rect key="frame" x="0.0" y="186.5" width="375" height="46.5"/>
                                         <subviews>
                                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6ib-f6-66Q" userLabel="Seperator">
-                                                <rect key="frame" x="37.5" y="-1.5" width="300" height="1"/>
+                                                <rect key="frame" x="37.5" y="-11.5" width="300" height="1"/>
                                                 <color key="backgroundColor" name="FrameGold"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="1" id="bPZ-kG-NVc"/>
                                                 </constraints>
                                             </view>
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="3fh-iZ-DS0">
-                                                <rect key="frame" x="37.5" y="4.5" width="300" height="37"/>
+                                                <rect key="frame" x="37.5" y="-5.5" width="300" height="37"/>
                                                 <subviews>
                                                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l0m-GM-vcJ">
                                                         <rect key="frame" x="0.0" y="0.0" width="0.0" height="37"/>
@@ -917,7 +917,7 @@
                                         <constraints>
                                             <constraint firstItem="3fh-iZ-DS0" firstAttribute="centerX" secondItem="EfS-ec-2wN" secondAttribute="centerX" id="B2V-tB-Me0"/>
                                             <constraint firstItem="3fh-iZ-DS0" firstAttribute="height" secondItem="EfS-ec-2wN" secondAttribute="height" multiplier="0.8" id="NHt-jg-3s2"/>
-                                            <constraint firstAttribute="bottom" secondItem="3fh-iZ-DS0" secondAttribute="bottom" constant="5" id="Pry-Gd-I0D"/>
+                                            <constraint firstAttribute="bottom" secondItem="3fh-iZ-DS0" secondAttribute="bottom" constant="15" id="Pry-Gd-I0D"/>
                                             <constraint firstItem="6ib-f6-66Q" firstAttribute="centerX" secondItem="EfS-ec-2wN" secondAttribute="centerX" id="PwS-Yy-cNr"/>
                                             <constraint firstItem="3fh-iZ-DS0" firstAttribute="top" secondItem="6ib-f6-66Q" secondAttribute="bottom" constant="5" id="Z7h-LP-Sf5"/>
                                             <constraint firstItem="6ib-f6-66Q" firstAttribute="width" secondItem="EfS-ec-2wN" secondAttribute="width" multiplier="0.8" id="c9N-vC-efY"/>

@@ -38,7 +38,7 @@ class CardCollectionViewCell: UICollectionViewCell {
             imageView.image = UIImage(named: card.imageName)
             self.isEmpty = false
         } else {
-            imageView.image = UIImage(named: spotImageName)
+            imageView.image = getSpotImage()
             self.isEmpty = true
         }
         
@@ -46,6 +46,32 @@ class CardCollectionViewCell: UICollectionViewCell {
         
         setUI()
         
+    }
+    
+    /// Gets the spot image for the spot based on the indexPath
+    /// - Returns: The UIImage of the spot
+    func getSpotImage() -> UIImage {
+        // TODO: Make it change based on setting
+        let hintRoyalSpots: Bool = Utilities.getSettingValue(.standard, for: .spotsHints)
+                
+        if hintRoyalSpots {
+            let kingSpots = Utilities.getSpots(forRank: .king)
+            let queenSpots = Utilities.getSpots(forRank: .queen)
+            let jackSpots = Utilities.getSpots(forRank: .jack)
+            
+            if let ip = self.indexPath {
+                if kingSpots.contains(ip) {
+                    return .frameKingSpot
+                }
+                if queenSpots.contains(ip) {
+                    return .frameQueenSpot
+                }
+                if jackSpots.contains(ip) {
+                    return .frameJackSpot
+                }
+            }
+        }
+        return .frameSpot
     }
     
     /**
@@ -76,7 +102,7 @@ class CardCollectionViewCell: UICollectionViewCell {
             }
         } else {
             self.card = nil
-            imageView.image = UIImage(named: spotImageName)
+            imageView.image = getSpotImage()
             self.isEmpty = true
         }
     }

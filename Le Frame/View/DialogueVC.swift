@@ -8,42 +8,25 @@
 
 import UIKit
 
-enum DialogueType: String {
-    case gameOver, gameWon, restart, info, settingChange, onboarding, afterTour, skippedTour
-    case gameOverRestart, gameWonRestart
-}
-
-struct DialogueButton {
-    var text: String!
-    var action: (() -> Void)? = nil
-}
-
-struct DialoguePayload {
-    var type: DialogueType!
-    var title: String!
-    var messages: [String]!
-    var buttons: [DialogueButton]!
-    var width: CGFloat?
-    var height: CGFloat?
-    var setSize: Bool = false
-}
-
-
 class DialogueVC: UIViewController {
 
+    // MARK: Parameters and IBOutlets
     var payload: DialoguePayload!
     
+    // AlertView
     @IBOutlet weak var alertView: UIView!
     
+    // Images
     @IBOutlet weak var logoImageView: UIImageView?
     @IBOutlet weak var frameImageView: UIImageView?
     
-    
+    // Labels
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var message1Label: UILabel!
     @IBOutlet weak var message2Label: UILabel?
     @IBOutlet weak var message3Label: UILabel?
     
+    // Buttons
     @IBOutlet weak var button1: UIButton!
     @IBOutlet weak var button2: UIButton!
     
@@ -51,31 +34,51 @@ class DialogueVC: UIViewController {
     @IBOutlet weak var alertViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var alertViewHeightConstraint: NSLayoutConstraint!
     
+    // MARK: ViewDidLoad
     
-    private let defaultHeight: CGFloat = 360
-    private let defaultWidth: CGFloat = 240
-        
     override func viewDidLoad() {
         super.viewDidLoad()
 
         alertView.roundCorners(.allCorners, radius: 20)
         
-        configByPayload()
-        configureLabels()
-        
-        configureViews()
-        configureSize()
+        configureByPayload()
     }
     
+    // MARK: Buttons Functions
+    
+    @IBAction func button1Tapped(_ sender: Any) {
+        buttonTapped(index: 0)
+    }
+    
+    @IBAction func button2Tapped(_ sender: Any) {
+        buttonTapped(index: 1)
+    }
+    
+    /// Called when a button was tapped
+    /// - Parameter index: The button's index
+    func buttonTapped(index: Int) {
+        presentingViewController?.dismiss(animated: true, completion: nil)
+        payload.buttons[index].action?()
+    }
+    
+    // MARK: Configuration Functions
+    
+    /// Configures DialogueVC based on received payload
+    func configureByPayload() {
+        configureSize()
+        configureViews()
+        configureLabels()
+        configureButtons()
+    }
+    
+    /// Determines the size of the dialogue
     func configureSize() {
         
-        var defaultWidthActive: Bool = false
+        let defaultWidthActive: Bool = false
         var defaultHeightActive: Bool = true
-        var widthMultiplier: CGFloat = 0.8
+        let widthMultiplier: CGFloat = 0.8
         var heightMultiplier: CGFloat = 0.4
         
-        
-
         switch payload.type {
         case .onboarding:
             break
@@ -103,6 +106,7 @@ class DialogueVC: UIViewController {
 
     }
     
+    /// Hides and shows views
     func configureViews() {
         switch payload.type {
         case .onboarding:
@@ -117,20 +121,9 @@ class DialogueVC: UIViewController {
         }
     }
     
-    @IBAction func button1Tapped(_ sender: Any) {
-        buttonTapped(index: 0)
-    }
-    
-    @IBAction func button2Tapped(_ sender: Any) {
-        buttonTapped(index: 1)
-    }
-    
-    func buttonTapped(index: Int) {
-        presentingViewController?.dismiss(animated: true, completion: nil)
-        payload.buttons[index].action?()
-    }
-    
+    /// Changes the text for labels and formats them
     func configureLabels() {
+        // Adjust Font Size
         let labels = [titleLabel, message1Label, message2Label, message3Label, button1.titleLabel, button2.titleLabel]
         
         for label in labels {
@@ -139,9 +132,32 @@ class DialogueVC: UIViewController {
             }
         }
         
+        // Title Label
+        titleLabel.text = payload.title
+
+        // Messages Labels
+        if payload.messages.count > 0 {
+            message1Label.text = payload.messages[0]
+        }
+        if payload.messages.count > 1 {
+            message2Label?.text = payload.messages[1]
+        }
+        if payload.messages.count > 2 {
+            message3Label?.text = payload.messages[2]
+        }
+        
+        
     }
     
+    /// Formats the buttons UI and labels
     func configureButtons() {
+        
+        // TODO: Handle one/two buttons
+        // Buttons Labels
+        button1.setTitle(payload.buttons[0].text, for: .normal)
+        button2.setTitle(payload.buttons[1].text, for: .normal)
+        
+        // Buttons UI
         switch payload.type {
         case .onboarding, .skippedTour, .afterTour, .gameOver, .gameOverRestart, .gameWon, .gameWonRestart, .info, .settingChange:
             
@@ -173,53 +189,51 @@ class DialogueVC: UIViewController {
             break
         }
     }
+
+}
+
+
+/// The data that dialogues receive
+struct DialoguePayload {
+    var type: DialogueType!
+    var title: String!
+    var messages: [String]!
+    var buttons: [DialogueButton]!
+}
+
+enum DialogueType: String {
+    /// Called when the user lost
+    case gameOver
     
-    func configByPayload() {
-        
-        // TODO: Handle one/two buttons
-        button1.setTitle(payload.buttons[0].text, for: .normal)
-        button2.setTitle(payload.buttons[1].text, for: .normal)
-        
-        configureButtons()
-        
-        if payload.messages.count > 0 {
-            message1Label.text = payload.messages[0]
-        }
-        if payload.messages.count > 1 {
-            message2Label?.text = payload.messages[1]
-        }
-        if payload.messages.count > 2 {
-            message3Label?.text = payload.messages[2]
-        }
+    /// Called when the user won
+    case gameWon
+    
+    /// Called when tapped the restart button during a game
+    case restart
+    
+    /// Called when tapped the info button in settings
+    case info
+    
+    /// Called when a setting was changed and the user need to know about the chang
+    case settingChange
+    
+    /// Called on first play, before the tour
+    case onboarding
+    
+    /// Called on first play, after the user finished the entire tour
+    case afterTour
+    
+    /// Called on first play, if ther user skipped the tour
+    case skippedTour
+    
+    /// Called when tapping the restart button after the game was lost
+    case gameOverRestart
+    
+    /// Called when tapping the restart button after the game was won
+    case gameWonRestart
+}
 
-        
-        var finalHeight: CGFloat = defaultHeight
-        var finalWidth: CGFloat = defaultWidth
-        
-        /*
-//        let setSize = payload.setSize
-        let setSize = false
-        
-        if setSize {
-            if let height = payload.height {
-                finalHeight = height
-            }
-            if let width = payload.width {
-                finalWidth = width
-            }
-            
-            for constraint in alertView.constraints {
-                guard constraint.firstAttribute == .height || constraint.firstAttribute == .width else { continue }
-                constraint.isActive = false
-            }
-            
-//            alertView.heightAnchor.constraint(equalToConstant: finalHeight).isActive = true
-//            alertView.widthAnchor.constraint(equalToConstant: finalWidth).isActive = true
-        }
-        */
-                
-        titleLabel.text = payload.title
-        
-    }
-
+struct DialogueButton {
+    var text: String!
+    var action: (() -> Void)? = nil
 }

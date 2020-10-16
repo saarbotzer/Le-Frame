@@ -28,6 +28,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 //                Setting(label: "Done removing anytime", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .doneRemovingAnytime, segmentedControlAlertText: "Yes", segueName: nil),
 //                Setting(label: "Remove when full board", segmentedControlSegments: ["YES", "NO"], segmentedControlSettingKey: .removeWhenFull, segmentedControlAlertText: "Yes", segueName: nil),
                 Setting(label: "Highlight available moves", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .highlightAvailableMoves, segmentedControlAlertText: nil, segueName: nil, infoText: "Available spots and matching cards will be highlighted"),
+                Setting(label: "Mark royal spots", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .spotsHints, segmentedControlAlertText: nil, segueName: nil, infoText: "The spots in the frame will show the designated cards (K for kings, Q for queens, J for jacks)"),
                 Setting(label: "Automatic hints", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .showHints, segmentedControlAlertText: "No"),
                 Setting(label: "Sounds", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .soundsOn, segmentedControlAlertText: "No"),
                 Setting(label: "Vibrate", segmentedControlSegments: ["ON", "OFF"], segmentedControlSettingKey: .hapticOn, segmentedControlAlertText: "No"),
@@ -57,7 +58,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     let gotoIcon = "settings-goto-icon.png"
     
-    let defaults = UserDefaults.standard
+    let defaults: UserDefaults = .standard
     var gameDifficulty: Difficulty = .default
 
     
@@ -240,6 +241,15 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     /// - Parameter sender: The segmented control
     @objc
     func segmentControlValueChanged(sender: SettingSegmentedControl) {
+        
+        // Vibrate
+        let hapticGenerator = UISelectionFeedbackGenerator()
+        hapticGenerator.selectionChanged()
+        
+        if sender.settingKey == SettingKey.hapticOn {
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+        }
+        
         if let settingKey = sender.settingKey {
             let keyRawValue = settingKey.getRawValue()
             switch settingKey {
@@ -262,8 +272,6 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 if gameDifficulty.name != newDifficulty {
                     let difficultyName = gameDifficulty.name.lowercased().contains("veryeasy") ? "very easy" : gameDifficulty.name
                     showSettingChangeDialogue(for: sender.name!, currentValue: difficultyName)
-                    // TODO: Remove
-//                    alertChange(for: sender.name!, currentValue: gameDifficulty.name)
                 }
                 
             case .sumMode:
@@ -272,12 +280,16 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
                 if gameDifficulty.sumMode.getRawValue() != newSumMode {
                     showSettingChangeDialogue(for: sender.name!, currentValue: gameDifficulty.name)
-                    // TODO: Remove
-//                    alertChange(for: sender.name!, currentValue: gameDifficulty.sumMode)
                 }
             case .showHints, .soundsOn, .doneRemovingAnytime, .hapticOn, .adsOn, .highlightAvailableMoves:
                 let newValue = sender.selectedSegmentIndex == 0
                 defaults.set(newValue, forKey: keyRawValue)
+            case .spotsHints:
+                let newValue = sender.selectedSegmentIndex == 0
+                defaults.set(newValue, forKey: keyRawValue)
+                if let presenter = self.presentingViewController as? GameVC {
+                    presenter.updateSpotImages(showHints: newValue)
+                }
             }
         }
     }
@@ -344,7 +356,7 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     defaults.set(true, forKey: keyRawValue)
                     selectedSegmentIndex = 0
                 }
-            case .doneRemovingAnytime:
+            case .doneRemovingAnytime, .spotsHints:
                 if keyExists {
                     let doneRemovingAnytime = defaults.bool(forKey: keyRawValue)
                     selectedSegmentIndex = doneRemovingAnytime ? 0 : 1
