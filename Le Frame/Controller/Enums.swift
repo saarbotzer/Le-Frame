@@ -169,15 +169,16 @@ enum SettingKey: String {
 
 enum SettingSegue: String {
     case goToStatistics = "goToStatistics"
-    case goToAboutUs = "goToAboutUs"
-    case goToTutorial = "goToTutorial"
-    case goToFaq = "goToFAQ"
-    case privacyPolicy = "PrivacyPolicy"
+    case goToAboutUs    = "goToAboutUs"
+    case goToTutorial   = "goToTutorial"
+    case tour           = "tour"
+    case goToFaq        = "goToFAQ"
+    case privacyPolicy  = "PrivacyPolicy"
     
     // With no segue
-    case share = "share"
-    case goToContactUs = "goToContactUs"
-    case rateUs = "rateUs"
+    case share          = "share"
+    case goToContactUs  = "goToContactUs"
+    case rateUs         = "rateUs"
     
     func getRawValue() -> String {
         return self.rawValue
@@ -370,4 +371,11 @@ struct Difficulty: CustomStringConvertible {
             hideNextCardsWhenRemoving:  true
         )
     }
+}
+
+
+public enum ShowAdsMode {
+    case testingWithAds
+    case testingWithoutAds
+    case notTesting
 }

@@ -30,6 +30,7 @@
 		BCC40CFB234DEDEB00CD951D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCC40CF9234DEDEB00CD951D /* LaunchScreen.storyboard */; };
 		BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */; };
 		BCC40D0B234DF4A000CD951D /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC40D0A234DF4A000CD951D /* CardModel.swift */; };
+		BCC6E8CA253B1B32004B5928 /* Global Variables.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC6E8C9253B1B31004B5928 /* Global Variables.swift */; };
 		BCD6074C238C6483000AFA6F /* roundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD6074B238C6482000AFA6F /* roundButton.swift */; };
 		BCE12CE9234E340400962F00 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CE8234E340400962F00 /* Card.swift */; };
 		BCE12CEF234E35E400962F00 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE12CEE234E35E400962F00 /* Utilities.swift */; };
@@ -66,6 +67,7 @@
 		BCC40CFC234DEDEB00CD951D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCC40D02234DF09900CD951D /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
 		BCC40D0A234DF4A000CD951D /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
+		BCC6E8C9253B1B31004B5928 /* Global Variables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Global Variables.swift"; sourceTree = "<group>"; };
 		BCD6074B238C6482000AFA6F /* roundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = roundButton.swift; sourceTree = "<group>"; };
 		BCE12CE8234E340400962F00 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = "Le Frame/Model/Card.swift"; sourceTree = SOURCE_ROOT; };
 		BCE12CEE234E35E400962F00 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 				BC368419236B502500DCC703 /* Data Model.xcdatamodeld */,
 				BCE12CE8234E340400962F00 /* Card.swift */,
 				BCC40D0A234DF4A000CD951D /* CardModel.swift */,
+				BCC6E8C9253B1B31004B5928 /* Global Variables.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				BCF0FA0023BE7CC000EB266C /* ContactUsVC.swift in Sources */,
 				BCF0F9FE23B9403300EB266C /* Enums.swift in Sources */,
 				BC36841B236B502500DCC703 /* Data Model.xcdatamodeld in Sources */,
+				BCC6E8CA253B1B32004B5928 /* Global Variables.swift in Sources */,
 				BCB7463023AE8B2300C7C841 /* AboutUsVC.swift in Sources */,
 				BCC40D03234DF09900CD951D /* CardCollectionViewCell.swift in Sources */,
 				BC4F5BB12531DD1200EE8567 /* Dialogue Functions.swift in Sources */,

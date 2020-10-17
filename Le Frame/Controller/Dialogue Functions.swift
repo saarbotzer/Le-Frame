@@ -151,7 +151,7 @@ extension GameVC {
         let messages = [message1, message2, message3]
 
         // Buttons
-        let button1 = DialogueButton(text: "Start tour", action: { self.coachMarksController.start(in: .window(over: self)) })
+        let button1 = DialogueButton(text: "Start tour", action: { self.startTour() })
         let button2 = DialogueButton(text: "Skip tour", action: { self.showDialogue(ofType: .skippedTour) })
         let buttons = [button1, button2]
         
@@ -172,7 +172,7 @@ extension GameVC {
 
         // Messages
         let message1 = "You win if you've filled the frame with royal cards, and you lose if you can't place or remove more cards."
-        let message2 = "Set the difficulty and find tips and FAQ in Settings menu."
+        let message2 = "Set the difficulty and find help in Settings menu."
         let message3 = "Enjoy playing Royal Frame!"
         let messages = [message1, message2, message3]
         
@@ -283,6 +283,34 @@ extension SettingsVC {
         // Buttons
         let button1 = DialogueButton(text: "OK")
         let buttons = [button1, button1]
+        
+        // Payload
+        let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons)
+        Utilities.presentDialogue(self, payload: payload)
+    }
+    
+    func showTourFromSettingsDialogue() {
+        // Parameters
+        let type: DialogueType = .tourFromSettings
+        
+        // Title
+        let title = "Show tour?"
+        
+        // Messages
+        let message1 = "This will start a new game after the tour ends"
+        let message2 = ""
+        let messages = [message1, message2]
+        
+        // Buttons
+        let button1 = DialogueButton(text: "Show tour") {
+            self.dismiss(animated: true, completion: nil)
+            if let gameVC = self.presentingViewController as? GameVC {
+                gameVC.restart()
+                gameVC.startTour()
+            }
+        }
+        let button2 = DialogueButton(text: "Dismiss")
+        let buttons = [button1, button2]
         
         // Payload
         let payload = DialoguePayload(type: type, title: title, messages: messages, buttons: buttons)

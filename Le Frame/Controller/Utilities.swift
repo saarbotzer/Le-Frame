@@ -366,15 +366,4 @@ struct GameMove: CustomStringConvertible {
     }
 }
 
-// MARK: - Custom Colors
-extension UIColor {
-    // TODO: Document
-    /// #FCD600
-    static let frameGold: UIColor = UIColor(red: 1, green: 0.84, blue: 0, alpha: 1)
-    
-    /// #hex
-    static let frameDarkGold: UIColor = UIColor(red: 0.78, green: 0.64, blue: 0, alpha: 1)
-    
-    /// #hex
-    static let frameBackgroundOverlay: UIColor = UIColor(red: 0.65, green: 0.8, blue: 0.65, alpha: 0.65)
-}
+public typealias MicroCopy = String

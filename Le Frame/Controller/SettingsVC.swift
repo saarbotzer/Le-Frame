@@ -36,7 +36,8 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 Setting(label: "Statistics", segueName: .goToStatistics)
             ],
             "HELP": [
-                Setting(label: "Tutorial", segueName: .goToTutorial),
+                Setting(label: "Onboarding tour", segueName: .tour),
+                Setting(label: "How to play?", segueName: .goToTutorial),
                 Setting(label: "FAQ", segueName: .goToFaq)
             ],
             "ABOUT": [
@@ -181,16 +182,19 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     tableView.deselectRow(at: indexPath, animated: true)
                 }
             } else if segueName == .privacyPolicy {
-                guard let url = URL(string: "http://www.freeprivacypolicy.com/privacy/view/2a29fd7a265d51d96bf75c8f422b751c") else { return }
+                guard let url = URL(string: privacyPolicyUrlString) else { return }
                 UIApplication.shared.open(url)
                 tableView.deselectRow(at: indexPath, animated: true)
             } else if segueName == .share {
-                let url = URL(string: "https://apps.apple.com/il/app/royal-frame/id1490916476")
+                let url = URL(string: appStoreUrlString)
                 let activityViewController = UIActivityViewController(activityItems: [url!], applicationActivities: nil)
                 present(activityViewController, animated: true, completion: nil)
                 tableView.deselectRow(at: indexPath, animated: true)
             } else if segueName == .goToContactUs {
                 sendEmail()
+                tableView.deselectRow(at: indexPath, animated: true)
+            } else if segueName == .tour {
+                showTourFromSettingsDialogue()
                 tableView.deselectRow(at: indexPath, animated: true)
             } else {
                 performSegue(withIdentifier: segueName.getRawValue(), sender: nil)
@@ -281,9 +285,32 @@ class SettingsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 if gameDifficulty.sumMode.getRawValue() != newSumMode {
                     showSettingChangeDialogue(for: sender.name!, currentValue: gameDifficulty.name)
                 }
-            case .showHints, .soundsOn, .doneRemovingAnytime, .hapticOn, .adsOn, .highlightAvailableMoves:
+            case .showHints, .soundsOn, .doneRemovingAnytime, .hapticOn, .adsOn:
                 let newValue = sender.selectedSegmentIndex == 0
                 defaults.set(newValue, forKey: keyRawValue)
+                
+            case .highlightAvailableMoves:
+                let newValue = sender.selectedSegmentIndex == 0
+                defaults.set(newValue, forKey: keyRawValue)
+                
+                if let gameVC = presentingViewController as? GameVC {
+//                    gameVC.highlightSpotsForNextCard()
+                    if gameVC.gameStatus == .placing {
+                        gameVC.highlightSpotsForNextCard()
+                    } else if gameVC.gameStatus == .removing {
+                        
+                        if gameVC.firstSelectedCardIndexPath == nil {
+                            gameVC.highlightCardsForRemoval(forCardAt: nil)
+                        } else if gameVC.secondSelectedCardIndexPath == nil {
+                            gameVC.highlightCardsForRemoval(forCardAt: gameVC.firstSelectedCardIndexPath)
+                        } else {
+                            gameVC.highlightCardsForRemoval(forCardAt: nil)
+                        }
+                        
+                        
+                    }
+                }
+                
             case .spotsHints:
                 let newValue = sender.selectedSegmentIndex == 0
                 defaults.set(newValue, forKey: keyRawValue)

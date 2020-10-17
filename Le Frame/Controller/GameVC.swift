@@ -115,13 +115,6 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
     
     // Ads
     var bannerView : GADBannerView!
-    
-    // Testings
-    var testShowTaps : Bool = false
-    var testShowAds : Bool = false
-    var testShowOnboarding : Bool = false
-    
-    
 
     // MARK: - ViewController Functions
     override func viewDidLoad() {
@@ -135,22 +128,27 @@ class GameVC: UIViewController, UICollectionViewDelegateFlowLayout, UICollection
         bannerView = GADBannerView(adSize: kGADAdSizeBanner)
         addBannerIfNeeded()
         
-        
-        if testShowOnboarding {
+        if testShowOnboarding && isTesting {
             defaults.set(false, forKey: "firstGamePlayed")
         }
 
-        ShowTime.enabled = testShowTaps ? .always : .never
-        ShowTime.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.5)
-//        ShowTime.strokeColor = #colorLiteral(red: 0.6, green: 0.6, blue: 0.6, alpha: 1)
-        ShowTime.strokeColor = .clear
-        ShowTime.size = CGSize(width: 60, height: 60)
         
+        showTaps()
         
         setDelegates()
         
         addRemovalButtonsRecognizer()
         
+    }
+    
+    func showTaps() {
+        if isTesting {
+            ShowTime.enabled = testShowTaps ? .always : .never
+            ShowTime.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.5)
+    //        ShowTime.strokeColor = #colorLiteral(red: 0.6, green: 0.6, blue: 0.6, alpha: 1)
+            ShowTime.strokeColor = .clear
+            ShowTime.size = CGSize(width: 60, height: 60)
+        }
     }
     
     func configureCoachController() {
@@ -566,7 +564,7 @@ extension GameVC {
     /// Enables (highlights) option cards for a card. (removal)
     /// - Parameters:
     ///   - indexPath: The card's index path. If nil, disable all cards except for specific conditions
-    ///   - enableAll: True if enable all cards, false otherwise
+    ///   - highlightAllCards: True if highlight all cards, false otherwise
     func highlightCardsForRemoval(forCardAt indexPath: IndexPath?, highlightAllCards: Bool = false) {
         let settingIsOn = Utilities.getSettingValue(defaults, for: .highlightAvailableMoves)
         let selectedCards = getSelectedIndexPaths(selected: true)
@@ -2474,17 +2472,18 @@ extension GameVC {
         // Every 15 games it switches the showAds
         let showAds = floor(Double(numberOfGamesPlayed) / switchEveryXGames).truncatingRemainder(dividingBy: 2) == 1
         
-        if showAds && testShowAds {
+        let showAdsByTesting = testShowAdsMode == .notTesting || testShowAdsMode == .testingWithAds
+        
+        if showAds && showAdsByTesting {
             
             addBannerViewToView(bannerView)
-            
-            
-            if self.testShowAds {
+
+            if testShowAdsMode != .notTesting {
                 // Testing ad unit ID
-                bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+                bannerView.adUnitID = testingAdUnitID
             } else {
                 // Actual ad unit ID
-                bannerView.adUnitID = "ca-app-pub-6790454182464184/3177122320"
+                bannerView.adUnitID = actualAdUnitID
             }
             
             bannerView.rootViewController = self
@@ -2532,6 +2531,10 @@ extension GameVC {
 // MARK: - Tour Functions
 
 extension GameVC: CoachMarksControllerDataSource, CoachMarksControllerDelegate {
+    
+    func startTour() {
+        coachMarksController.start(in: .window(over: self))
+    }
     
     func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
         return itemsToCoach.count

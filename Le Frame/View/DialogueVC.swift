@@ -65,10 +65,10 @@ class DialogueVC: UIViewController {
     
     /// Configures DialogueVC based on received payload
     func configureByPayload() {
+        configureButtons()
         configureSize()
         configureViews()
         configureLabels()
-        configureButtons()
     }
     
     /// Determines the size of the dialogue
@@ -214,8 +214,11 @@ enum DialogueType: String {
     /// Called when tapped the info button in settings
     case info
     
-    /// Called when a setting was changed and the user need to know about the chang
+    /// Called when a setting was changed and the user need to know about the change
     case settingChange
+    
+    /// Called when the user goes to the tour from the settings menu
+    case tourFromSettings
     
     /// Called on first play, before the tour
     case onboarding
