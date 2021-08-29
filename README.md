@@ -46,6 +46,10 @@ Winning!
 
 <img src="https://user-images.githubusercontent.com/29557441/131245872-f9fa43ca-a433-43bb-a2a0-375ed357e77a.PNG" width="250">
 
+Gameplay
+
+![Gameplay](https://user-images.githubusercontent.com/29557441/131249105-8b417856-b7bb-4dd1-98fa-204120f11634.gif)
+
 Settings & preferences screen
 
 <img src="https://user-images.githubusercontent.com/29557441/131245905-f3456a69-64fc-4aa3-8314-f99942b3a9f1.jpeg" width="250">
